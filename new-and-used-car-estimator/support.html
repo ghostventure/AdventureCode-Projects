@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Support, methodology, operations, and antique guidance for the New and Used Car Benchmark Price Estimator.">
+  <meta name="theme-color" content="#132033">
+  <title>Estimator Support</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar" aria-label="Site controls">
+      <div>
+        <strong>Estimator Support</strong>
+        <span>Decision support, operations, homework, and antique guidance</span>
+      </div>
+      <a class="button theme-button" href="index.html">Estimator</a>
+    </header>
+
+    <section class="hero support-hero">
+      <div>
+        <p class="eyebrow">Support</p>
+        <h1>Review the guardrails before trusting the number.</h1>
+        <p class="hero-copy">Use this page for methodology, operational checks, collector cautions, and the homework that should happen before any purchase, sale, financing, or appraisal decision.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="index.html#estimator">Back to estimator</a>
+          <a class="button" href="#decision-support">Decision support</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel intelligence-panel" id="decision-support">
+      <div class="section-head">
+        <p class="eyebrow">Decision Support</p>
+        <h2>Signals to review before you trust the number</h2>
+      </div>
+      <div class="component-grid">
+        <article><strong>Risk review</strong><p>Condition, title history, accident history, rust, records, and mileage can overpower the baseline.</p></article>
+        <article><strong>Negotiation lane</strong><p>Use the low end of the range against written quotes, asking prices, and inspection findings.</p></article>
+        <article><strong>Documentation</strong><p>Confirm title, service records, recalls, tire/brake condition, equipment, and seller disclosures.</p></article>
+        <article><strong>Category scope</strong><p>Make/model/category selections are controlled so unsupported vehicles are not guessed.</p></article>
+        <article><strong>Mass-market rule</strong><p>In this estimator, Mass-Market generally requires at least five active mainstream auto model lines plus broad everyday-buyer coverage. Narrow, paused, discontinued, motorcycle-only, specialty, or underrepresented brands are classified under Niche, Mid-Market, Rugged, Sport, Motorcycle, or International instead.</p></article>
+        <article><strong>SUV-only lane</strong><p>The SUVs only category filters by SUV body-style segments, not brand label, so sedans, pickups, vans, motorcycles, and box trucks stay out of that view.</p></article>
+        <article><strong>Crossover lane</strong><p>The Crossovers category uses SUV-style segments but excludes rugged, truck-based, minivan, and commercial-van names so common crossover models stay grouped separately.</p></article>
+        <article><strong>Comparable checklist</strong><p>Compare price, mileage, distance, title, accident history, seller type, and days listed.</p></article>
+        <article><strong>Confidence explainer</strong><p>Quality changes with mileage, condition, title history, market pressure, and profile specificity.</p></article>
+      </div>
+      <div class="review-strip">
+        <div><span>Source discipline</span><strong>Controlled catalog</strong></div>
+        <div><span>Estimate discipline</span><strong>Range, not promise</strong></div>
+        <div><span>Buyer discipline</span><strong>Verify before action</strong></div>
+      </div>
+    </section>
+
+    <section class="panel operations-panel" id="operations">
+      <div class="section-head">
+        <p class="eyebrow">Operations</p>
+        <h2>Resilience and guardrails</h2>
+      </div>
+      <div class="component-grid">
+        <article><strong>Catalog integrity</strong><p>Duplicate IDs, missing segments, category gaps, and year-bound conflicts are smoke checked.</p></article>
+        <article><strong>Input guard</strong><p>Range controls are clamped and invalid selects recover to the nearest controlled option.</p></article>
+        <article><strong>Tamper status</strong><p>The client computes a catalog signature and freezes catalog arrays during runtime.</p></article>
+        <article><strong>Fail-safe mode</strong><p>If a guarded audit fails, the estimator renders a conservative fallback instead of breaking.</p></article>
+        <article><strong>Snapshot state</strong><p>The latest safe estimate is stored locally for recovery awareness.</p></article>
+        <article><strong>Smoke status</strong><p>Browser smoke verifies pricing controls, catalog filters, support components, and recovery paths.</p></article>
+      </div>
+    </section>
+
+    <section class="panel tools-panel" id="tools">
+      <div class="section-head">
+        <p class="eyebrow">Tools</p>
+        <h2>Compare, export, and review</h2>
+      </div>
+      <div class="component-grid">
+        <article><strong>Saved comparisons</strong><p>Use the estimator copy summary output or exported state to compare vehicles outside the page.</p></article>
+        <article><strong>Print / PDF</strong><p>Use browser print or save-to-PDF after generating an estimate.</p></article>
+        <article><strong>Export state</strong><p>Current estimate data can be copied from the summary and reviewed against written quotes.</p></article>
+        <article><strong>Catalog issue</strong><p>Report missing models, bad categories, wrong discontinued status, or visibly incorrect support notes.</p></article>
+      </div>
+    </section>
+
+    <section class="panel operations-panel" id="commercial-motorcycle-support">
+      <div class="section-head">
+        <p class="eyebrow">Commercial And Motorcycle Support</p>
+        <h2>Specialty vehicle context</h2>
+      </div>
+      <div class="component-grid">
+        <article><strong>Box trucks</strong><p>Commercial includes cargo vans, cutaways, low-cab-forward trucks, medium-duty box trucks, liftgate-ready chassis, and fleet work platforms.</p></article>
+        <article><strong>Commercial upfits</strong><p>Box length, liftgate, refrigeration, shelving, payload rating, wheelbase, and duty cycle can change value more than cosmetic condition.</p></article>
+        <article><strong>Motorcycles</strong><p>Motorcycle profiles cover cruiser, sport, touring, adventure, dual-sport, scooter/mini, electric, and off-road categories.</p></article>
+        <article><strong>Motorcycle checks</strong><p>Review tire date codes, chain/belt/shaft service, brake wear, fork seals, service records, title status, modifications, track use, drops, and storage history.</p></article>
+      </div>
+    </section>
+
+    <section class="panel operations-panel" id="market-facts">
+      <div class="section-head">
+        <p class="eyebrow">Market Facts</p>
+        <h2>Current data behind Market price mode</h2>
+      </div>
+      <div class="component-grid">
+        <article><strong>CPI anchor</strong><p>BLS May 2026 CPI-U all-items index: 335.123, up 4.2% over 12 months.</p></article>
+        <article><strong>Vehicle CPI</strong><p>BLS May 2026 vehicle movement: new vehicles down 0.3% month over month; used cars and trucks up 0.1% month over month.</p></article>
+        <article><strong>New transaction prices</strong><p>KBB/Cox May 2026 average new-vehicle transaction price: $49,220, down from April and up 1.2% year over year.</p></article>
+        <article><strong>Used-market pressure</strong><p>Manheim May 2026 used wholesale index: 212.6, up 3.6% year over year. Edmunds reported three-year residual values at 66% in Q1 2026.</p></article>
+      </div>
+    </section>
+
+    <section class="panel antique-panel" id="antique-support">
+      <div class="section-head">
+        <p class="eyebrow">Antique Support</p>
+        <h2>Collector vehicle context</h2>
+      </div>
+      <div class="homework-grid">
+        <div><strong>Era guide</strong><p>Antique mode covers 25+ model-year vehicles from early production through the collector cut-off year.</p></div>
+        <div><strong>Value drivers</strong><p>Originality, matching numbers, restoration quality, provenance, rust, parts availability, and auction history can outweigh mileage.</p></div>
+        <div><strong>Collector costs</strong><p>Budget separately for enclosed transport, inspection, storage, insurance, registration rules, buyer premiums, and post-purchase sorting.</p></div>
+      </div>
+      <div class="review-strip">
+        <div><span>Antique threshold</span><strong>25+ model years</strong></div>
+        <div><span>Collector caution</span><strong>Specialist review</strong></div>
+        <div><span>Registration caution</span><strong>Rules vary by state</strong></div>
+      </div>
+    </section>
+
+    <section class="panel homework-panel" id="homework">
+      <div class="section-head">
+        <p class="eyebrow">Homework</p>
+        <h2>What to verify before you use the number</h2>
+      </div>
+      <div class="homework-grid">
+        <div><strong>Vehicle facts that move value</strong><p>Year, make, model, trim, equipment, mileage, condition, title status, accident history, records, rust, and region can all move the benchmark.</p></div>
+        <div><strong>Costs outside the benchmark</strong><p>Taxes, registration, title, documentation fees, dealer add-ons, delivery, warranties, APR, transport, storage, and loan term are outside the benchmark.</p></div>
+        <div><strong>Evidence to collect</strong><p>Use current listings, written quotes, recall checks, service records, comparable sales, and independent inspections before buying.</p></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

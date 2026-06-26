@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Benchmark price guide for new and used vehicles with mileage, condition, region, trim, and market adjustments.">
+  <meta name="theme-color" content="#132033">
+  <title>New and Used Vehicle Benchmark Price Estimator</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="estimator.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar" aria-label="Site controls">
+      <div>
+        <strong>Vehicle Benchmark Estimator</strong>
+        <span id="catalogSummary">Catalog loading</span>
+      </div>
+      <button class="button theme-button" id="themeToggle" type="button" aria-pressed="false">
+        <span id="themeIcon">Mode</span>
+        <span id="themeLabel">Day</span>
+      </button>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Benchmark Price Guide</p>
+        <h1>New and used vehicle benchmark prices without the dealership fog.</h1>
+        <p class="hero-copy">
+          Compare a vehicle against a typical market baseline, then adjust for model year,
+          mileage, condition, trim, region, and demand. This is a planning tool, not a final appraisal.
+        </p>
+      <div class="hero-actions">
+        <a class="button primary" href="#estimator">Start estimate</a>
+        <a class="button" href="#insights">View insights</a>
+        <a class="button" href="support.html">Support</a>
+      </div>
+      </div>
+      <aside class="hero-panel" aria-label="Current benchmark summary">
+        <span class="panel-label">Typical range</span>
+        <strong id="heroRange">$18,900 - $31,600</strong>
+        <p id="heroRangeNote">Supported benchmark profiles for mass-market, luxury, rugged, tuner, sport, muscle, niche, and exotic vehicles.</p>
+        <div class="hero-metrics">
+          <div><span>Makes</span><strong id="heroMakeCount">103</strong></div>
+          <div><span>Profiles</span><strong id="heroProfileCount">874</strong></div>
+          <div><span>Year band</span><strong id="heroYearBand">2002-2027</strong></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="notice">
+      <strong>Important:</strong>
+      Benchmark prices are estimates for comparison and planning. Actual sale price, trade value,
+      lender value, taxes, fees, incentives, title history, accident history, options, local supply,
+      and inspection results can materially change the number.
+    </section>
+
+    <section class="estimator-grid" id="estimator">
+      <form class="panel estimator-card" id="estimateForm">
+        <div class="section-head">
+          <p class="eyebrow">Estimator</p>
+        <h2>Build a benchmark price</h2>
+          <p class="form-note">Choose from supported makes and models. Every control recalculates the benchmark immediately.</p>
+        </div>
+
+        <fieldset class="control-group">
+          <legend>Vehicle</legend>
+          <label>
+            Brand category
+            <select id="categorySelect">
+              <option value="all">All categories</option>
+              <option value="Mass-Market">Mass-Market</option>
+              <option value="Mid-Market">Mid-Market</option>
+              <option value="Lux">Lux</option>
+              <option value="Niche">Niche</option>
+              <option value="Muscle">Muscle</option>
+              <option value="Sport">Sport</option>
+              <option value="Rugged">Rugged</option>
+              <option value="SUV">SUVs only</option>
+              <option value="Crossover">Crossovers</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="Antique">Antique</option>
+              <option value="Tuner">Tuner</option>
+              <option value="Exotic">Exotic</option>
+              <option value="EV">EV</option>
+              <option value="International">International</option>
+            </select>
+          </label>
+
+          <div class="field-row">
+            <label>
+              Make
+              <select id="makeSelect"></select>
+            </label>
+            <label>
+              Model
+              <select id="modelSelect"></select>
+            </label>
+          </div>
+          <p class="helper-line" id="catalogCount">Catalog loading...</p>
+          <p class="helper-line">Production status reviewed through May 2026.</p>
+        </fieldset>
+
+        <div class="locked-profile" aria-live="polite">
+          <div><span>Make</span><strong id="profileMake">Toyota</strong></div>
+          <div><span>Model</span><strong id="profileModel">RAV4 XLE</strong></div>
+          <div><span>Segment</span><strong id="profileSegment">Compact SUV</strong></div>
+          <div><span>Trim class</span><strong id="profileTrim">XLE</strong></div>
+          <div><span>Brand category</span><strong id="profileBrandCategory">Mass-Market</strong></div>
+          <div><span>Model lane</span><strong id="profileModelLane">Rugged / utility</strong></div>
+          <div><span>Production status</span><strong id="profileProduction">Current</strong></div>
+        </div>
+
+        <div class="live-status" aria-live="polite">
+          <span>Instant recalculation</span>
+          <strong id="lastUpdated">Ready</strong>
+        </div>
+
+        <fieldset class="control-group">
+          <legend>Core facts</legend>
+          <div class="field-row">
+            <label>
+              Vehicle type
+              <select id="vehicleType">
+                <option value="used">Used</option>
+                <option value="new">New</option>
+                <option value="antique">Antique</option>
+              </select>
+              <span class="helper-line">New shows current manufacturer models. Used covers modern current/discontinued models. Antique covers 25+ model-year collector vehicles.</span>
+            </label>
+            <div class="slider-field">
+              <div class="slider-label">
+                <span>Model year</span>
+                <strong id="modelYearValue">2022</strong>
+              </div>
+              <input id="modelYear" type="range" min="2002" max="2027" step="1" value="2022">
+              <p class="helper-line" id="yearHint">Modern non-antique range</p>
+            </div>
+          </div>
+
+          <div class="slider-field">
+            <div class="slider-label">
+              <span>Mileage</span>
+              <strong id="mileageValue">42,000 mi</strong>
+            </div>
+            <input id="mileage" type="range" min="0" max="220000" step="1000" value="42000">
+            <div class="slider-scale"><span>0</span><span>55k</span><span>110k</span><span>165k</span><span>220k</span></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="control-group">
+          <legend>Market adjustments</legend>
+          <div class="slider-field">
+            <div class="slider-label">
+              <span>Condition</span>
+              <strong id="conditionValue">Good</strong>
+            </div>
+            <input id="condition" type="range" min="0" max="3" step="1" value="2">
+            <div class="slider-scale"><span>Rough</span><span>Fair</span><span>Good</span><span>Excellent</span></div>
+          </div>
+
+          <div class="field-row">
+            <div class="slider-field">
+              <div class="slider-label">
+                <span>Trim / options</span>
+                <strong id="trimValue">Mid</strong>
+              </div>
+              <input id="trim" type="range" min="0" max="3" step="1" value="1">
+              <div class="slider-scale"><span>Base</span><span>Mid</span><span>Premium</span><span>Performance</span></div>
+            </div>
+            <div class="slider-field">
+              <div class="slider-label">
+                <span>Region</span>
+                <strong id="regionValue">Average market</strong>
+              </div>
+              <input id="region" type="range" min="0" max="4" step="1" value="1">
+              <div class="slider-scale"><span>Rural</span><span>Average</span><span>Sunbelt</span><span>Snow/AWD</span><span>Urban</span></div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="slider-field">
+              <div class="slider-label">
+                <span>Transaction context</span>
+                <strong id="sellerTypeValue">Dealer retail</strong>
+              </div>
+              <input id="sellerType" type="range" min="0" max="2" step="1" value="2">
+              <div class="slider-scale"><span>Trade-in</span><span>Private</span><span>Dealer</span></div>
+            </div>
+            <div class="slider-field">
+              <div class="slider-label">
+                <span>History / title</span>
+                <strong id="historyValue">Clean title</strong>
+              </div>
+              <input id="history" type="range" min="0" max="3" step="1" value="3">
+              <div class="slider-scale"><span>Major</span><span>Minor</span><span>Unknown</span><span>Clean</span></div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="slider-field">
+              <div class="slider-label">
+                <span>Owner count</span>
+                <strong id="ownerCountValue">2 owners</strong>
+              </div>
+              <input id="ownerCount" type="range" min="0" max="4" step="1" value="1">
+              <div class="slider-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5+</span></div>
+            </div>
+            <label class="toggle-field">
+              <input id="fleetUse" type="checkbox">
+              <span>
+                <strong>Prior fleet / company vehicle</strong>
+                <em id="fleetUseValue">Personal-use history assumed</em>
+              </span>
+            </label>
+          </div>
+
+          <div class="slider-field">
+            <div class="slider-label">
+              <span>Current demand</span>
+              <strong id="demandValue">Normal</strong>
+            </div>
+            <input id="demand" type="range" min="0" max="3" step="1" value="1">
+            <div class="slider-scale"><span>Soft</span><span>Normal</span><span>Strong</span><span>Hot</span></div>
+          </div>
+
+          <div class="slider-field">
+            <div class="slider-label">
+              <span>Market price mode</span>
+              <strong id="marketModeValue">Normal</strong>
+            </div>
+            <input id="marketMode" type="range" min="0" max="2" step="1" value="1">
+            <div class="slider-scale"><span>Soft market</span><span>Normal</span><span>Inflation</span></div>
+            <p class="helper-line" id="marketModeNote">Uses May 2026 CPI, KBB/Cox ATP, Manheim, and residual-value context.</p>
+          </div>
+
+          <div class="field-row">
+            <label>
+              Asking price
+              <input id="askingPrice" type="number" min="0" max="10000000" step="100" placeholder="Optional seller price">
+              <span class="helper-line">Compare a listed price against the estimate range.</span>
+            </label>
+            <label>
+              Fuel / energy
+              <select id="fuelType">
+                <option value="gas">Gas</option>
+                <option value="diesel">Diesel</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="ev">EV</option>
+                <option value="unknown">Unknown</option>
+              </select>
+              <span class="helper-line">Adds ownership-cost and maintenance context.</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="control-group">
+          <legend>Equipment and powertrain</legend>
+          <div class="field-row">
+            <label>Drivetrain
+              <select id="drivetrain">
+                <option value="standard">Standard</option>
+                <option value="awd">AWD / 4WD</option>
+                <option value="rwd">RWD</option>
+              </select>
+            </label>
+            <label>Engine / powertrain
+              <select id="powertrain">
+                <option value="base">Base</option>
+                <option value="upgraded">Upgraded</option>
+                <option value="diesel">Diesel</option>
+                <option value="performance">Performance</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Transmission
+              <select id="transmission">
+                <option value="automatic">Automatic</option>
+                <option value="manual">Manual</option>
+                <option value="ev">EV direct drive</option>
+              </select>
+            </label>
+            <label>Options package
+              <select id="optionPackage">
+                <option value="standard">Standard equipment</option>
+                <option value="safety">Safety / driver assist</option>
+                <option value="luxury">Luxury / premium</option>
+                <option value="tow">Tow / off-road</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Exterior / interior color
+              <select id="colorDemand">
+                <option value="neutral">Neutral / mainstream</option>
+                <option value="rare">Rare / enthusiast</option>
+                <option value="polarizing">Polarizing</option>
+              </select>
+            </label>
+            <label>Warranty status
+              <select id="warrantyStatus">
+                <option value="none">Expired / none</option>
+                <option value="factory">Factory active</option>
+                <option value="cpo">CPO / transferable</option>
+              </select>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="control-group">
+          <legend>Condition and records</legend>
+          <div class="field-row">
+            <label>Service records
+              <select id="serviceRecords">
+                <option value="complete">Complete</option>
+                <option value="partial">Partial</option>
+                <option value="missing">Missing</option>
+              </select>
+            </label>
+            <label>Tires / brakes
+              <select id="wearItems">
+                <option value="good">Good</option>
+                <option value="soon">Soon due</option>
+                <option value="needed">Needs work</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Open recalls
+              <select id="recallStatus">
+                <option value="none">None known</option>
+                <option value="open">Open recall</option>
+              </select>
+            </label>
+            <label>Title brand
+              <select id="titleBrand">
+                <option value="clean">Clean</option>
+                <option value="rebuilt">Rebuilt / lemon / buyback</option>
+                <option value="salvage">Salvage / flood / odometer</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Rust / corrosion
+              <select id="rustLevel">
+                <option value="none">None visible</option>
+                <option value="minor">Minor</option>
+                <option value="structural">Structural concern</option>
+              </select>
+            </label>
+            <label>Repair quality
+              <select id="repairQuality">
+                <option value="none">No known repair</option>
+                <option value="quality">Documented quality repair</option>
+                <option value="poor">Poor / unknown repair</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Keys / manuals / accessories
+              <select id="accessoryCompleteness">
+                <option value="complete">Complete</option>
+                <option value="partial">Partial</option>
+                <option value="missing">Missing</option>
+              </select>
+            </label>
+            <label>Prior rental
+              <select id="rentalUse">
+                <option value="no">No</option>
+                <option value="yes">Prior rental</option>
+              </select>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="control-group">
+          <legend>Market and transaction</legend>
+          <div class="field-row">
+            <label>Dealer add-ons
+              <select id="dealerAddons">
+                <option value="none">None</option>
+                <option value="moderate">Moderate</option>
+                <option value="heavy">Heavy</option>
+              </select>
+            </label>
+            <label>Incentives / rebates
+              <select id="incentiveLevel">
+                <option value="none">None</option>
+                <option value="moderate">Moderate</option>
+                <option value="strong">Strong</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Days on market
+              <select id="daysMarket">
+                <option value="fresh">Fresh listing</option>
+                <option value="normal">Normal</option>
+                <option value="stale">Stale</option>
+              </select>
+            </label>
+            <label>Local inventory
+              <select id="inventorySupply">
+                <option value="balanced">Balanced</option>
+                <option value="scarce">Scarce</option>
+                <option value="oversupplied">Oversupplied</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Seasonality
+              <select id="seasonality">
+                <option value="neutral">Neutral</option>
+                <option value="inSeason">In season</option>
+                <option value="offSeason">Off season</option>
+              </select>
+            </label>
+            <label>Shipping distance
+              <select id="shippingDistance">
+                <option value="local">Local</option>
+                <option value="regional">Regional</option>
+                <option value="long">Long-distance</option>
+              </select>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="control-group">
+          <legend>Specialty factors</legend>
+          <div class="field-row">
+            <label>Commercial use intensity
+              <select id="commercialIntensity">
+                <option value="normal">Normal</option>
+                <option value="heavy">Heavy use / idle hours</option>
+                <option value="upfitWear">Upfit wear / wrap removal</option>
+              </select>
+            </label>
+            <label>EV battery health
+              <select id="evBatteryHealth">
+                <option value="notApplicable">Not applicable</option>
+                <option value="strong">Strong</option>
+                <option value="unknown">Unknown</option>
+                <option value="weak">Weak</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Tax credit eligibility
+              <select id="taxCredit">
+                <option value="none">None / unknown</option>
+                <option value="eligible">Eligible</option>
+                <option value="notEligible">Not eligible</option>
+              </select>
+            </label>
+            <label>Import / gray-market status
+              <select id="importStatus">
+                <option value="domestic">Normal market</option>
+                <option value="documented">Documented import</option>
+                <option value="gray">Gray-market concern</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Originality / modifications
+              <select id="modificationLevel">
+                <option value="stock">Stock / original</option>
+                <option value="tasteful">Tasteful upgrades</option>
+                <option value="modified">Heavily modified</option>
+              </select>
+            </label>
+            <label>Aftermarket quality
+              <select id="aftermarketQuality">
+                <option value="none">None / factory</option>
+                <option value="quality">Known-brand quality</option>
+                <option value="cheap">Cheap / irreversible</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Rarity / production numbers
+              <select id="rarity">
+                <option value="common">Common</option>
+                <option value="limited">Limited</option>
+                <option value="rare">Rare</option>
+              </select>
+            </label>
+            <label>Matching numbers / provenance
+              <select id="matchingNumbers">
+                <option value="notApplicable">Not applicable</option>
+                <option value="verified">Verified</option>
+                <option value="unknown">Unknown</option>
+                <option value="mismatch">Mismatch</option>
+              </select>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="action-row">
+          <button class="button primary" type="submit">Refresh benchmark</button>
+          <button class="button secondary" id="resetEstimate" type="button">Reset</button>
+          <button class="button secondary" id="copySummary" type="button">Copy summary</button>
+        </div>
+      </form>
+
+      <section class="panel result-card" aria-live="polite">
+        <div class="section-head">
+          <p class="eyebrow">Result</p>
+          <h2 id="resultTitle">Used compact SUV benchmark</h2>
+        </div>
+        <div class="price-stack">
+          <span>Benchmark price</span>
+          <strong id="benchmarkPrice">$24,100</strong>
+          <em id="confidenceLabel">Confidence: medium</em>
+        </div>
+        <div class="quality-card">
+          <div>
+            <span>Price confidence meter</span>
+            <strong id="qualityScore">72 / 100</strong>
+          </div>
+          <meter id="qualityMeter" min="0" max="100" value="72">72 out of 100</meter>
+          <p id="qualityReason">Clean title, normal demand, and mileage near expectation support the estimate.</p>
+        </div>
+        <div class="range-box">
+          <span>Likely comparison range</span>
+          <strong id="priceRange">$22,200 - $26,000</strong>
+        </div>
+        <div class="range-box compact-range">
+          <span>Net adjustment from profile base</span>
+          <strong id="netAdjustment">+$0</strong>
+        </div>
+        <div class="historical-card" aria-label="Historical dollar value">
+          <div class="slider-label">
+            <span>Historical dollar value</span>
+            <strong id="historicalYearValue">1937</strong>
+          </div>
+          <input id="historicalYear" type="range" min="1886" max="2026" step="1" value="1937">
+          <div class="slider-scale"><span>1886</span><span>1937</span><span>1970</span><span>2000</span><span>2026</span></div>
+          <div class="historical-grid">
+            <div><span>Vehicle in then-dollars</span><strong id="historicalVehicleValue">$0</strong></div>
+            <div><span>$1 then equals today</span><strong id="historicalDollarToday">$0</strong></div>
+            <div><span>Today $1 was worth then</span><strong id="currentDollarThen">$0.00</strong></div>
+            <div><span>Source basis</span><strong id="historicalSource">CPI ratio</strong></div>
+          </div>
+          <p id="historicalNote">1886 starts at the first production automobile era; pre-1913 values are estimates.</p>
+        </div>
+        <p class="result-note" id="resultNote">
+          Compare this against current local listings, vehicle history, inspection results, and an out-the-door quote.
+        </p>
+        <div class="insight-grid" id="insights">
+          <div><span>Estimated out-the-door</span><strong id="outTheDoorPrice">$26,000</strong></div>
+          <div><span>Estimated payment</span><strong id="monthlyPayment">$470/mo</strong></div>
+          <div><span>Taxes / fees reserve</span><strong id="taxFeeReserve">$1,900</strong></div>
+          <div><span>Cost per mile</span><strong id="costPerMile">$0.57</strong></div>
+          <div><span>Market pressure</span><strong id="marketPressure">Normal</strong></div>
+          <div><span>Age / mileage fit</span><strong id="ageMileageFit">Aligned</strong></div>
+          <div><span>Value volatility</span><strong id="valueVolatility">Normal</strong></div>
+          <div><span>Buyer liquidity</span><strong id="buyerLiquidity">Broad buyer pool</strong></div>
+          <div><span>Ownership risk</span><strong id="ownershipRisk">Normal</strong></div>
+          <div><span>Deal quality</span><strong id="dealQuality">Enter asking price</strong></div>
+          <div><span>Confidence band</span><strong id="confidenceBand">Medium</strong></div>
+          <div><span>Suggested first offer</span><strong id="firstOffer">$0</strong></div>
+          <div><span>Walk-away point</span><strong id="walkAwayPoint">$0</strong></div>
+          <div><span>Fair midpoint</span><strong id="fairMidpoint">$0</strong></div>
+          <div><span>Regional adjustment</span><strong id="regionalAdjustment">Average market</strong></div>
+          <div><span>12-month ownership</span><strong id="ownershipPreview">$0</strong></div>
+          <div><span>Maintenance risk</span><strong id="maintenanceRisk">Normal</strong></div>
+          <div><span>Fuel sensitivity</span><strong id="fuelSensitivity">Normal</strong></div>
+          <div><span>Depreciation snapshot</span><strong id="depreciationPreview">Calculating</strong></div>
+          <div><span>Transmission impact</span><strong id="transmissionImpact">Automatic</strong></div>
+          <div><span>Equipment impact</span><strong id="equipmentImpact">Neutral</strong></div>
+          <div><span>History impact</span><strong id="historyImpact">Neutral</strong></div>
+          <div><span>Market leverage</span><strong id="marketLeverage">Neutral</strong></div>
+          <div><span>Specialty impact</span><strong id="specialtyImpact">Neutral</strong></div>
+        </div>
+        <div class="result-tools" aria-label="Estimate tools">
+          <button class="button secondary" id="printSummary" type="button">Print estimate</button>
+          <button class="button secondary" id="exportJson" type="button">Export JSON</button>
+          <button class="button secondary" id="reportCatalogIssue" type="button">Report data issue</button>
+        </div>
+        <p class="tool-status" id="exportStatus">Export ready.</p>
+        <p class="tool-status" id="catalogIssueStatus">Catalog review ready.</p>
+        <p class="tool-status" id="printStatus">Print ready.</p>
+        <div class="insight-grid" id="collectorInsights">
+          <div><span>Originality signal</span><strong id="originalitySignal">Verify</strong></div>
+          <div><span>Provenance signal</span><strong id="provenanceSignal">Review</strong></div>
+          <div><span>Restoration risk</span><strong id="restorationRisk">Normal</strong></div>
+          <div><span>Auction reserve</span><strong id="auctionReserve">$0</strong></div>
+          <div><span>Transport reserve</span><strong id="transportReserve">$0</strong></div>
+          <div><span>Storage reserve</span><strong id="storageReserve">$0</strong></div>
+        </div>
+        <div class="signal-strip">
+          <span id="signalDemand">Demand: normal</span>
+          <span id="signalHistory">History: clean</span>
+          <span id="signalInflation">Market mode: normal</span>
+          <span id="signalProduction">Production: current</span>
+        </div>
+        <div class="value-summary">
+          <strong>What this gives you</strong>
+          <ul>
+            <li id="valuePointOne">A controlled make/model baseline instead of a freeform guess.</li>
+            <li id="valuePointTwo">A likely range to compare against listings and written quotes.</li>
+            <li id="valuePointThree">A checklist of the facts most likely to change the number.</li>
+          </ul>
+        </div>
+        <dl class="adjustment-list" id="adjustmentList"></dl>
+      </section>
+    </section>
+
+    <footer class="site-footer">
+      <nav class="footer-nav" aria-label="Footer policy links">
+        <a href="support.html">Support</a>
+        <a href="docs.html#faq">FAQ</a>
+        <a href="docs.html#legal">Legal</a>
+        <a href="docs.html#dmca">DMCA</a>
+        <a href="docs.html#governance">Governance</a>
+        <a href="docs.html#terms">TOU</a>
+        <a href="docs.html#privacy">Privacy</a>
+        <a href="docs.html#support">Scope</a>
+      </nav>
+      <p class="visitor-counter" aria-live="polite">
+        Site visits: <strong id="visitorCount">Counting...</strong>
+        <span id="visitorCounterStatus">Aggregate counter</span>
+      </p>
+      <p class="footer-note">Webmaster: Black Lion Studios</p>
+    </footer>
+  </main>
+</body>
+</html>

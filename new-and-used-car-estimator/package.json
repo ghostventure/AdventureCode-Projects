@@ -1,0 +1,11 @@
+{
+  "name": "new-and-used-car-estimator",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Single-page benchmark price guide for new and used vehicles.",
+  "scripts": {
+    "check": "node --check estimator.js && node --check scripts/smoke-estimator.mjs && node -e \"JSON.parse(require('fs').readFileSync('firebase.json','utf8')); JSON.parse(require('fs').readFileSync('.firebaserc','utf8')); console.log('config ok')\"",
+    "smoke": "node scripts/smoke-estimator.mjs",
+    "deploy:hosting": "npm run check && npx firebase-tools deploy --only hosting --project new-and-used-car-estimator --account solidartentertainment@gmail.com"
+  }
+}
