@@ -1,0 +1,52 @@
+{
+  "name": "Home Pro Split Search",
+  "version": "0.1.0",
+  "mode": "provider-free-template",
+  "referencePattern": "home-services marketplace split hero",
+  "brand": {
+    "displayName": "Home Services",
+    "tagline": "Book repairs, installs, and home projects",
+    "industryLabel": "Home services marketplace"
+  },
+  "routes": {
+    "publicHome": "/",
+    "clientPortal": "/client",
+    "managerWorkspace": "/manager",
+    "professionalSignup": "/auth"
+  },
+  "colors": {
+    "page": "#f3f1ee",
+    "surface": "#ffffff",
+    "text": "#202124",
+    "mutedText": "#5f666b",
+    "primary": "#00836f",
+    "primaryHover": "#006f5f",
+    "panel": "#123a5a",
+    "panelText": "#ffffff",
+    "panelMuted": "#d8e7f0",
+    "link": "#0f6fbf",
+    "border": "#d8d8d8",
+    "chipBorder": "#00836f",
+    "shadow": "rgba(23, 33, 29, 0.18)"
+  },
+  "typography": {
+    "fontFamily": "Inter, Arial, sans-serif",
+    "heroTitle": "36px",
+    "body": "16px",
+    "nav": "15px"
+  },
+  "layout": {
+    "maxWidth": "1180px",
+    "headerHeight": "76px",
+    "heroMinHeight": "492px",
+    "rightPanelWidth": "390px",
+    "formHeight": "50px"
+  },
+  "providerStatus": {
+    "billing": "disabled-placeholder",
+    "email": "disabled-placeholder",
+    "sms": "disabled-placeholder",
+    "analytics": "disabled-placeholder",
+    "webhooks": "disabled-placeholder"
+  }
+}

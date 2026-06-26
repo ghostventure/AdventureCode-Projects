@@ -1,0 +1,392 @@
+:root {
+  --page: #f3f1ee;
+  --surface: #ffffff;
+  --text: #202124;
+  --muted-text: #5f666b;
+  --primary: #00836f;
+  --primary-hover: #006f5f;
+  --panel: #123a5a;
+  --panel-text: #ffffff;
+  --panel-muted: #d8e7f0;
+  --link: #0f6fbf;
+  --border: #d8d8d8;
+  --chip-border: #00836f;
+  --shadow: rgba(23, 33, 29, 0.18);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --max-width: 1180px;
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.market-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(90deg, rgba(247, 245, 241, 0.95) 0%, rgba(247, 245, 241, 0.9) 50%, rgba(247, 245, 241, 0) 66%),
+    radial-gradient(circle at 64% 38%, rgba(255, 255, 255, 0.9), rgba(231, 226, 219, 0.52) 30%, rgba(180, 190, 181, 0.32) 54%, transparent 55%),
+    linear-gradient(135deg, #f6f2ed 0%, #e6e2db 52%, #c6c7bc 100%);
+}
+
+.market-header {
+  align-items: center;
+  background: var(--surface);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  display: grid;
+  gap: 22px;
+  grid-template-columns: auto auto 1fr auto;
+  min-height: 76px;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.brand-mark {
+  align-items: center;
+  display: inline-flex;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand-icon {
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(3, 8px);
+  transform: rotate(45deg);
+}
+
+.brand-icon span {
+  aspect-ratio: 1;
+  display: block;
+}
+
+.brand-icon span:nth-child(1) {
+  background: #ef476f;
+}
+
+.brand-icon span:nth-child(2) {
+  background: #ffd166;
+}
+
+.brand-icon span:nth-child(3) {
+  background: #06d6a0;
+}
+
+.brand-icon span:nth-child(4) {
+  background: #118ab2;
+}
+
+.brand-icon span:nth-child(5) {
+  background: #073b4c;
+}
+
+.brand-icon span:nth-child(6) {
+  background: #8ecae6;
+}
+
+.brand-icon span:nth-child(7) {
+  background: #ffb703;
+}
+
+.brand-icon span:nth-child(8) {
+  background: #219ebc;
+}
+
+.brand-icon span:nth-child(9) {
+  background: #fb8500;
+}
+
+.brand-name {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.main-nav,
+.utility-nav {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.main-nav a,
+.utility-nav a {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.utility-nav a.sale-link {
+  color: var(--primary);
+}
+
+.utility-nav a.pro-link {
+  color: var(--link);
+}
+
+.header-search {
+  align-items: center;
+  background: #f2f2f2;
+  border-radius: 22px;
+  display: flex;
+  gap: 8px;
+  justify-self: center;
+  max-width: 230px;
+  min-height: 42px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.header-search span {
+  color: #7a7f83;
+}
+
+.header-search input {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  min-width: 0;
+  outline: 0;
+  width: 100%;
+}
+
+.market-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  margin: 0 auto;
+  max-width: var(--max-width);
+  min-height: 492px;
+}
+
+.consumer-panel {
+  align-content: center;
+  display: grid;
+  padding: 56px 56px 48px 72px;
+}
+
+.consumer-panel h1 {
+  font-size: 36px;
+  line-height: 1.16;
+  margin: 0 0 26px;
+  max-width: 460px;
+}
+
+.consumer-panel p {
+  color: #383d40;
+  font-size: 18px;
+  line-height: 1.55;
+  margin: 0 0 26px;
+  max-width: 540px;
+}
+
+.finder-form {
+  box-shadow: 0 2px 12px var(--shadow);
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) 116px 126px;
+  max-width: 560px;
+}
+
+.finder-form label {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: block;
+}
+
+.finder-form label span {
+  display: none;
+}
+
+.finder-form input {
+  border: 0;
+  height: 50px;
+  outline: 0;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.finder-form button,
+.pro-panel button {
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+  min-height: 50px;
+  padding: 0 18px;
+}
+
+.finder-form button:hover,
+.pro-panel button:hover {
+  background: var(--primary-hover);
+}
+
+.quick-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.quick-links strong {
+  font-size: 16px;
+}
+
+.quick-links a {
+  border: 1px solid var(--chip-border);
+  border-radius: 999px;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 650;
+  padding: 9px 16px;
+  text-decoration: none;
+}
+
+.pro-panel {
+  background: var(--panel);
+  color: var(--panel-text);
+  display: grid;
+  min-height: 492px;
+  padding: 34px 32px;
+}
+
+.pro-panel-inner {
+  align-content: center;
+  display: grid;
+}
+
+.pro-lockup {
+  align-items: center;
+  display: flex;
+  font-size: 23px;
+  font-weight: 850;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.pro-lockup span {
+  background: #1680d5;
+  border-radius: 5px;
+  display: inline-grid;
+  height: 27px;
+  place-items: center;
+  width: 27px;
+}
+
+.pro-panel h2 {
+  color: var(--panel-text);
+  font-size: 30px;
+  line-height: 1.18;
+  margin: 0 0 28px;
+}
+
+.pro-panel p {
+  color: var(--panel-muted);
+  font-size: 17px;
+  line-height: 1.45;
+  margin: 0 0 16px;
+}
+
+.learn-link {
+  color: var(--panel-text);
+  display: inline-block;
+  font-weight: 800;
+  margin-bottom: 36px;
+  text-decoration: none;
+}
+
+.pro-panel input {
+  border: 0;
+  border-radius: var(--radius-sm);
+  height: 48px;
+  margin-bottom: 12px;
+  outline: 0;
+  padding: 0 14px;
+  width: 100%;
+}
+
+.pro-panel button {
+  background: #1378c8;
+  width: 100%;
+}
+
+.fine-print {
+  color: #d7e4ec;
+  font-size: 12px;
+  line-height: 1.35;
+  margin-top: 12px;
+}
+
+@media (max-width: 980px) {
+  .market-header {
+    grid-template-columns: auto 1fr;
+  }
+
+  .main-nav,
+  .utility-nav {
+    display: none;
+  }
+
+  .header-search {
+    justify-self: end;
+  }
+
+  .market-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .consumer-panel {
+    padding: 44px 24px;
+  }
+
+  .pro-panel {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .market-header {
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .brand-name {
+    display: none;
+  }
+
+  .header-search {
+    max-width: none;
+  }
+
+  .consumer-panel h1,
+  .pro-panel h2 {
+    font-size: 28px;
+  }
+
+  .finder-form {
+    grid-template-columns: 1fr;
+  }
+
+  .finder-form label {
+    border-bottom: 1px solid var(--border);
+    border-right: 0;
+  }
+}

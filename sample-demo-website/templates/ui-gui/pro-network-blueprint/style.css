@@ -1,0 +1,98 @@
+:root {
+  --blueprint-page: #eef2f4;
+  --blueprint-surface: #ffffff;
+  --blueprint-text: #17212b;
+  --blueprint-muted: #56616c;
+  --blueprint-primary: #0a7c72;
+  --blueprint-primary-hover: #075f57;
+  --blueprint-panel: #102f4a;
+  --blueprint-panel-text: #ffffff;
+  --blueprint-panel-muted: #cfe0ec;
+  --blueprint-accent: #167fd2;
+  --blueprint-border: #ccd6dd;
+}
+
+.blueprint-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(90deg, rgba(238, 242, 244, 0.98) 0%, rgba(238, 242, 244, 0.9) 58%, rgba(238, 242, 244, 0) 76%),
+    repeating-linear-gradient(0deg, rgba(16, 47, 74, 0.04) 0 1px, transparent 1px 34px),
+    repeating-linear-gradient(90deg, rgba(16, 47, 74, 0.04) 0 1px, transparent 1px 34px),
+    #eef2f4;
+  color: var(--blueprint-text);
+  font-family: Inter, Arial, sans-serif;
+}
+
+.blueprint-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  min-height: 500px;
+}
+
+.blueprint-consumer-panel {
+  align-content: center;
+  display: grid;
+  padding: 56px 72px;
+}
+
+.blueprint-consumer-panel h1 {
+  font-size: 44px;
+  line-height: 1.1;
+  margin: 0 0 22px;
+  max-width: 560px;
+}
+
+.blueprint-consumer-panel p {
+  color: var(--blueprint-muted);
+  font-size: 18px;
+  line-height: 1.55;
+  margin: 0 0 26px;
+  max-width: 560px;
+}
+
+.blueprint-search-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 130px 132px;
+  max-width: 610px;
+  border: 1px solid var(--blueprint-border);
+  background: var(--blueprint-surface);
+  box-shadow: 0 10px 30px rgba(16, 47, 74, 0.14);
+}
+
+.blueprint-search-form input {
+  border: 0;
+  border-right: 1px solid var(--blueprint-border);
+  min-height: 52px;
+  outline: 0;
+  padding: 0 16px;
+}
+
+.blueprint-search-form button,
+.blueprint-pro-panel button {
+  border: 0;
+  background: var(--blueprint-primary);
+  color: #ffffff;
+  font-weight: 900;
+  min-height: 52px;
+  padding: 0 18px;
+}
+
+.blueprint-pro-panel {
+  align-content: center;
+  background: var(--blueprint-panel);
+  color: var(--blueprint-panel-text);
+  display: grid;
+  padding: 36px 34px;
+}
+
+.blueprint-pro-panel h2 {
+  font-size: 33px;
+  line-height: 1.15;
+  margin: 0 0 22px;
+}
+
+.blueprint-pro-panel p {
+  color: var(--blueprint-panel-muted);
+  line-height: 1.5;
+}
+

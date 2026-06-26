@@ -1,0 +1,43 @@
+{
+  "name": "sample-demo-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint \"app/**/*.{js,jsx}\" --max-warnings=0",
+    "audit": "npm audit --audit-level=moderate",
+    "test:rules": "node --test tests/firestore-rules.test.mjs",
+    "test:a11y": "playwright test tests/accessibility.spec.js",
+    "smoke": "playwright test",
+    "verify": "npm run lint && npm run audit && npm run test:rules && npm run build && npm run smoke",
+    "build:static": "node scripts/build-static-deploy.mjs",
+    "deploy": "npx firebase-tools deploy --project sample-demo-website-2026 --account blacklionmediastudio@gmail.com",
+    "deploy:static": "npm run build && npm run build:static && npx firebase-tools deploy --config firebase.static.json --only hosting --project sample-demo-website-2026 --account blacklionmediastudio@gmail.com",
+    "deploy:hosting": "npx firebase-tools deploy --only hosting --project sample-demo-website-2026 --account blacklionmediastudio@gmail.com",
+    "deploy:rules": "npx firebase-tools deploy --only firestore:rules,firestore:indexes --project sample-demo-website-2026 --account blacklionmediastudio@gmail.com"
+  },
+  "dependencies": {
+    "firebase": "^12.13.0",
+    "lucide-react": "^1.16.0",
+    "next": "^15.3.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "@firebase/rules-unit-testing": "^5.0.1",
+    "@playwright/test": "^1.60.0",
+    "eslint": "^9.27.0",
+    "eslint-config-next": "^15.3.3"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=11.0.0"
+  }
+}

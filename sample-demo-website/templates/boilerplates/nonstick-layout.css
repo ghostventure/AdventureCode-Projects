@@ -1,0 +1,119 @@
+.nonstick-layout-shell {
+  display: grid;
+  gap: 24px;
+}
+
+.nonstick-layout-header {
+  display: grid;
+  gap: 8px;
+}
+
+.nonstick-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+  gap: 24px;
+  align-items: start;
+}
+
+.nonstick-layout-main,
+.nonstick-layout-aside {
+  min-width: 0;
+}
+
+.nonstick-section-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nonstick-section-index a {
+  padding: 10px 12px;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.nonstick-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid currentColor;
+}
+
+.nonstick-action-row > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.nonstick-footer {
+  display: grid;
+  gap: 24px;
+  padding: 32px 0;
+  border-top: 1px solid currentColor;
+}
+
+.nonstick-footer-brand {
+  display: grid;
+  gap: 8px;
+  max-width: 640px;
+}
+
+.nonstick-footer-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.nonstick-footer-groups nav,
+.nonstick-footer-legal nav,
+.nonstick-compact-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nonstick-footer-groups nav {
+  flex-direction: column;
+}
+
+.nonstick-footer a,
+.nonstick-compact-footer a {
+  color: inherit;
+}
+
+.nonstick-footer-legal,
+.nonstick-compact-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nonstick-compact-footer {
+  padding: 20px 0;
+  border-top: 1px solid currentColor;
+}
+
+.nonstick-layout-shell :where(.nonstick-layout-aside, .nonstick-section-index, .nonstick-action-row, .nonstick-footer, .nonstick-compact-footer) {
+  position: static;
+}
+
+@media (max-width: 820px) {
+  .nonstick-layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nonstick-footer-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .nonstick-action-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

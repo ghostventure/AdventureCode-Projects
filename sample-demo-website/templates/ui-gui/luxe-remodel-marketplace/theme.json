@@ -1,0 +1,36 @@
+{
+  "name": "Luxe Remodel Marketplace",
+  "version": "0.1.0",
+  "mode": "provider-free-template",
+  "brand": {
+    "displayName": "CasaWorks",
+    "tagline": "Design-forward project matching",
+    "industryLabel": "Premium remodeling marketplace"
+  },
+  "colors": {
+    "page": "#f6f1eb",
+    "surface": "#ffffff",
+    "text": "#2a2520",
+    "mutedText": "#6f665d",
+    "primary": "#8b5e3c",
+    "primaryHover": "#70472b",
+    "panel": "#2e241f",
+    "panelText": "#fffaf3",
+    "panelMuted": "#e9d7c5",
+    "accent": "#c29a6b",
+    "border": "#ded3c8"
+  },
+  "layout": {
+    "heroStyle": "split-search",
+    "rightPanelWidth": "390px",
+    "density": "comfortable-premium"
+  },
+  "providerStatus": {
+    "billing": "disabled-placeholder",
+    "email": "disabled-placeholder",
+    "sms": "disabled-placeholder",
+    "analytics": "disabled-placeholder",
+    "webhooks": "disabled-placeholder"
+  }
+}
+

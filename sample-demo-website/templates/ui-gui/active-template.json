@@ -1,0 +1,16 @@
+{
+  "activeTemplate": "home-pro-split-search",
+  "appliedTo": [
+    "app/components/BasicLanding.jsx",
+    "app/globals.css"
+  ],
+  "sourceFolder": "templates/ui-gui/home-pro-split-search",
+  "mode": "plug-and-play-gui-layer",
+  "providerStatus": "provider-free-template",
+  "notes": [
+    "This GUI skin is layered on top of the existing platform foundation.",
+    "Core data, auth, security, workflow, and provider-placeholder logic stay separate.",
+    "Swap this file and apply another folder's tokens/layout when a client needs a different look."
+  ]
+}
+

@@ -1,0 +1,42 @@
+{
+  "name": "Default Portal",
+  "version": "0.1.0",
+  "mode": "provider-free-template",
+  "brand": {
+    "displayName": "Sample Demo",
+    "tagline": "Client portal template",
+    "industryLabel": "Service business"
+  },
+  "colors": {
+    "background": "#f7f8f5",
+    "surface": "#ffffff",
+    "surfaceMuted": "#eef2ed",
+    "text": "#17211d",
+    "mutedText": "#5d6a62",
+    "primary": "#2f6245",
+    "primaryText": "#ffffff",
+    "accent": "#bc4749",
+    "border": "#d7ded5",
+    "warning": "#a8661f",
+    "danger": "#a93535",
+    "success": "#2f6245"
+  },
+  "radius": {
+    "small": "4px",
+    "medium": "8px",
+    "large": "12px"
+  },
+  "density": {
+    "dashboard": "compact",
+    "forms": "comfortable",
+    "tables": "scan-friendly"
+  },
+  "providerStatus": {
+    "billing": "disabled-placeholder",
+    "email": "disabled-placeholder",
+    "sms": "disabled-placeholder",
+    "analytics": "disabled-placeholder",
+    "webhooks": "disabled-placeholder"
+  }
+}
+

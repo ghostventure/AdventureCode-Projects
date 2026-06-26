@@ -1,0 +1,36 @@
+{
+  "name": "Pro Network Blueprint",
+  "version": "0.1.0",
+  "mode": "provider-free-template",
+  "brand": {
+    "displayName": "TradeGrid",
+    "tagline": "Route service requests to the right crew",
+    "industryLabel": "Contractor and field-service network"
+  },
+  "colors": {
+    "page": "#eef2f4",
+    "surface": "#ffffff",
+    "text": "#17212b",
+    "mutedText": "#56616c",
+    "primary": "#0a7c72",
+    "primaryHover": "#075f57",
+    "panel": "#102f4a",
+    "panelText": "#ffffff",
+    "panelMuted": "#cfe0ec",
+    "accent": "#167fd2",
+    "border": "#ccd6dd"
+  },
+  "layout": {
+    "heroStyle": "split-search",
+    "rightPanelWidth": "400px",
+    "density": "compact-operational"
+  },
+  "providerStatus": {
+    "billing": "disabled-placeholder",
+    "email": "disabled-placeholder",
+    "sms": "disabled-placeholder",
+    "analytics": "disabled-placeholder",
+    "webhooks": "disabled-placeholder"
+  }
+}
+

@@ -1,0 +1,269 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function currentUserDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isManager() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        currentUserDoc().data.role == "manager" &&
+        currentUserDoc().data.status == "active";
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function validRole(role) {
+      return role in ["client", "manager"];
+    }
+
+    function validStatus(status) {
+      return status in ["active", "invited", "paused", "archived"];
+    }
+
+    function validUserPayload() {
+      return request.resource.data.keys().hasOnly([
+        "uid",
+        "role",
+        "status",
+        "displayName",
+        "email",
+        "phone",
+        "companyName",
+        "propertyAddress",
+        "servicePlan",
+        "managerScope",
+        "managerProfile",
+        "profileCompletion",
+        "avatar",
+        "contactPreferences",
+        "addresses",
+        "alternateContacts",
+        "billingProfile",
+        "identityStatus",
+        "tags",
+        "customFields",
+        "accountGroupId",
+        "retentionPolicy",
+        "notes",
+        "createdAt",
+        "updatedAt"
+      ]) &&
+      request.resource.data.uid is string &&
+      request.resource.data.role is string &&
+      request.resource.data.status is string &&
+      request.resource.data.displayName is string &&
+      request.resource.data.email is string &&
+      validRole(request.resource.data.role) &&
+      validStatus(request.resource.data.status);
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isManager();
+      allow create: if isManager() && validUserPayload() && request.resource.data.uid == userId;
+      allow update: if isManager() && validUserPayload() && request.resource.data.uid == userId;
+      allow delete: if isManager();
+    }
+
+    match /auditLogs/{eventId} {
+      allow read, create: if isManager();
+      allow update, delete: if false;
+    }
+
+    match /invitations/{invitationId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /consents/{userId} {
+      allow read, create, update: if isOwner(userId) || isManager();
+      allow delete: if isManager();
+    }
+
+    match /contentRevisions/{revisionId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /loginHistory/{eventId} {
+      allow read: if isManager() || isOwner(resource.data.uid);
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /deviceSessions/{userId}/sessions/{sessionId} {
+      allow read, update, delete: if isOwner(userId) || isManager();
+      allow create: if isOwner(userId);
+    }
+
+    match /claimSyncRequests/{requestId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /conversations/{conversationId} {
+      allow read, update: if isManager() || request.auth.uid in resource.data.participantIds;
+      allow create: if signedIn() && request.auth.uid in request.resource.data.participantIds;
+      allow delete: if isManager();
+    }
+
+    match /messages/{messageId} {
+      allow read: if isManager() || request.auth.uid in resource.data.participantIds;
+      allow create: if signedIn();
+      allow update, delete: if isManager();
+    }
+
+    match /notifications/{userId}/items/{notificationId} {
+      allow read, update, delete: if isOwner(userId) || isManager();
+      allow create: if isManager();
+    }
+
+    match /deliveryReceipts/{receiptId} {
+      allow read: if isManager();
+      allow create: if signedIn();
+      allow update, delete: if false;
+    }
+
+    match /webhookEvents/{eventId} {
+      allow read, update, delete: if isManager();
+      allow create: if false;
+    }
+
+    match /requests/{requestId} {
+      allow read: if isManager() || isOwner(resource.data.ownerId);
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isManager() || isOwner(resource.data.ownerId);
+      allow delete: if isManager();
+    }
+
+    match /workItems/{itemId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /workflowEvents/{eventId} {
+      allow read, create: if isManager();
+      allow update, delete: if false;
+    }
+
+    match /approvals/{approvalId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /dataJobs/{jobId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /automationRules/{ruleId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /reports/{reportId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /qualityFindings/{findingId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /releaseRecords/{releaseId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /changeRequests/{changeId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /runbooks/{runbookId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /postLaunchMonitors/{monitorId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /profileActivities/{activityId} {
+      allow read: if isManager() || isOwner(resource.data.userId);
+      allow create: if signedIn() && (isManager() || request.resource.data.userId == request.auth.uid);
+      allow update, delete: if false;
+    }
+
+    match /profileAttachments/{attachmentId} {
+      allow read: if isManager() || isOwner(resource.data.userId);
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isManager();
+    }
+
+    match /managerAssignments/{assignmentId} {
+      allow read: if isManager() || isOwner(resource.data.userId);
+      allow create, update, delete: if isManager();
+    }
+
+    match /delegatedAccess/{accessId} {
+      allow read: if isManager() || isOwner(resource.data.accountId) || isOwner(resource.data.delegateUserId);
+      allow create, update, delete: if isManager() || isOwner(request.resource.data.accountId);
+    }
+
+    match /duplicateProfileSignals/{signalId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /profileVersions/{versionId} {
+      allow read: if isManager() || isOwner(resource.data.userId);
+      allow create: if signedIn() && (isManager() || request.resource.data.userId == request.auth.uid);
+      allow update, delete: if false;
+    }
+
+    match /profileReviewQueue/{reviewId} {
+      allow read: if isManager() || isOwner(resource.data.userId);
+      allow create: if signedIn() && (isManager() || request.resource.data.userId == request.auth.uid);
+      allow update, delete: if isManager();
+    }
+
+    match /customProfileFields/{fieldId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isManager();
+    }
+
+    match /accountGroups/{groupId} {
+      allow read: if isManager() || request.auth.uid in resource.data.memberIds;
+      allow create, update, delete: if isManager();
+    }
+
+    match /profileRetentionPolicies/{policyId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /profileImportJobs/{jobId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /managerProfiles/{managerId} {
+      allow read: if isOwner(managerId) || isManager();
+      allow create, update, delete: if isManager();
+    }
+
+    match /managerDelegations/{delegationId} {
+      allow read: if isManager() || isOwner(resource.data.managerId) || isOwner(resource.data.substituteManagerId);
+      allow create, update, delete: if isManager();
+    }
+
+    match /managerAccessReviews/{reviewId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /managerAuditSummaries/{summaryId} {
+      allow read: if isManager();
+      allow create, update: if isManager();
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

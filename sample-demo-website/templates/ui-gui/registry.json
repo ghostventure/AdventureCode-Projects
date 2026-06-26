@@ -1,0 +1,33 @@
+{
+  "activeTemplate": "home-pro-split-search",
+  "templates": [
+    {
+      "id": "default-portal",
+      "name": "Default Portal",
+      "path": "templates/ui-gui/default-portal",
+      "status": "available",
+      "bestFor": ["generic client portal", "operations dashboard"]
+    },
+    {
+      "id": "home-pro-split-search",
+      "name": "Home Pro Split Search",
+      "path": "templates/ui-gui/home-pro-split-search",
+      "status": "active",
+      "bestFor": ["home services", "remodeling", "contractor marketplace", "design services"]
+    },
+    {
+      "id": "luxe-remodel-marketplace",
+      "name": "Luxe Remodel Marketplace",
+      "path": "templates/ui-gui/luxe-remodel-marketplace",
+      "status": "available",
+      "bestFor": ["premium remodeling", "interior design", "kitchen and bath", "architecture consultants"]
+    },
+    {
+      "id": "pro-network-blueprint",
+      "name": "Pro Network Blueprint",
+      "path": "templates/ui-gui/pro-network-blueprint",
+      "status": "available",
+      "bestFor": ["contractor networks", "field service", "property maintenance", "repair and installation"]
+    }
+  ]
+}

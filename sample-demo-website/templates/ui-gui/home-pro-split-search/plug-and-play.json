@@ -1,0 +1,47 @@
+{
+  "id": "home-pro-split-search",
+  "name": "Home Pro Split Search",
+  "type": "gui-skin",
+  "status": "active",
+  "sourceFiles": [
+    "README.md",
+    "theme.json",
+    "style.css",
+    "preview.html",
+    "implementation-notes.md",
+    "plug-and-play.json"
+  ],
+  "appTargets": [
+    {
+      "slot": "publicLanding",
+      "file": "app/components/BasicLanding.jsx",
+      "component": "BasicLanding"
+    },
+    {
+      "slot": "globalStyles",
+      "file": "app/globals.css",
+      "classes": [
+        "marketplace-landing",
+        "marketplace-consumer-panel",
+        "marketplace-search-form",
+        "marketplace-pro-panel"
+      ]
+    }
+  ],
+  "swapChecklist": [
+    "Copy this folder for the client.",
+    "Update theme.json brand, colors, labels, and route intent.",
+    "Replace the image slot with licensed or client-approved imagery.",
+    "Apply CSS tokens/classes to app/globals.css or a client skin file.",
+    "Keep providers disabled until selected during client setup.",
+    "Run lint, build, and smoke checks before deployment."
+  ],
+  "providerStatus": {
+    "billing": "disabled-placeholder",
+    "email": "disabled-placeholder",
+    "sms": "disabled-placeholder",
+    "analytics": "disabled-placeholder",
+    "webhooks": "disabled-placeholder"
+  }
+}
+

@@ -1,0 +1,18 @@
+:root {
+  --ui-bg: #f7f8f5;
+  --ui-surface: #ffffff;
+  --ui-surface-muted: #eef2ed;
+  --ui-text: #17211d;
+  --ui-muted-text: #5d6a62;
+  --ui-primary: #2f6245;
+  --ui-primary-text: #ffffff;
+  --ui-accent: #bc4749;
+  --ui-border: #d7ded5;
+  --ui-warning: #a8661f;
+  --ui-danger: #a93535;
+  --ui-success: #2f6245;
+  --ui-radius-sm: 4px;
+  --ui-radius-md: 8px;
+  --ui-radius-lg: 12px;
+}
+

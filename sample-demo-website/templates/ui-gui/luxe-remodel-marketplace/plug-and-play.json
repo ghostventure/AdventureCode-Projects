@@ -1,0 +1,18 @@
+{
+  "id": "luxe-remodel-marketplace",
+  "name": "Luxe Remodel Marketplace",
+  "type": "gui-skin",
+  "status": "available",
+  "appTargets": [
+    "app/components/BasicLanding.jsx",
+    "app/globals.css"
+  ],
+  "swapChecklist": [
+    "Copy folder for the client.",
+    "Update theme.json.",
+    "Apply style tokens and class names.",
+    "Replace imagery.",
+    "Run lint, build, and smoke."
+  ]
+}
+
