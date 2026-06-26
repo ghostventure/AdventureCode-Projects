@@ -1,0 +1,43 @@
+# CLTCH.NTWRK Security And Performance
+
+- Firebase project targeting is pinned to `cltch-ntwrk`.
+- Hosting now serves stricter security headers and better cache controls.
+- Hosting ignore rules now explicitly exclude native app scaffolds, generated mobile bundles, docs, scripts, and package metadata so Spark Hosting only deploys the website surface.
+- A canonical `/users/{uid}` summary record is maintained alongside role and profile documents.
+- Firestore rules explicitly validate `users`, `hosts`, `musicians`, `userRoles`, and `gigs`.
+- Plaid HTTP functions now verify auth, validate origin, and restrict role misuse more tightly.
+- A Stripe Connect scaffold now exists in `functions/index.js`, but it remains inactive until Stripe credentials and a deployable functions plan are in place.
+- Password-based access now requires verified email on the client and in Firestore-protected flows.
+- Protected website sessions currently auto-sign-out after 5 minutes of inactivity.
+- Protected sessions now show a one-minute warning before idle logout.
+- Idle timeout now stores a safe same-role resume target so users return to the page they were on after re-authentication.
+- The previous website service-worker caching path was removed from the live auth/dashboard flow after it caused stale-code sign-in hangs.
+- `site-init.js` now unregisters existing website service workers, and root `sw.js` exists only to self-unregister stale clients.
+- `/users/{uid}` summary records now also carry lightweight auth activity markers used by profile diagnostics and support tooling.
+- Branding is normalized to `CLTCH.NTWRK` across titles and metadata.
+- A shared dexterity layer now lives in `site-init.js` plus `cltch-boilerplate.css`, providing faster keyboard/touch navigation without duplicating page logic.
+- The 2026-04-24 dexterity pass strengthened that shared layer with:
+  - searchable and keyboardable quick-jump overlay behavior
+  - overflow-safe arrow-key workspace navigation for tabs and role toggles
+  - live match-count feedback plus clear actions on shared search fields
+  - form completion guides that reduce invalid-submit thrash on larger workflows
+- The 2026-04-25 queue-surface pass upgraded the shared card-table shell so denser feeds can switch between `Board`, `Compact`, and `List` layouts without collapsing into placeholder-looking stacks.
+- Card-table toolbars now carry live item counts and clearer context labels, which improves scan speed on host and performer queues without adding heavier page-specific logic.
+- The role toggle between host and musician now persists back to both `userRoles/{uid}` and `users/{uid}` before redirecting, preventing the UI from snapping back to a stale role.
+- The shared mode-toggle path is now centralized in `app/mode-switch.js` instead of being duplicated across gated pages.
+- Dirty-form navigation warnings now exist on host and performer profile workflows plus the host post-gig form, reducing accidental loss of local draft state.
+- Performer `bookedDates` is now pruned to a bounded rolling cache, reducing hot-document growth and write amplification on heavily used profiles.
+- Shared Firestore query builders now live in `app/gig-queries.js`.
+- Open gig listeners are now constrained to upcoming windows and capped result sizes instead of watching the full open-gigs collection.
+- Accepted gig lookups are now date-bounded and limited, which lowers dashboard read volume for long-lived performer accounts.
+- Host gig queue reads are now ordered by `createdAt` and capped, reducing hot-list growth for heavy host accounts.
+- Shared live listeners now pause when the tab is hidden through `app/visible-snapshot.js`, which cuts background snapshot churn on host, performer, and booking pages.
+- Noncritical shell features now initialize after the first paint instead of on the critical path, reducing boot-time UI lag.
+- Shared long-form sections now use `content-visibility` and lower-cost surface effects, which reduces paint overhead on dashboard, profile, and feed pages.
+- Firestore composite indexes now cover:
+  - open gig feeds by `status + date + createdAt`
+  - accepted performer bookings by `acceptedBy + status + date`
+  - available performers by `available + performerType`
+- `hosts/{uid}` and `musicians/{uid}` reads are now restricted to verified signed-in users instead of being world-readable.
+- `performer-view.html` is now treated as a protected signed-in page rather than an effectively public profile endpoint.
+- `support.html` now enforces verified auth and the shared idle-session controls.

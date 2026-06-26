@@ -1,0 +1,104 @@
+query listAllProperties @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  properties {
+    id
+    title
+    address
+    city
+    state
+    zipCode
+    price
+    propertyType
+    listingStatus
+    createdAt
+    owner {
+      id
+      displayName
+      email
+    }
+  }
+}
+
+query getPropertyDetails($propertyId: UUID!) @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  property(id: $propertyId) {
+    id
+    title
+    address
+    city
+    state
+    zipCode
+    price
+    propertyType
+    listingStatus
+    createdAt
+    description
+    squareFootage
+    lotSize
+    bedrooms
+    bathrooms
+    yearBuilt
+    blightStatus
+    redevelopmentPotential
+    owner {
+      id
+      displayName
+      email
+      phoneNumber
+    }
+    images_on_property {
+      imageUrl
+      altText
+      order
+    }
+    offers_on_property {
+      id
+      offerAmount
+      offerDate
+      offerStatus
+      contingencies
+      buyer {
+        id
+        displayName
+      }
+    }
+  }
+}
+
+mutation createProperty($title: String!, $address: String!, $city: String!, $state: String!, $zipCode: String!, $price: Float!, $propertyType: String!, $listingStatus: String!, $description: String, $squareFootage: Int, $lotSize: Float, $bedrooms: Int, $bathrooms: Float, $yearBuilt: Int, $blightStatus: Boolean, $redevelopmentPotential: String) @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  property_insert(
+    data: {
+      title: $title
+      address: $address
+      city: $city
+      state: $state
+      zipCode: $zipCode
+      price: $price
+      propertyType: $propertyType
+      listingStatus: $listingStatus
+      description: $description
+      squareFootage: $squareFootage
+      lotSize: $lotSize
+      bedrooms: $bedrooms
+      bathrooms: $bathrooms
+      yearBuilt: $yearBuilt
+      blightStatus: $blightStatus
+      redevelopmentPotential: $redevelopmentPotential
+      ownerId_expr: "auth.uid"
+      createdAt_expr: "request.time"
+    }
+  ) {
+    id
+  }
+}
+
+mutation addPropertyToWatchlist($propertyId: UUID!) @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  watchlist_insert(
+    data: {
+      userId_expr: "auth.uid"
+      propertyId: $propertyId
+      createdAt_expr: "request.time"
+    }
+  ) {
+    userId
+    propertyId
+  }
+}

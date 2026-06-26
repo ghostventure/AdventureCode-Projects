@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f0f0f">
+  <meta name="description" content="CLTCH.NTWRK is an on-demand gig dispatch app for hosts, venues, musicians, DJs, and creative performers.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK</title>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --page: #f7f8fa;
+      --panel: #ffffff;
+      --ink: #181818;
+      --muted: #5f666d;
+      --line: rgba(24, 24, 24, 0.14);
+      --red: #c33a3a;
+      --teal: #0f7d86;
+      --green: #2f7a4b;
+      --gold: #9f8424;
+      --soft: #f1f3f4;
+      --panel-alt: #fbfbfc;
+      --shadow: 0 20px 44px rgba(20, 20, 20, 0.12);
+      --wrap: 1160px;
+    }
+
+    html[data-theme='dark'] {
+      --page: #0d1015;
+      --panel: #191e26;
+      --ink: #f8fafc;
+      --muted: #d3dbe6;
+      --line: rgba(248, 250, 252, 0.18);
+      --soft: #151a22;
+      --panel-alt: #181d25;
+      --shadow: 0 20px 48px rgba(0, 0, 0, 0.36);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--page) !important;
+      color: var(--ink) !important;
+      font-family: 'Space Grotesk', 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .wrap {
+      width: min(var(--wrap), calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      border-bottom: 1px solid var(--line) !important;
+      background: rgba(247, 248, 250, 0.92) !important;
+      backdrop-filter: blur(14px);
+    }
+
+    html[data-theme='dark'] header {
+      background: rgba(13, 16, 21, 0.92) !important;
+    }
+
+    .topbar {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink) !important;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      display: inline-grid;
+      place-items: center;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .nav-link,
+    .button {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .nav-link {
+      padding: 0 10px;
+      color: var(--muted) !important;
+    }
+
+    .button {
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink) !important;
+    }
+
+    .button.primary {
+      border-color: #111 !important;
+      background: #111 !important;
+      color: #fff !important;
+    }
+
+    .button.signup {
+      border-color: rgba(197, 61, 54, 0.34) !important;
+      background: #fff3f1 !important;
+      color: #85211d !important;
+    }
+
+    header nav .button.primary,
+    .hero-actions .button.primary {
+      background: #111 !important;
+      color: #fff !important;
+    }
+
+    header nav .button.signup,
+    .hero-actions .button.signup {
+      background: #fff3f1 !important;
+      color: #85211d !important;
+    }
+
+    html[data-theme='dark'] .button.signup,
+    html[data-theme='dark'] header nav .button.signup,
+    html[data-theme='dark'] .hero-actions .button.signup,
+    html[data-theme='dark'] .cta-actions .button.signup {
+      border-color: rgba(255, 215, 209, 0.42) !important;
+      background: #ffd7d1 !important;
+      color: #6f1515 !important;
+    }
+
+    .button:hover,
+    .nav-link:hover,
+    .role-card:hover {
+      transform: translateY(-1px);
+    }
+
+    main {
+      display: block;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    .hero {
+      padding: clamp(36px, 6vw, 78px) 0 34px;
+    }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(360px, 0.68fr);
+      gap: clamp(28px, 5vw, 58px);
+      align-items: center;
+    }
+
+    .hero-layout > *,
+    .section-head > *,
+    .cta-layout > * {
+      min-width: 0;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 34px;
+      height: 3px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--red), var(--teal), var(--green));
+    }
+
+    .hero h1,
+    h1 {
+      max-width: 760px;
+      font-family: 'Space Grotesk', 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+      font-size: clamp(46px, 6.5vw, 84px) !important;
+      line-height: 0.96 !important;
+      letter-spacing: 0 !important;
+      font-weight: 800 !important;
+      color: var(--ink) !important;
+      text-wrap: balance;
+    }
+
+    h1 span {
+      color: var(--red) !important;
+    }
+
+    .lead {
+      max-width: 620px;
+      margin-top: 22px;
+      color: var(--muted) !important;
+      font-size: clamp(17px, 2vw, 21px) !important;
+      line-height: 1.6 !important;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .hero-note {
+      margin-top: 14px;
+      color: var(--muted) !important;
+      font-size: 13px;
+    }
+
+    .hero-photo {
+      position: relative;
+      min-height: 540px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #111;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .booking-strip {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(12, 12, 12, 0.82);
+      color: #fff;
+      backdrop-filter: blur(12px);
+    }
+
+    .booking-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .booking-row strong {
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .booking-row span {
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 12px;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 5px 8px;
+      border-radius: 8px;
+      background: #f5cc67;
+      color: #211809;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .metric {
+      min-height: 116px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.15;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .lane-grid,
+    .ops-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .lane-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .lane-card,
+    .ops-card {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 10px 26px rgba(20, 20, 20, 0.06);
+    }
+
+    .lane-card {
+      min-height: 216px;
+      padding: 20px;
+    }
+
+    .lane-card strong,
+    .ops-card strong {
+      color: var(--ink);
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    .lane-card span,
+    .ops-card span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .lane-card small {
+      width: fit-content;
+      align-self: start;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .section {
+      padding: clamp(42px, 6vw, 72px) 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section.roles-section {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(241, 243, 244, 0.72));
+    }
+
+    html[data-theme='dark'] .section.roles-section {
+      background: linear-gradient(180deg, rgba(24, 29, 37, 0.78), rgba(15, 18, 23, 0.92));
+    }
+
+    .section.process-section {
+      background: var(--page);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(280px, 0.42fr);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      max-width: 700px;
+      font-family: 'Space Grotesk', 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+      font-size: clamp(32px, 4.5vw, 58px) !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+      font-weight: 800 !important;
+      color: var(--ink) !important;
+      text-wrap: balance;
+    }
+
+    .section-head p {
+      color: var(--muted) !important;
+      font-size: 15px !important;
+      line-height: 1.65 !important;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .role-card {
+      position: relative;
+      display: grid;
+      grid-template-rows: 260px 1fr;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-alt);
+      box-shadow: 0 14px 34px rgba(20, 20, 20, 0.08);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .role-card::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--red), var(--teal), var(--green));
+      opacity: 0.92;
+    }
+
+    .role-card:hover {
+      border-color: rgba(24, 24, 24, 0.28);
+      box-shadow: var(--shadow);
+    }
+
+    .role-card img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .role-body {
+      display: grid;
+      gap: 18px;
+      padding: 24px;
+    }
+
+    .role-body > div {
+      display: grid;
+      gap: 12px;
+    }
+
+    .role-label {
+      width: fit-content;
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .role-card h3 {
+      max-width: 480px;
+      font-family: 'Space Grotesk', 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+      font-size: clamp(28px, 4vw, 44px) !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+      font-weight: 800 !important;
+      color: var(--ink) !important;
+    }
+
+    .role-card p {
+      max-width: 520px;
+      color: var(--muted) !important;
+      font-size: 15px !important;
+      line-height: 1.65 !important;
+    }
+
+    .role-card .button {
+      width: fit-content;
+    }
+
+    .process {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      counter-reset: process;
+    }
+
+    .process-step {
+      min-height: 196px;
+      display: flex;
+      flex-direction: column;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      counter-increment: process;
+      box-shadow: 0 10px 26px rgba(20, 20, 20, 0.06);
+    }
+
+    .process-step::before {
+      content: "0" counter(process);
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      margin-bottom: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #85211d;
+      background: #fff3f1;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .process-step:nth-child(2)::before {
+      color: #075e65;
+      background: #e9f8f9;
+    }
+
+    .process-step:nth-child(3)::before {
+      color: #235d39;
+      background: #edf8f0;
+    }
+
+    .process-step strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .process-step span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .ops-grid {
+      grid-template-columns: minmax(0, 0.86fr) minmax(320px, 0.64fr);
+      align-items: stretch;
+    }
+
+    .ops-card {
+      padding: clamp(22px, 4vw, 34px);
+    }
+
+    .ops-card.feature {
+      background: #111;
+      color: #fff;
+    }
+
+    .ops-card.feature strong {
+      color: #fff;
+      font-size: clamp(28px, 4vw, 44px);
+    }
+
+    .ops-card.feature span {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 16px;
+    }
+
+    .ops-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .ops-list li {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      list-style: none;
+    }
+
+    .ops-list li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, var(--red), var(--teal));
+    }
+
+    .cta-band {
+      padding: clamp(44px, 6vw, 74px) 0;
+      border-top: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(241, 243, 244, 0.72), var(--page));
+    }
+
+    .cta-layout {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+      overflow: hidden;
+      padding: clamp(26px, 5vw, 42px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      background: #101010;
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .cta-layout::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--red), var(--teal), var(--green));
+    }
+
+    .cta-layout h2 {
+      color: #fff !important;
+    }
+
+    .cta-layout p {
+      max-width: 680px;
+      margin-top: 12px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .cta-actions .button {
+      background: #fff;
+      color: #111 !important;
+    }
+
+    .cta-actions .button.signup {
+      border-color: #ffd7d1;
+      background: #ffd7d1;
+      color: #6f1515 !important;
+    }
+
+    footer {
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.55);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-layout {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    footer a {
+      margin-left: 12px;
+      color: var(--muted) !important;
+      font-weight: 800;
+    }
+
+    footer a:hover {
+      color: var(--ink) !important;
+    }
+
+    @media (max-width: 960px) {
+      .hero-layout,
+      .section-head,
+      .ops-grid,
+      .cta-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .lane-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-photo {
+        min-height: 420px;
+      }
+
+      .cta-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        width: 100%;
+        padding-right: 32px;
+        padding-left: 32px;
+      }
+
+      .topbar {
+        min-height: 0;
+        align-items: stretch;
+        flex-direction: column;
+        padding: 16px 0;
+      }
+
+      nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .nav-link,
+      .button {
+        width: 100%;
+      }
+
+      .hero {
+        padding-top: 34px;
+      }
+
+      .lead,
+      .hero-note,
+      .metric span,
+      .role-card p,
+      .process-step span {
+        overflow-wrap: anywhere;
+      }
+
+      .metrics,
+      .role-grid,
+      .lane-grid,
+      .process {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-photo {
+        min-height: 340px;
+      }
+
+      .role-card {
+        grid-template-rows: 210px 1fr;
+      }
+
+      .hero-actions,
+      .cta-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        max-width: 320px;
+      }
+
+      footer a {
+        display: inline-flex;
+        margin: 0 10px 8px 0;
+      }
+    }
+
+    @media (max-width: 430px) {
+      h1 {
+        max-width: 12ch !important;
+        font-size: 38px !important;
+        line-height: 1.02 !important;
+      }
+
+      .lead {
+        font-size: 16px;
+        max-width: 28ch !important;
+      }
+
+      .hero-note {
+        max-width: 28ch !important;
+      }
+
+      .booking-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('cltch_theme_v1');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var mode = saved === 'dark' || (!saved && prefersDark) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.style.colorScheme = mode;
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <a class="brand" href="index.html" aria-label="CLTCH.NTWRK home">
+        <span class="brand-mark" aria-hidden="true">C</span>
+        CLTCH.NTWRK
+      </a>
+      <nav aria-label="Primary navigation">
+        <a class="nav-link" href="#roles">Who It Is For</a>
+        <a class="nav-link" href="faq.html">FAQ</a>
+        <a class="button primary" href="auth.html">Sign In</a>
+        <a class="button signup" href="auth.html?tab=signup#signup">Sign Up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="homeHeading">
+      <div class="wrap hero-layout">
+        <div>
+          <div class="kicker">On-demand gig dispatch</div>
+          <h1 id="homeHeading">Request talent. <span>Book the match.</span></h1>
+          <p class="lead">CLTCH.NTWRK works like a dispatch app for gigs: hosts request talent, nearby available performers see the job, the first solid match accepts, and both sides track the booking to payout and review.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="auth.html">Sign In</a>
+            <a class="button signup" href="auth.html?tab=signup#signup">Join Network</a>
+          </div>
+          <p class="hero-note">Built for hosts, venues, musicians, DJs, photographers, cinematographers, models, and creative performers.</p>
+        </div>
+
+        <figure class="hero-photo">
+          <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1400&q=82" alt="Crowd watching a live concert performance">
+          <figcaption class="booking-strip">
+            <div class="booking-row">
+              <div>
+                <strong>Tonight's request</strong>
+                <span>Searching nearby available performers</span>
+              </div>
+              <span class="badge">Live</span>
+            </div>
+            <div class="booking-row">
+              <div>
+                <strong>Performer found</strong>
+                <span>Accepting the dispatch now</span>
+              </div>
+              <span class="badge">Ready</span>
+            </div>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="wrap metrics" aria-label="CLTCH.NTWRK highlights">
+        <div class="metric">
+          <strong>Request</strong>
+          <span>Tell CLTCH who you need, where, when, and for how much.</span>
+        </div>
+        <div class="metric">
+          <strong>Dispatch</strong>
+          <span>Nearby available performers get the request and decide fast.</span>
+        </div>
+        <div class="metric">
+          <strong>Track</strong>
+          <span>Follow accept, arrival, event, payout, and review in one booking room.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="lanesHeading">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="lanesHeading">Built for real event needs.</h2>
+          <p>CLTCH is not only for one kind of performer. It helps hosts fill the creative roles that make a night work, while giving talent a clearer place to receive serious requests.</p>
+        </div>
+
+        <div class="lane-grid" aria-label="Service lanes">
+          <div class="lane-card">
+            <small>Music</small>
+            <strong>Musicians and DJs</strong>
+            <span>Book live music, DJs, open-format sets, instrumentalists, and specialty acts for private events, lounges, venues, and pop-ups.</span>
+          </div>
+          <div class="lane-card">
+            <small>Media</small>
+            <strong>Photo and video</strong>
+            <span>Request photographers, videographers, recap crews, editors, and creators who can capture the event instead of only performing at it.</span>
+          </div>
+          <div class="lane-card">
+            <small>Talent</small>
+            <strong>Models and hosts</strong>
+            <span>Match with promotional talent, event hosts, brand faces, and appearance-based creative roles with clear timing and expectations.</span>
+          </div>
+          <div class="lane-card">
+            <small>Support</small>
+            <strong>Creative event help</strong>
+            <span>Use the same request flow for setup needs, last-minute fills, support creatives, and event-day coordination around the booking.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section roles-section" id="roles" aria-labelledby="rolesHeading">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="rolesHeading">Choose your side of dispatch.</h2>
+          <p>Hosts request talent. Performers go available. CLTCH keeps the match, booking, messages, event day, payout, and review moving.</p>
+        </div>
+
+        <div class="role-grid">
+          <a class="role-card" href="auth.html?tab=signup#signup">
+            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1000&q=82" alt="Event table setup before guests arrive">
+            <div class="role-body">
+              <span class="role-label">Hosts and venues</span>
+              <div>
+                <h3>Request talent on demand.</h3>
+                <p>Send a live request with time, place, pay, performer type, and setup needs.</p>
+              </div>
+              <span class="button signup">Start Host Setup</span>
+            </div>
+          </a>
+
+          <a class="role-card" href="auth.html?tab=signup#signup">
+            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1000&q=82" alt="Musician playing guitar during a live performance">
+            <div class="role-body">
+              <span class="role-label">Musicians and creatives</span>
+              <div>
+                <h3>Go available for nearby gigs.</h3>
+                <p>Set your city, radius, category, rate, and availability so the right requests reach you.</p>
+              </div>
+              <span class="button signup">Start Performer Setup</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section process-section" aria-labelledby="processHeading">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="processHeading">Move like a live booking app.</h2>
+          <p>The core flow is request, match, accept, arrive, complete, then pay and review.</p>
+        </div>
+
+        <div class="process">
+          <div class="process-step">
+            <strong>Request</strong>
+            <span>Hosts enter the job, timing, pay, location, performer type, and setup needs.</span>
+          </div>
+          <div class="process-step">
+            <strong>Match</strong>
+            <span>Nearby available performers see the request with fit reasons, pay, distance, and timing.</span>
+          </div>
+          <div class="process-step">
+            <strong>Accept and track</strong>
+            <span>The booking locks in, contact rules open, event-day status updates, and payout/review closes the loop.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="opsHeading">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="opsHeading">Less guessing after the match.</h2>
+          <p>Once a request turns into a booking, CLTCH keeps the basic operating details in one place so both sides can move with fewer loose messages.</p>
+        </div>
+
+        <div class="ops-grid">
+          <div class="ops-card feature">
+            <strong>One booking room for the work.</strong>
+            <span>Hosts and performers should be able to see the request, contact status, arrival timing, event notes, payout path, and review step without hunting through separate threads.</span>
+          </div>
+          <div class="ops-card">
+            <strong>What stays visible</strong>
+            <ul class="ops-list">
+              <li>Role, rate, date, location, arrival window, and event expectations.</li>
+              <li>Accepted performer, booking status, check-in path, and support contact.</li>
+              <li>Payment setup, completion notes, dispute trail, and review handoff.</li>
+              <li>Plain-language account paths for host setup and performer setup.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band" aria-labelledby="ctaHeading">
+      <div class="wrap cta-layout">
+        <div>
+          <h2 id="ctaHeading">Start the next dispatch from here.</h2>
+          <p>Request talent, go available, accept the match, and keep the event moving.</p>
+        </div>
+        <div class="cta-actions">
+          <a class="button" href="auth.html">Sign In</a>
+          <a class="button signup" href="auth.html?tab=signup#signup">Join Network</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-layout">
+      <span>&copy; 2026 CLTCH.NTWRK</span>
+      <span>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+        <a href="press.html">Press</a>
+        <a href="accessibility.html">Accessibility</a>
+        <a href="dmca.html">DMCA</a>
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+      </span>
+    </div>
+  </footer>
+</body>
+</html>

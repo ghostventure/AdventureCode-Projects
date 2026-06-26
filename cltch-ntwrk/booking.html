@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="View booking details, timing, payout, and progress on CLTCH.NTWRK.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK — Booking Details</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background:#0a0a0a; color:#f4f7fb; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    header { padding:24px 32px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1e1e1e; }
+    .logo { color:#fff; text-decoration:none; font-size:20px; font-weight:700; letter-spacing:2px; }
+    nav a { color:#8ea0b5; text-decoration:none; margin-left:18px; font-size:14px; }
+    nav a:hover { color:#fff; }
+    .container { width:min(920px,100% - 32px); margin:36px auto 60px; display:grid; gap:18px; }
+    .hero, .card { background:rgba(13,16,22,0.92); border:1px solid #202a35; border-radius:20px; padding:22px; }
+    .eyebrow { color:#f5a623; font-size:12px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:10px; }
+    .title { font-size:32px; font-weight:800; line-height:1.1; margin-bottom:10px; }
+    .sub { color:#9fb0c1; font-size:14px; line-height:1.6; }
+    .meta { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+    .meta span, .timeline span { padding:7px 12px; border-radius:999px; background:#111923; border:1px solid #26384a; color:#d9e6f3; font-size:12px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; }
+    .label { color:#8ea0b5; font-size:12px; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; }
+    .value { font-size:18px; font-weight:700; }
+    .small { color:#9fb0c1; font-size:13px; line-height:1.6; }
+    .timeline { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .timeline .done { background:rgba(28,83,55,0.45); border-color:#355e4e; color:#b7f0ce; }
+    .timeline .active { background:rgba(24,47,68,0.55); border-color:#35506a; color:#d8ecff; }
+    .status { min-height:22px; font-size:14px; margin-top:12px; color:#f5a623; }
+    .stack { display:grid; gap:12px; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:12px; border:1px solid #2a3d50; text-decoration:none; color:#f4f7fb; font-weight:700; background:#13202d; }
+    .btn.primary { background:#f5a623; color:#111; border-color:#f5a623; }
+    .empty { color:#9fb0c1; font-size:14px; }
+    .message-list { display:grid; gap:10px; }
+    .message-item { border:1px solid #243545; border-radius:14px; padding:12px 14px; background:#101923; }
+    .message-item.self { border-color:#355e4e; background:#15261f; }
+    .message-meta { font-size:11px; color:#8ea0b5; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+    .message-text { font-size:14px; color:#e7eef7; line-height:1.7; white-space:pre-wrap; }
+    .message-form { display:grid; gap:10px; margin-top:14px; }
+    .message-form textarea { min-height:96px; resize:vertical; background:#0f1721; border:1px solid #2a3d50; color:#f4f7fb; border-radius:12px; padding:12px 14px; font:inherit; }
+    .message-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .message-note { font-size:12px; color:#9fb0c1; line-height:1.6; }
+    @media (max-width: 640px) {
+      header { padding:18px 18px; flex-direction:column; align-items:flex-start; gap:10px; }
+      nav a { margin-left:0; margin-right:14px; }
+      .title { font-size:26px; }
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script src="site-init.js" defer></script>
+</head>
+<body>
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <a href="host.html" id="hostNavLink" style="display:none;">Host Dashboard</a>
+      <a href="musician-matched-gigs.html" id="performerNavLink" style="display:none;">Performer Dashboard</a>
+      <a href="support.html">Support</a>
+      <a href="auth.html" id="signOutLink">Sign Out</a>
+    </nav>
+  </header>
+
+  <main class="page-shell container">
+    <section class="hero">
+      <div class="eyebrow">Booking Details</div>
+      <div class="title" id="bookingTitle">Loading booking…</div>
+      <div class="sub" id="bookingSubtitle">Checking booking status, timeline, and participants.</div>
+      <div class="meta" id="bookingMeta"></div>
+      <div class="timeline" id="bookingTimeline"></div>
+      <div class="actions" id="bookingActions"></div>
+      <div class="status" id="bookingStatus"></div>
+    </section>
+
+    <section class="grid">
+      <div class="card stack">
+        <div>
+          <div class="label">Venue</div>
+          <div class="value" id="venueValue">—</div>
+        </div>
+        <div>
+          <div class="label">When</div>
+          <div class="value" id="whenValue">—</div>
+        </div>
+        <div>
+          <div class="label">Where</div>
+          <div class="value" id="whereValue">—</div>
+        </div>
+      </div>
+      <div class="card stack">
+        <div>
+          <div class="label">Pay</div>
+          <div class="value" id="payValue">—</div>
+        </div>
+        <div>
+          <div class="label">Performer Type</div>
+          <div class="value" id="typeValue">—</div>
+        </div>
+        <div>
+          <div class="label">Current Status</div>
+          <div class="value" id="statusValue">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <div class="label">Skill Focus</div>
+        <div class="small" id="skillValue">No specific skill requirement attached to this booking.</div>
+      </div>
+      <div class="card">
+        <div class="label">Notes</div>
+        <div class="small" id="notesValue">No extra booking notes were added.</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <div class="label">Host</div>
+        <div class="small" id="hostValue">Loading host details…</div>
+      </div>
+      <div class="card">
+        <div class="label">Performer</div>
+        <div class="small" id="performerValue">Waiting for performer details…</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="label">Booking Messages</div>
+      <div class="small" id="messageSubtitle">Messages stay tied to this booking and are only for the host and assigned performer.</div>
+      <div class="message-note" style="margin:10px 0 14px;">Trust note: only use the names, booking details, and payout method shown inside CLTCH.NTWRK. Do not trust off-platform payment demands, login requests, or last-minute identity changes made outside the booking thread.</div>
+      <div class="message-list" id="messageList">
+        <div class="empty">Loading booking messages…</div>
+      </div>
+      <form class="message-form" id="messageForm">
+        <textarea id="messageInput" maxlength="600" placeholder="Send a booking note, arrival update, or event detail."></textarea>
+        <div class="message-row">
+          <button class="btn primary" type="submit" id="messageSendBtn">Send Message</button>
+          <div class="message-note" id="messageStatus">Messages are available once a performer has accepted the booking.</div>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <section class="platform-grid" aria-label="Booking workflow components">
+    <div class="platform-component">
+      <h2>Booking Agreement</h2>
+      <p>Lock the scope, terms, contacts, and rider details before the gig moves to confirmed.</p>
+      <div id="bookingAgreementComponent"></div>
+    </div>
+    <div class="platform-component">
+      <h2>Status Timeline</h2>
+      <p>Track the booking from request through payment with one visible status model.</p>
+      <div id="bookingStatusComponent"></div>
+    </div>
+    <div class="platform-component">
+      <h2>Payment Lifecycle</h2>
+      <p>Keep the payment path clear while external payment rails are being connected.</p>
+      <div id="paymentLifecycleComponent"></div>
+    </div>
+    <div class="platform-component">
+      <h2>Issue Resolution</h2>
+      <p>Document no-shows, payment issues, access problems, and the next support action.</p>
+      <div id="disputeFlowComponent"></div>
+    </div>
+  </section>
+
+  <section class="feedback-panel">
+    <div class="feedback-column">
+      <h2>Host Feedback</h2>
+      <form id="hostFeedbackForm">
+        <label>Grade</label>
+        <select name="hostGrade" required>
+          <option value="">Select Grade</option>
+          <option value="AA">AA</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+          <option value="F">F</option>
+        </select>
+        <label>Comments</label>
+        <textarea name="hostFeedback" placeholder="Share compliance notes, production wins, or improvement ideas." rows="3"></textarea>
+        <button type="submit" class="btn btn-accept">Submit Host Feedback</button>
+      </form>
+    </div>
+    <div class="feedback-column">
+      <h2>Performer Feedback</h2>
+      <form id="performerFeedbackForm">
+        <label>Grade</label>
+        <select name="performerGrade" required>
+          <option value="">Select Grade</option>
+          <option value="AA">AA</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+          <option value="F">F</option>
+        </select>
+        <label>Comments</label>
+        <textarea name="performerFeedback" placeholder="Let the host know how the space, support, or compliance cues felt." rows="3"></textarea>
+        <button type="submit" class="btn btn-accept">Submit Performer Feedback</button>
+      </form>
+    </div>
+  </section>
+
+  <footer style="padding:24px 18px 40px;text-align:center;color:#556272;font-size:12px;">&copy; 2026 CLTCH.NTWRK</footer>
+
+  <script type="module">
+    import { doc, getDoc, updateDoc, serverTimestamp, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { onAuthStateChanged, reload, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { auth, db } from "./app/firebase-client.js";
+    import { DEFAULT_TIMEOUT_MS, clearResumeTarget, installIdleLogout } from "./app/idle-logout.js";
+    import { subscribeWhenVisible } from "./app/visible-snapshot.js";
+    import { readUserSummary, recordAuthEvent } from "./app/user-db.js";
+
+    const bookingId = new URL(window.location.href).searchParams.get("id") || "";
+    const titleEl = document.getElementById("bookingTitle");
+    const subtitleEl = document.getElementById("bookingSubtitle");
+    const metaEl = document.getElementById("bookingMeta");
+    const timelineEl = document.getElementById("bookingTimeline");
+    const statusEl = document.getElementById("bookingStatus");
+    const actionsEl = document.getElementById("bookingActions");
+    const messageListEl = document.getElementById("messageList");
+    const messageFormEl = document.getElementById("messageForm");
+    const messageInputEl = document.getElementById("messageInput");
+    const messageStatusEl = document.getElementById("messageStatus");
+    const messageSendBtn = document.getElementById("messageSendBtn");
+    let stopMessages = null;
+    let activeBooking = null;
+    let activeSummary = null;
+    let activeUser = null;
+
+    function requiresVerifiedEmail(user) {
+      return !!(user && user.providerData && user.providerData.some((provider) => provider?.providerId === "password") && !user.emailVerified);
+    }
+
+    async function refreshUserVerification(user) {
+      if (!user) return user;
+      try { await reload(user); } catch {}
+      return auth.currentUser || user;
+    }
+
+    function formatTime(t) {
+      if (!t) return "—";
+      const [h, m] = t.split(":").map(Number);
+      const ampm = h >= 12 ? "PM" : "AM";
+      const h12 = h % 12 || 12;
+      return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+    }
+
+    function routeForRole(role) {
+      return role === "host" ? "host.html" : "musician-matched-gigs.html";
+    }
+
+    function gigDateTime(gig) {
+      if (!gig?.date || !gig?.time) return null;
+      const [y, m, d] = gig.date.split("-").map(Number);
+      const [hh, mm] = gig.time.split(":").map(Number);
+      if (![y, m, d, hh, mm].every(Number.isFinite)) return null;
+      return new Date(y, m - 1, d, hh, mm, 0, 0);
+    }
+
+    function checkInState(gig) {
+      const start = gigDateTime(gig);
+      if (!start || gig?.status !== "accepted") return { allowed: false, label: "Check-in unavailable", reason: "" };
+      if (gig.checkedInAt) return { allowed: false, label: "Checked In", reason: "The performer already confirmed this booking." };
+      const now = new Date();
+      const opensAt = new Date(start.getTime() - (2 * 60 * 60 * 1000));
+      if (now < opensAt) return { allowed: false, label: "Check-in opens later", reason: `Performer check-in opens 2 hours before start at ${formatTime(gig.time)}.` };
+      if (now > start) return { allowed: false, label: "Check-in window closed", reason: "The pre-event check-in window has closed." };
+      return { allowed: true, label: "Check In", reason: "Confirm attendance 2 hours before event start." };
+    }
+
+    function formatStamp(value) {
+      if (!value) return "Just now";
+      const date = value.toDate ? value.toDate() : new Date(value);
+      return Number.isFinite(date.getTime()) ? date.toLocaleString() : "Just now";
+    }
+
+    function isMessagingOpen(gig) {
+      if (gig?.status !== "accepted") return false;
+      if (!gig?.date) return true;
+      const todayKey = new Date().toISOString().slice(0, 10);
+      return todayKey <= gig.date;
+    }
+
+    function canUseMessages(gig, user) {
+      return !!(gig && user && gig.status === "accepted" && (gig.hostId === user.uid || gig.acceptedBy === user.uid));
+    }
+
+    function renderMessageState(gig, user) {
+      const participant = canUseMessages(gig, user);
+      const open = isMessagingOpen(gig);
+      const enabled = participant && open;
+      messageInputEl.disabled = !enabled;
+      messageSendBtn.disabled = !enabled;
+      if (!participant) {
+        messageStatusEl.textContent = gig.status === "accepted"
+          ? "Only the host and assigned performer can use this thread."
+          : "Messages open once a performer has accepted this booking.";
+      } else if (!open) {
+        messageStatusEl.textContent = "Messaging is locked because the event day has passed.";
+      } else {
+        messageStatusEl.textContent = "Messages stay open through the event day and lock the following day.";
+      }
+    }
+
+    function bindMessages(gig, user, summary) {
+      if (stopMessages) {
+        stopMessages();
+        stopMessages = null;
+      }
+      renderMessageState(gig, user);
+      if (!canUseMessages(gig, user)) {
+        messageListEl.innerHTML = `<div class="empty">${gig.status === "accepted" ? "This thread is private to the host and assigned performer." : "A private booking thread appears after a performer accepts the gig."}</div>`;
+        return;
+      }
+
+      const q = query(collection(db, "gigs", gig.id, "messages"), orderBy("createdAt", "asc"));
+      stopMessages = subscribeWhenVisible(() => onSnapshot(q, (snapshot) => {
+        const items = [];
+        snapshot.forEach((docSnap) => items.push({ id: docSnap.id, ...docSnap.data() }));
+        if (!items.length) {
+          messageListEl.innerHTML = `<div class="empty">No messages yet. Use this thread for event details, arrival updates, or quick coordination.</div>`;
+          return;
+        }
+        messageListEl.innerHTML = items.map((item) => {
+          const self = item.senderId === user.uid;
+          return `
+            <div class="message-item ${self ? "self" : ""}">
+              <div class="message-meta">${item.senderRole === "host" ? "Host" : "Performer"}${self ? " • You" : ""} • ${formatStamp(item.createdAt)}</div>
+              <div class="message-text">${item.text || ""}</div>
+            </div>
+          `;
+        }).join("");
+      }));
+    }
+
+    function renderTimeline(gig) {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const isPast = !!(gig.date && gig.date < todayStr);
+      const steps = [
+        { label: "Posted", done: true, active: gig.status === "open" },
+        { label: "Accepted", done: gig.status === "accepted", active: gig.status === "accepted" && !isPast },
+        { label: "Checked In", done: !!gig.checkedInAt, active: gig.status === "accepted" && !gig.checkedInAt && !isPast },
+        { label: isPast ? "Completed" : "Upcoming", done: isPast, active: gig.status === "accepted" && !isPast },
+        { label: gig.reviewed ? "Reviewed" : "Review Pending", done: !!gig.reviewed, active: isPast && !gig.reviewed }
+      ];
+      timelineEl.innerHTML = steps.map((step) => `<span class="${step.done ? "done" : step.active ? "active" : ""}">${step.label}</span>`).join("");
+    }
+
+    async function readProfileSummary(collectionName, uid, fallbackText) {
+      if (!uid) return fallbackText;
+      const snap = await getDoc(doc(db, collectionName, uid));
+      if (!snap.exists()) return fallbackText;
+      const data = snap.data();
+      if (collectionName === "hosts") {
+        return [data.venueName, [data.city, data.state].filter(Boolean).join(", "), data.website].filter(Boolean).join(" • ");
+      }
+      const displayName = data.stageName || [data.firstName, data.lastName].filter(Boolean).join(" ");
+      return [displayName, [data.city, data.state].filter(Boolean).join(", "), (data.genres || []).slice(0, 3).join(", ")].filter(Boolean).join(" • ");
+    }
+
+    async function renderBooking(user) {
+      if (!bookingId) {
+        titleEl.textContent = "Booking not found";
+        subtitleEl.textContent = "No booking id was provided.";
+        return;
+      }
+
+      const [summary, gigSnap] = await Promise.all([
+        readUserSummary(db, user.uid),
+        getDoc(doc(db, "gigs", bookingId))
+      ]);
+
+      if (!gigSnap.exists()) {
+        titleEl.textContent = "Booking not found";
+        subtitleEl.textContent = "This booking no longer exists.";
+        return;
+      }
+
+      const gig = { id: gigSnap.id, ...gigSnap.data() };
+      activeBooking = gig;
+      activeSummary = summary;
+      activeUser = user;
+      const isHostOwner = gig.hostId === user.uid;
+      const isAcceptedPerformer = gig.acceptedBy === user.uid;
+      const canView = isHostOwner || isAcceptedPerformer || gig.status === "open";
+
+      if (!canView) {
+        titleEl.textContent = "Booking unavailable";
+        subtitleEl.textContent = "You do not have access to this booking.";
+        return;
+      }
+
+      document.getElementById("hostNavLink").style.display = summary?.role === "host" ? "inline" : "none";
+      document.getElementById("performerNavLink").style.display = summary?.role === "musician" ? "inline" : "none";
+
+      titleEl.textContent = gig.venue || "Booking";
+      subtitleEl.textContent = gig.status === "accepted"
+        ? "This booking is active. Use the timeline and details below to keep both sides aligned."
+        : "This request is still open. Review the details before accepting or sharing it.";
+
+      metaEl.innerHTML = [
+        gig.genre ? `<span>${gig.genre}</span>` : "",
+        gig.pay ? `<span>${gig.pay}</span>` : "",
+        gig.location ? `<span>${gig.location}</span>` : "",
+        gig.performerType && gig.performerType !== "any" ? `<span>${gig.performerType}</span>` : "<span>Any performer</span>"
+      ].filter(Boolean).join("");
+
+      renderTimeline(gig);
+      document.getElementById("venueValue").textContent = gig.venue || "—";
+      document.getElementById("whenValue").textContent = gig.date ? `${gig.date} @ ${formatTime(gig.time)}` : "—";
+      document.getElementById("whereValue").textContent = gig.location || "—";
+      document.getElementById("payValue").textContent = gig.pay || "—";
+      document.getElementById("typeValue").textContent = gig.performerType || "Any performer";
+      document.getElementById("statusValue").textContent = gig.reviewed ? "Reviewed" : (gig.status || "open").toUpperCase();
+      document.getElementById("skillValue").textContent = gig.skillNeed || "No specific skill requirement attached to this booking.";
+      document.getElementById("notesValue").textContent = gig.notes || "No extra booking notes were added.";
+
+      const [hostText, performerText] = await Promise.all([
+        readProfileSummary("hosts", gig.hostId, "Host profile not found."),
+        gig.acceptedBy ? readProfileSummary("musicians", gig.acceptedBy, "Performer profile not found.") : Promise.resolve("No performer has accepted this booking yet.")
+      ]);
+      document.getElementById("hostValue").textContent = hostText;
+      document.getElementById("performerValue").textContent = performerText;
+
+      const backHref = routeForRole(summary?.role);
+      const checkIn = checkInState(gig);
+      actionsEl.innerHTML = [
+        `<a class="btn" href="${backHref}">Back to Workspace</a>`,
+        isHostOwner && gig.acceptedBy ? `<a class="btn" href="performer-view.html?id=${gig.acceptedBy}">View Performer</a>` : "",
+        summary?.role === "musician" && isAcceptedPerformer ? `<button class="btn" id="checkInBtn" ${checkIn.allowed ? "" : "disabled"}>${checkIn.label}</button>` : "",
+        `<a class="btn primary" href="${summary?.role === "host" ? "host-profile.html" : "musician-profile.html"}">Open Profile</a>`
+      ].filter(Boolean).join("");
+
+      const checkInBtn = document.getElementById("checkInBtn");
+      if (checkInBtn && checkIn.allowed) {
+        checkInBtn.addEventListener("click", async () => {
+          try {
+            await updateDoc(doc(db, "gigs", bookingId), { checkedInAt: serverTimestamp() });
+            statusEl.textContent = "Checked in. The host can now see that you confirmed attendance.";
+            await renderBooking(user);
+          } catch (error) {
+            console.error(error);
+            statusEl.textContent = "Unable to confirm check-in right now.";
+          }
+        });
+      }
+
+      statusEl.textContent = gig.checkedInAt
+        ? "Performer check-in is complete. The booking is confirmed on both sides."
+        : gig.reviewed
+        ? "This booking already has review follow-up completed."
+        : gig.status === "accepted"
+          ? (checkIn.reason || "Booking is active. Review submission unlocks after the event is complete.")
+          : "Booking is still open and waiting for a performer response.";
+
+      bindMessages(gig, user, summary);
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = `auth.html?next=${encodeURIComponent(`booking.html?id=${bookingId}`)}`;
+        return;
+      }
+      const freshUser = await refreshUserVerification(user);
+      if (requiresVerifiedEmail(freshUser)) {
+        await signOut(auth).catch(() => {});
+        window.location.href = "auth.html?reason=verify-email";
+        return;
+      }
+      installIdleLogout(auth, DEFAULT_TIMEOUT_MS);
+      renderBooking(freshUser).catch((err) => {
+        console.error(err);
+        titleEl.textContent = "Booking unavailable";
+        subtitleEl.textContent = "The booking could not be loaded right now.";
+      });
+      window.CLTCHLoading?.done();
+    });
+
+    document.getElementById("signOutLink").addEventListener("click", async (event) => {
+      event.preventDefault();
+      if (stopMessages) {
+        stopMessages();
+        stopMessages = null;
+      }
+      clearResumeTarget();
+      if (auth.currentUser) await recordAuthEvent(db, auth.currentUser, "sign_out").catch(() => {});
+      await signOut(auth);
+      window.location.href = "auth.html";
+    });
+
+    messageFormEl.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!activeBooking || !activeUser || !activeSummary) return;
+      if (!canUseMessages(activeBooking, activeUser) || !isMessagingOpen(activeBooking)) {
+        renderMessageState(activeBooking, activeUser);
+        return;
+      }
+      const text = messageInputEl.value.trim();
+      if (!text) return;
+      messageSendBtn.disabled = true;
+      try {
+        await addDoc(collection(db, "gigs", activeBooking.id, "messages"), {
+          senderId: activeUser.uid,
+          senderRole: activeSummary.role === "host" ? "host" : "musician",
+          text,
+          createdAt: serverTimestamp()
+        });
+        messageInputEl.value = "";
+      } catch (error) {
+        console.error(error);
+        messageStatusEl.textContent = "Unable to send this message right now.";
+      }
+      renderMessageState(activeBooking, activeUser);
+    });
+  </script>
+  <script src="scripts/legal-components.js"></script>
+  <script src="scripts/host-performer-enhancements.js"></script>
+  <script src="scripts/platform-components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.Enhancements) {
+        window.Enhancements.initFeedbackForms('hostFeedbackForm', 'performerFeedbackForm');
+      }
+      if (window.PlatformComponents) {
+        window.PlatformComponents.initBookingAgreement('bookingAgreementComponent');
+        window.PlatformComponents.initStatusTimeline('bookingStatusComponent');
+        window.PlatformComponents.initPaymentLifecycle('paymentLifecycleComponent');
+        window.PlatformComponents.initDisputeFlow('disputeFlowComponent');
+      }
+    });
+  </script>
+</body>
+</html>

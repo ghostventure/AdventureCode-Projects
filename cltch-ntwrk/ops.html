@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="CLTCH.NTWRK operations dashboard for booking health, trust, payments, and support review.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK - Operations</title>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script src="site-init.js" defer></script>
+  <style>
+    .ops-page {
+      width: min(1160px, calc(100% - 32px));
+      margin: 36px auto 64px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .ops-hero {
+      padding: clamp(24px, 4vw, 44px);
+      border: 1px solid var(--cltch-line);
+      border-radius: 18px;
+      background: var(--cltch-card-bg);
+      box-shadow: var(--cltch-shadow);
+    }
+
+    .ops-hero h1 {
+      max-width: 780px;
+      color: var(--cltch-text) !important;
+      font-size: clamp(36px, 6vw, 68px);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .ops-hero p {
+      max-width: 720px;
+      margin-top: 14px;
+      color: var(--cltch-muted) !important;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <a href="host.html">Host</a>
+      <a href="musician-dashboard.html">Performer</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </header>
+
+  <main class="ops-page">
+    <section class="ops-hero">
+      <p class="hero-kicker">Operations</p>
+      <h1>Platform health, trust, payment, and support review.</h1>
+      <p>This page gives CLTCH operations a single local control surface for the components that need human oversight before deeper provider integrations are connected.</p>
+    </section>
+
+    <section class="platform-card">
+      <h2>Operations Dashboard</h2>
+      <p>Use these lanes to review booking health, support problems, payment readiness, and profile trust signals.</p>
+      <div id="opsDashboardComponent" style="margin-top:16px;"></div>
+    </section>
+
+    <section class="platform-grid" style="width:100%;margin:0;">
+      <div class="platform-component">
+        <h2>Payment Review</h2>
+        <p>Manual readiness checklist for bookings that are not yet covered by automated payment rails.</p>
+        <div id="opsPaymentComponent"></div>
+      </div>
+      <div class="platform-component">
+        <h2>Trust Review</h2>
+        <p>Check identity, profile completeness, payout state, and proof of work before escalation.</p>
+        <div id="opsTrustComponent"></div>
+      </div>
+      <div class="platform-component">
+        <h2>Issue Queue</h2>
+        <p>Record active booking problems and the next support action.</p>
+        <div id="opsDisputeComponent"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>&copy; 2026 CLTCH.NTWRK</footer>
+
+  <script src="scripts/platform-components.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.PlatformComponents) return;
+      window.PlatformComponents.initOperationsDashboard("opsDashboardComponent");
+      window.PlatformComponents.initPaymentLifecycle("opsPaymentComponent");
+      window.PlatformComponents.initTrustVerification("opsTrustComponent");
+      window.PlatformComponents.initDisputeFlow("opsDisputeComponent");
+      window.CLTCHLoading?.done();
+    });
+  </script>
+</body>
+</html>

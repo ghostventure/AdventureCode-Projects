@@ -1,0 +1,97 @@
+mutation CreateSeedData @transaction @auth(level: USER, insecureReason: "Seed data is for development and testing purposes only.") {
+  user_insertMany(data: [
+    {
+      id: "6e267104-e53f-42e1-88c9-75a898b0f9f3",
+      displayName: "Alice Smith",
+      email: "alice.smith@example.com",
+      createdAt: "2023-01-01T10:00:00Z",
+      userType: "Buyer"
+    },
+    {
+      id: "7a267104-e53f-42e1-88c9-75a898b0f9f4",
+      displayName: "Bob Johnson",
+      email: "bob.johnson@example.com",
+      createdAt: "2023-01-02T11:00:00Z",
+      userType: "Seller"
+    }
+  ])
+  property_insertMany(data: [
+    {
+      id: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      title: "Cozy Family Home",
+      address: "123 Main St",
+      city: "Anytown",
+      state: "CA",
+      zipCode: "90210",
+      price: 500000.0,
+      propertyType: "House",
+      listingStatus: "Active",
+      createdAt: "2023-01-03T12:00:00Z",
+      description: "A beautiful 3-bedroom, 2-bathroom house with a spacious backyard.",
+      squareFootage: 1800,
+      lotSize: 0.25,
+      bedrooms: 3,
+      bathrooms: 2.5,
+      yearBuilt: 1990,
+      blightStatus: false,
+      ownerId: "7a267104-e53f-42e1-88c9-75a898b0f9f4"
+    },
+    {
+      id: "b2c3d4e5-f6a7-8901-2345-67890abcdef0",
+      title: "Downtown Condo",
+      address: "456 Oak Ave",
+      city: "Metropolis",
+      state: "NY",
+      zipCode: "10001",
+      price: 750000.0,
+      propertyType: "Condo",
+      listingStatus: "Active",
+      createdAt: "2023-01-04T13:00:00Z",
+      description: "Modern 2-bedroom condo in the heart of the city with great amenities.",
+      squareFootage: 1200,
+      bedrooms: 2,
+      bathrooms: 2.0,
+      yearBuilt: 2015,
+      blightStatus: false,
+      ownerId: "7a267104-e53f-42e1-88c9-75a898b0f9f4"
+    }
+  ])
+  image_insertMany(data: [
+    {
+      imageUrl: "https://example.com/image1.jpg",
+      order: 1,
+      altText: "Front view of the house",
+      propertyId: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+    },
+    {
+      imageUrl: "https://example.com/image2.jpg",
+      order: 2,
+      altText: "Living room interior",
+      propertyId: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+    },
+    {
+      imageUrl: "https://example.com/image3.jpg",
+      order: 1,
+      altText: "Condo exterior",
+      propertyId: "b2c3d4e5-f6a7-8901-2345-67890abcdef0"
+    }
+  ])
+  offer_insertMany(data: [
+    {
+      offerAmount: 480000.0,
+      offerDate: "2023-01-05",
+      offerStatus: "Pending",
+      createdAt: "2023-01-05T14:00:00Z",
+      buyerId: "6e267104-e53f-42e1-88c9-75a898b0f9f3",
+      propertyId: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      contingencies: "Inspection and financing"
+    }
+  ])
+  watchlist_insertMany(data: [
+    {
+      createdAt: "2023-01-06T15:00:00Z",
+      userId: "6e267104-e53f-42e1-88c9-75a898b0f9f3",
+      propertyId: "b2c3d4e5-f6a7-8901-2345-67890abcdef0"
+    }
+  ])
+}

@@ -1,0 +1,14 @@
+{
+  "name": "cltch-ntwrk-functions",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "firebase-functions": "^5.0.1",
+    "plaid": "^26.0.0",
+    "stripe": "^18.4.0"
+  }
+}

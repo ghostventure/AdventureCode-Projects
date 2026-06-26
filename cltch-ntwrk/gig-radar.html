@@ -1,0 +1,2336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Manage accepted gigs, matches, reviews, and performer activity on CLTCH.NTWRK.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK — Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    header .logo { font-size: 20px; font-weight: 700; letter-spacing: 2px; color: #fff; text-decoration: none; }
+    header nav { display: flex; align-items: center; flex-wrap: wrap; }
+    header nav a { color: #aaa; text-decoration: none; margin-left: 24px; font-size: 14px; }
+    header nav a:hover { color: #fff; }
+    .mode-toggle {
+      margin-left: 24px;
+      display: inline-flex;
+      align-items: center;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .mode-btn {
+      border: 0;
+      background: transparent;
+      color: #8d98a8;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .mode-btn.active {
+      background: #f5a623;
+      color: #000;
+    }
+    .mode-toggle.busy { opacity: 0.7; }
+    .mode-toggle.busy .mode-btn { pointer-events: none; }
+    header nav select {
+      margin-left: 24px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #aaa;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 10px;
+      outline: none;
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    header nav select:focus { border-color: #f5a623; color: #fff; }
+
+    .container {
+      flex: 1;
+      max-width: 620px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 36px 24px 64px;
+    }
+    .workspace-tabs {
+      display: inline-flex;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid #1f2d39;
+      background: rgba(11, 16, 22, 0.92);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .workspace-tab {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1px solid #24394b;
+      color: #cfe0f1;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #101923;
+    }
+    .workspace-tab.active {
+      background: #f5a623;
+      border-color: #f5a623;
+      color: #111;
+    }
+    .workspace-pane.hidden {
+      display: none;
+    }
+    .workspace-scope.hidden {
+      display: none;
+    }
+
+    /* ── Dashboard Header ────────────────────────────────── */
+    .dash-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .dash-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      border: 2px solid #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .dash-info { flex: 1; min-width: 0; }
+    .dash-name {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dash-stage { font-size: 14px; color: #f5a623; margin-top: 2px; }
+    .dash-location { font-size: 13px; color: #555; margin-top: 3px; }
+    .avail-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .avail-pill.open   { background: #0d2e1a; color: #4caf82; border: 1px solid #1a5c34; }
+    .avail-pill.closed { background: #1e1e1e; color: #555;    border: 1px solid #2a2a2a; }
+    .avail-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .avail-dot.open   { background: #4caf82; }
+    .avail-dot.closed { background: #444; }
+
+    /* ── Stats Strip ─────────────────────────────────────── */
+    .stats-strip {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 100px;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-val { font-size: 24px; font-weight: 800; line-height: 1; margin-bottom: 5px; }
+    .stat-lbl { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+    .analytics-panel {
+      margin-bottom: 36px;
+      background: #101010;
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .analytics-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .analytics-title {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #777;
+      font-weight: 700;
+    }
+    .analytics-live {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 1px solid #1a5c34;
+      background: #0d2e1a;
+      color: #4caf82;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .analytics-card {
+      background: #141414;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 74px;
+    }
+    .analytics-value {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+      color: #f0f0f0;
+    }
+    .analytics-label {
+      font-size: 11px;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      font-weight: 600;
+    }
+    .command-bar {
+      margin-bottom: 28px;
+      background: #101010;
+      border: 1px solid #1e1e1e;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .command-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .command-title {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #777;
+      font-weight: 700;
+    }
+    .command-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .command-link {
+      color: #9fc9ff;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid #2b4158;
+      background: #121a23;
+    }
+    .command-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+    .command-grid-bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+    .command-search {
+      width: 100%;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #f0f0f0;
+      font-size: 14px;
+      padding: 12px 14px;
+      font-family: inherit;
+    }
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .intent-filter {
+      display: flex;
+      flex-direction: column;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ea8ba;
+      gap: 4px;
+      justify-content: center;
+    }
+    .intent-filter select {
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    .filter-chip {
+      border: 1px solid #2a2a2a;
+      background: #141414;
+      color: #aaa;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .filter-chip.active {
+      border-color: #f5a623;
+      color: #111;
+      background: #f5a623;
+    }
+    .sort-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .sort-label {
+      font-size: 11px;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+    .sort-select {
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #f0f0f0;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 10px 12px;
+      font-family: inherit;
+    }
+    .radar-summary {
+      margin: -8px 0 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+    .radar-summary-card {
+      background: #101010;
+      border: 1px solid #1e1e1e;
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .radar-summary-value {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+      color: #f4f7fb;
+      margin-bottom: 6px;
+    }
+    .radar-summary-label {
+      font-size: 11px;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .radar-summary-note {
+      font-size: 12px;
+      color: #9fb1c8;
+      line-height: 1.45;
+    }
+    .review-spotlight {
+      margin-bottom: 30px;
+      background: linear-gradient(180deg, #111, #0d141d);
+      border: 1px solid #2a2a2a;
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .review-spotlight-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .review-spotlight-title {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #777;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .review-spotlight-grade {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .review-spotlight-copy {
+      color: #9fb1c8;
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 420px;
+    }
+    .review-spotlight-note {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #d5e4f5;
+      line-height: 1.6;
+    }
+    .review-spotlight-note em {
+      color: #8ea4bf;
+    }
+
+    /* ── Section ─────────────────────────────────────────── */
+    .dash-section { margin-bottom: 48px; }
+    .section-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .section-title { font-size: 16px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+    .count-pill {
+      background: #f5a623;
+      color: #000;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .badge {
+      background: #f5a623;
+      color: #000;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: none;
+    }
+    .section-sub { color: #444; font-size: 13px; margin-bottom: 16px; margin-top: -8px; }
+    .gig-topline {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .save-btn {
+      min-height: 34px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid #2a3d50;
+      background: #13202d;
+      color: #dce8f5;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .save-btn.saved {
+      background: #f5a623;
+      border-color: #f5a623;
+      color: #111;
+    }
+    .radar-insight {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #213244;
+      background: #101822;
+      color: #b6c8dd;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .radar-insight.warn {
+      border-color: #6e3a00;
+      background: #20150a;
+      color: #f0c17a;
+    }
+    .radar-foot {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+      color:#7f92a8;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.06em;
+      font-weight:700;
+    }
+
+    /* ── Booked Gig Cards ────────────────────────────────── */
+    #upcomingList,
+    #gigList,
+    #reviewsList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .booked-card {
+      background: #111;
+      border: 1px solid #2a1a00;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 0;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      animation: cardIn 0.3s ease forwards;
+      opacity: 0;
+    }
+    @keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+
+    .booked-date-block {
+      text-align: center;
+      min-width: 52px;
+      flex-shrink: 0;
+    }
+    .booked-month {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #f5a623;
+    }
+    .booked-day { font-size: 28px; font-weight: 900; line-height: 1; color: #fff; }
+    .booked-dow { font-size: 10px; color: #555; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .booked-body { flex: 1; min-width: 0; }
+    .booked-venue { font-size: 16px; font-weight: 700; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gig-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 0;
+    }
+    .gig-meta span {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .days-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+    .days-badge.today    { background: #2a1a00; color: #f5a623; }
+    .days-badge.tomorrow { background: #1a2200; color: #a3e635; }
+    .days-badge.soon     { background: #111;    color: #555; border: 1px solid #2a2a2a; }
+    .days-badge.past     { background: #0d2e1a; color: #4caf82; }
+
+    .empty-sm { color: #333; font-size: 14px; padding: 20px 0; text-align: center; }
+
+    /* ── Match badges ────────────────────────────────────── */
+    .match-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+    .match-detail {
+      font-size: 11px;
+      color: #7a7a7a;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 3px 10px;
+      background: #111;
+    }
+    .match-perfect   { background: #1a2e00; color: #a3e635; border-color: #a3e635 !important; }
+    .match-close     { background: #0d2e1a; color: #4caf82; border-color: #4caf82 !important; }
+    .match-near      { background: #0e1e2e; color: #5baaff; border-color: #5baaff !important; }
+    .match-genre     { background: #2a1a00; color: #f5a623; border-color: #f5a623 !important; }
+    .match-expanded  { background: #1a1a2e; color: #7b9cff; border-color: #7b9cff !important; }
+    /* Conflict indicator */
+    .conflict-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #2e1800;
+      color: #f5a623;
+      border: 1px solid #6e3a00;
+      margin-bottom: 10px;
+      margin-left: 6px;
+    }
+
+    /* ── Open request gig cards ──────────────────────────── */
+    .gig-card {
+      position: relative;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 0;
+      transition: border-color 0.2s, transform 0.35s cubic-bezier(.25,.8,.25,1), opacity 0.35s ease;
+      cursor: grab;
+      user-select: none;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: cardIn 0.3s ease forwards;
+    }
+    .gig-card.dragging { transition: none !important; cursor: grabbing; }
+    .gig-card.exit-right {
+      transition: transform 0.32s ease, opacity 0.32s ease !important;
+      transform: translateX(420px) rotate(14deg) !important;
+      opacity: 0 !important;
+    }
+    .gig-card.exit-left {
+      transition: transform 0.32s ease, opacity 0.32s ease !important;
+      transform: translateX(-420px) rotate(-14deg) !important;
+      opacity: 0 !important;
+    }
+    .swipe-hint {
+      position: absolute;
+      top: 22px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      pointer-events: none;
+      border: 2px solid;
+      border-radius: 6px;
+      padding: 4px 10px;
+      transition: opacity 0.08s;
+    }
+    .swipe-hint.accept { left: 20px;  color: #4caf82; border-color: #4caf82; }
+    .swipe-hint.pass   { right: 20px; color: #cf6679; border-color: #cf6679; }
+    .gig-card .venue { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+    .gig-notes { font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; }
+    .actions { display: flex; gap: 12px; }
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.3px;
+    }
+    .btn:hover  { opacity: 0.85; }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-accept { background: #f5a623; color: #000; }
+    .btn-pass   { background: #1e1e1e; color: #888; border: 1px solid #2a2a2a; }
+    .swipe-tip  { text-align: center; font-size: 12px; color: #2a2a2a; margin-bottom: 16px; letter-spacing: 0.3px; }
+    .responded  { text-align: center; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+    .responded.accepted { background: #0d2e1a; color: #4caf82; }
+    .responded.passed   { background: #1e1e1e; color: #555; }
+
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 0;
+      color: #333;
+      font-size: 15px;
+    }
+    .empty span { display: block; font-size: 32px; margin-bottom: 10px; }
+
+    /* ── My Reviews ──────────────────────────────────────── */
+    .reviews-section { margin-bottom: 48px; }
+    .overall-grade-badge { display: flex; align-items: baseline; gap: 10px; }
+    .grade-letter    { font-size: 36px; font-weight: 900; line-height: 1; }
+    .grade-sublabel  { font-size: 13px; color: #555; }
+    .review-card {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 0;
+    }
+    .review-top     { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .review-host    { font-size: 14px; font-weight: 600; }
+    .review-grade-pill {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 2px 9px;
+      border-radius: 5px;
+      border: 2px solid;
+      letter-spacing: 0.5px;
+    }
+    .review-date { font-size: 12px; color: #3a3a3a; margin-bottom: 6px; }
+    .review-text { font-size: 13px; color: #888; line-height: 1.5; font-style: italic; }
+    .grade-bars  { margin-bottom: 20px; }
+    .grade-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+    .grade-bar-label { width: 24px; text-align: right; font-weight: 800; flex-shrink: 0; }
+    .grade-bar-track { flex: 1; height: 5px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
+    .grade-bar-fill  { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+    .grade-bar-count { width: 20px; color: #444; flex-shrink: 0; }
+    @media (max-width: 640px) {
+      .analytics-grid,
+      .radar-summary,
+      #upcomingList,
+      #gigList,
+      #reviewsList {
+        grid-template-columns: 1fr;
+      }
+      .command-grid { grid-template-columns: 1fr; }
+      .command-grid-bottom { grid-template-columns: 1fr; }
+      .filter-row { justify-content: flex-start; }
+      .actions { flex-direction: column; }
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #333;
+      border-top: 1px solid #1e1e1e;
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script src="site-init.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <div class="mode-toggle" id="modeSwitch" aria-label="Switch mode" role="tablist">
+        <button class="mode-btn" type="button" data-mode="host">Host</button>
+        <button class="mode-btn" type="button" data-mode="musician">Performer</button>
+      </div>
+      <a href="musician-profile.html">My Profile</a>
+      <a href="auth.html" id="signOutLink">Sign Out</a>
+    </nav>
+  </header>
+
+  <main class="page-shell container">
+    <div class="workspace-tabs" aria-label="Performer workspace tabs">
+      <a class="workspace-tab" href="musician-matched-gigs.html" data-workspace-tab="matched">My Matched Gigs</a>
+      <a class="workspace-tab active" href="gig-radar.html" data-workspace-tab="radar">Gig Radar</a>
+      <a class="workspace-tab" href="musician-profile.html" data-workspace-tab="profile">My Profile</a>
+    </div>
+
+    <!-- Dashboard Header -->
+    <div class="dash-header">
+      <div class="dash-avatar" id="dashAvatar">🎸</div>
+      <div class="dash-info">
+        <div class="dash-name"  id="dashName">Loading…</div>
+        <div class="dash-stage" id="dashStage"></div>
+        <div class="dash-location" id="dashLocation"></div>
+        <div class="dash-location" id="workspaceViewLabel">Gig Radar view</div>
+      </div>
+      <div id="dashAvailPill"></div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-strip" id="statsStrip"></div>
+
+    <!-- Performance Analytics -->
+    <section class="analytics-panel workspace-scope" id="analyticsPanel">
+      <div class="analytics-head">
+        <span class="analytics-title">Performance Analytics</span>
+        <span class="analytics-live">LIVE</span>
+      </div>
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <div class="analytics-value" id="metricLiveMatches">0</div>
+          <div class="analytics-label">Live Matches</div>
+        </div>
+        <div class="analytics-card">
+          <div class="analytics-value" id="metricAvgMatch">0%</div>
+          <div class="analytics-label">Avg Match Score</div>
+        </div>
+        <div class="analytics-card">
+          <div class="analytics-value" id="metricAcceptanceRate">0%</div>
+          <div class="analytics-label">Acceptance Rate</div>
+        </div>
+        <div class="analytics-card">
+          <div class="analytics-value" id="metricAcceptedCount">0</div>
+          <div class="analytics-label">Accepted Gigs</div>
+        </div>
+        <div class="analytics-card">
+          <div class="analytics-value" id="metricPassedCount">0</div>
+          <div class="analytics-label">Passed Gigs</div>
+        </div>
+        <div class="analytics-card">
+          <div class="analytics-value" id="metricUpcomingEarnings">$0</div>
+          <div class="analytics-label">Upcoming Earnings</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="command-bar workspace-scope" id="queueControlsBar">
+      <div class="command-top">
+        <span class="command-title">Queue Controls</span>
+        <div class="command-links">
+          <a class="command-link" href="#upcomingList">Jump to Upcoming</a>
+          <a class="command-link" href="musician-profile.html">Edit Profile</a>
+          <a class="command-link" href="#reviewsSection">Reviews</a>
+        </div>
+      </div>
+      <div class="command-grid">
+        <input class="command-search" id="gigSearchInput" type="search" placeholder="Search venue, location, genre, or pay">
+        <div class="command-grid-bottom">
+          <div class="filter-row" id="gigFilterRow">
+            <button class="filter-chip active" type="button" data-filter="all">All</button>
+            <button class="filter-chip" type="button" data-filter="top">Top Match</button>
+            <button class="filter-chip" type="button" data-filter="urgent">Urgent</button>
+            <button class="filter-chip" type="button" data-filter="actionable">Actionable</button>
+            <button class="filter-chip" type="button" data-filter="saved">Saved</button>
+            <button class="filter-chip" type="button" data-filter="week">This Week</button>
+          </div>
+          <div class="intent-filter">
+            <label for="intentFilter">Intent</label>
+            <select id="intentFilter">
+              <option value="all">All gigs</option>
+              <option value="child-friendly">Child-friendly</option>
+              <option value="union">Union-ready</option>
+              <option value="multi-genre">Multi-genre</option>
+            </select>
+          </div>
+          <div class="sort-wrap">
+            <span class="sort-label">Sort</span>
+            <select class="sort-select" id="gigSortSelect">
+              <option value="best">Best Match</option>
+              <option value="soonest">Soonest</option>
+              <option value="pay">Highest Pay</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="radar-summary">
+      <div class="radar-summary-card">
+        <div class="radar-summary-label">Best Match</div>
+        <div class="radar-summary-value" id="radarBestMatchValue">—</div>
+        <div class="radar-summary-note" id="radarBestMatchNote">Waiting for live gigs.</div>
+      </div>
+      <div class="radar-summary-card">
+        <div class="radar-summary-label">Urgent This Week</div>
+        <div class="radar-summary-value" id="radarUrgentValue">0</div>
+        <div class="radar-summary-note" id="radarUrgentNote">No urgent gigs yet.</div>
+      </div>
+      <div class="radar-summary-card">
+        <div class="radar-summary-label">Saved For Later</div>
+        <div class="radar-summary-value" id="radarSavedValue">0</div>
+        <div class="radar-summary-note" id="radarSavedNote">Save a gig if you need a minute.</div>
+      </div>
+      <div class="radar-summary-card">
+        <div class="radar-summary-label">Actionable Now</div>
+        <div class="radar-summary-value" id="radarConflictValue">0</div>
+        <div class="radar-summary-note" id="radarConflictNote">Bookable gigs only.</div>
+      </div>
+    </section>
+    <section class="command-bar workspace-scope" id="noticesBar" style="margin-top:-8px;">
+      <div class="command-top">
+        <span class="command-title">Notices</span>
+        <div class="command-links">
+          <a class="command-link" href="support.html">Support</a>
+        </div>
+      </div>
+      <div id="musicianNotifications" style="font-size:13px;line-height:1.65;color:#cfd7e2;">Loading your notices…</div>
+    </section>
+    <section class="command-bar workspace-scope" id="checklistBar" style="margin-top:-8px;">
+      <div class="command-top">
+        <span class="command-title">Next Steps</span>
+        <div class="command-links">
+          <a class="command-link" href="musician-profile.html">Edit Profile</a>
+        </div>
+      </div>
+      <div id="musicianChecklist" style="font-size:13px;line-height:1.65;color:#cfd7e2;">Building your performer checklist…</div>
+    </section>
+    <section class="command-bar workspace-scope" id="bookingGuideBar" style="margin-top:-8px;">
+      <div class="command-top">
+        <span class="command-title">First Booking Flow</span>
+        <div class="command-links">
+          <a class="command-link" href="support.html">Need help?</a>
+        </div>
+      </div>
+      <div id="musicianBookingGuide" style="font-size:13px;line-height:1.65;color:#cfd7e2;">Loading your booking flow…</div>
+    </section>
+
+    <section class="review-spotlight workspace-scope" id="reviewSpotlight">
+      <div class="review-spotlight-top">
+        <div>
+          <div class="review-spotlight-title">Reputation Snapshot</div>
+          <div class="review-spotlight-grade" id="reviewSpotlightGrade">—</div>
+        </div>
+        <div class="review-spotlight-copy" id="reviewSpotlightCopy">Your review history will appear here once hosts submit ratings. This keeps your reputation visible near the top of the dashboard instead of burying it lower in the page.</div>
+      </div>
+      <div class="review-spotlight-note" id="reviewSpotlightNote"><em>No review feedback yet.</em></div>
+    </section>
+
+    <!-- Upcoming Booked Gigs -->
+    <div class="dash-section workspace-scope" id="upcomingSection">
+      <div class="section-hdr">
+        <span class="section-title">Upcoming Gigs</span>
+        <span class="count-pill" id="upcomingCount" style="display:none;"></span>
+      </div>
+      <div id="upcomingList">
+        <div class="empty-sm">No upcoming bookings yet.</div>
+      </div>
+    </div>
+
+    <!-- Matched Gigs Queue -->
+    <div class="dash-section workspace-pane" id="matched-gigs">
+      <div class="section-hdr">
+        <span class="section-title">My Matched Gigs</span>
+        <span class="count-pill" id="matchedQueueCount" style="display:none;"></span>
+      </div>
+      <p class="section-sub">All upcoming matched requests in one list. Review details, approve, or pass without digging through cards.</p>
+      <div id="matchedQueueList">
+        <div class="empty-sm">No live matches yet.</div>
+      </div>
+    </div>
+
+    <!-- Open Requests -->
+    <div class="dash-section workspace-pane" id="gig-radar">
+      <div class="section-hdr">
+        <span class="section-title">Gig Radar</span>
+        <div class="badge" id="newBadge">NEW</div>
+      </div>
+      <p class="section-sub">Incoming gigs that match your style and availability. Move fast when the fit is strong.</p>
+      <div id="gigList">
+        <div class="empty"><span>🎵</span>Looking for gigs&hellip;</div>
+      </div>
+    </div>
+
+    <!-- My Reviews -->
+    <div class="reviews-section workspace-scope" id="reviewsSection" style="display:none;">
+      <div class="section-hdr">
+        <span class="section-title">My Reviews</span>
+        <div class="overall-grade-badge">
+          <div class="grade-letter" id="myGradeLetter">—</div>
+          <div class="grade-sublabel" id="myGradeCount"></div>
+        </div>
+      </div>
+      <div class="grade-bars" id="gradeBars"></div>
+      <div id="myReviewsList"></div>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2026 CLTCH.NTWRK &mdash; <a href="about.html" style="color:#555;text-decoration:none;margin:0 6px;">About</a> <a href="faq.html" style="color:#555;text-decoration:none;margin:0 6px;">FAQ</a> <a href="contact.html" style="color:#555;text-decoration:none;margin:0 6px;">Contact</a> <a href="press.html" style="color:#555;text-decoration:none;margin:0 6px;">Press</a> <a href="accessibility.html" style="color:#555;text-decoration:none;margin:0 6px;">Accessibility</a> <a href="dmca.html" style="color:#555;text-decoration:none;margin:0 6px;">DMCA</a> <a href="terms.html" style="color:#555;text-decoration:none;margin:0 6px;">Terms</a> <a href="privacy.html" style="color:#555;text-decoration:none;margin:0 6px;">Privacy</a></footer>
+
+  <script type="module">
+    import { getFirestore, collection, query, where, orderBy, limit, onSnapshot,
+             doc, updateDoc, getDoc, getDocs, arrayUnion, deleteField, runTransaction, serverTimestamp }
+      from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { onAuthStateChanged, signOut, reload } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { auth, db } from "./app/firebase-client.js";
+    import { buildAcceptedGigQuery, buildOpenGigFeedQuery, isoToday } from "./app/gig-queries.js";
+    import { DEFAULT_TIMEOUT_MS, clearResumeTarget, installIdleLogout } from "./app/idle-logout.js";
+    import { bindModeSwitch } from "./app/mode-switch.js";
+    import { subscribeWhenVisible } from "./app/visible-snapshot.js";
+    import { recordAuthEvent, writeUserSummary } from "./app/user-db.js";
+
+    async function refreshUserVerification(user) {
+      if (!user) return user;
+      try {
+        await reload(user);
+      } catch {}
+      return auth.currentUser || user;
+    }
+
+    function requiresVerifiedEmail(user) {
+      return !!(user && user.providerData && user.providerData.some((provider) => provider?.providerId === 'password') && !user.emailVerified);
+    }
+
+    async function redirectUnverifiedUser() {
+      await signOut(auth).catch(() => {});
+      window.location.href = 'auth.html?reason=verify-email';
+    }
+
+    let MUSICIAN_ID     = null;
+    let musicianProfile = null;
+    let matchedGigFeed  = [];
+    let reviewCache     = [];
+    let activeGigFilter = localStorage.getItem('cltch_gig_filter_v1') || 'all';
+    let activeGigSort   = localStorage.getItem('cltch_gig_sort_v1') || 'best';
+    let savedGigIds     = new Set();
+
+    // Gate: must be signed in with a profile
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'auth.html'; return; }
+      if (requiresVerifiedEmail(user)) { await redirectUnverifiedUser(); return; }
+      installIdleLogout(auth, DEFAULT_TIMEOUT_MS);
+      const profileSnap = await getDoc(doc(db, 'musicians', user.uid));
+      MUSICIAN_ID     = user.uid;
+      loadSavedGigIds();
+      musicianProfile = profileSnap.exists() ? profileSnap.data() : {};
+      writeUserSummary(db, user.uid, {
+        role: 'musician',
+        email: user.email || '',
+        displayName: musicianProfile.stageName || `${musicianProfile.firstName || ''} ${musicianProfile.lastName || ''}`.trim(),
+        city: musicianProfile.city || '',
+        state: musicianProfile.state || '',
+        status: 'active',
+        profileComplete: profileSnap.exists(),
+        payoutReady: musicianProfile.payoutMethod === 'check' || !!musicianProfile.payoutHandle
+      }).catch(() => {});
+      initModeSwitch('musician', MUSICIAN_ID);
+      renderDashboardHeader();
+      renderStatsStrip();
+      updateAnalyticsPanel();
+      renderMusicianChecklist();
+      renderMusicianBookingGuide();
+      loadUpcomingGigs();
+      startListening();
+      loadMyReviews();
+      refreshPerformanceAnalytics();
+      syncWorkspaceTabs();
+      handleWorkspaceNavigation();
+      window.CLTCHLoading?.done();
+    });
+
+    document.getElementById('signOutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      clearResumeTarget();
+      if (auth.currentUser) await recordAuthEvent(db, auth.currentUser, 'sign_out').catch(() => {});
+      await signOut(auth);
+      window.location.href = 'auth.html';
+    });
+
+    window.addEventListener('popstate', handleWorkspaceNavigation);
+
+    async function initModeSwitch(currentMode, userId) {
+      const modeSwitch = document.getElementById('modeSwitch');
+      bindModeSwitch(modeSwitch, { db, userId, currentMode });
+    }
+
+    // ── Grade constants ────────────────────────────────────────────────
+    const GRADES_ORDER = ['AA','A','B','C','D','F','N'];
+    const GRADE_COLORS = { AA:'#f5a623', A:'#4caf82', B:'#7bc67e', C:'#d4b44a', D:'#d4844a', F:'#cf6679', N:'#555' };
+    const GRADE_LABELS = { AA:'Above & beyond', A:'Excellent', B:'Good', C:'Average', D:'Below average', F:'Unacceptable', N:'No show' };
+    const GRADE_VALUES = { AA:7, A:6, B:5, C:4, D:3, F:2 };
+    const PERFORMER_META = {
+      musician: { label: 'Musician', icon: '🎸' },
+      dj: { label: 'DJ', icon: '🎧' },
+      photographer: { label: 'Photographer', icon: '📸' },
+      cinematographer: { label: 'Cinematographer', icon: '🎥' },
+      model: { label: 'Model', icon: '✨' }
+    };
+
+    const analyticsState = {
+      activeMatches: 0,
+      avgMatchPercent: 0,
+      acceptedCount: 0,
+      passedCount: 0,
+      acceptanceRate: 0,
+      upcomingEarnings: 0
+    };
+    const BOOKING_CACHE_LIMIT = 120;
+    const BOOKING_CACHE_PAST_DAYS = 30;
+    const gigSearchInput = document.getElementById('gigSearchInput');
+    const gigFilterRow = document.getElementById('gigFilterRow');
+    const gigSortSelect = document.getElementById('gigSortSelect');
+    const workspaceTabs = [...document.querySelectorAll('[data-workspace-tab]')];
+    const workspaceViewLabel = document.getElementById('workspaceViewLabel');
+    const SAVED_GIGS_STORAGE_KEY = 'cltch_saved_gigs_v1';
+    const RADAR_MIN_MATCH_PERCENT = 78;
+    const SEARCH_INPUT_DEBOUNCE_MS = 120;
+    let feedRenderTimerId = 0;
+    let activeSearchTerm = '';
+
+    function loadSavedGigIds() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(SAVED_GIGS_STORAGE_KEY) || '{}');
+        const ids = raw && typeof raw === 'object' && Array.isArray(raw[MUSICIAN_ID]) ? raw[MUSICIAN_ID] : [];
+        savedGigIds = new Set(ids.map((id) => String(id || '').trim()).filter(Boolean));
+      } catch (err) {
+        savedGigIds = new Set();
+      }
+    }
+
+    function persistSavedGigIds() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(SAVED_GIGS_STORAGE_KEY) || '{}');
+        const next = raw && typeof raw === 'object' ? raw : {};
+        next[MUSICIAN_ID] = [...savedGigIds];
+        localStorage.setItem(SAVED_GIGS_STORAGE_KEY, JSON.stringify(next));
+      } catch (err) {}
+    }
+
+    function isSavedGig(gigId) {
+      return savedGigIds.has(gigId);
+    }
+
+    function toggleSavedGig(gigId) {
+      if (!gigId) return;
+      if (savedGigIds.has(gigId)) savedGigIds.delete(gigId);
+      else savedGigIds.add(gigId);
+      persistSavedGigIds();
+      renderRadarSummary();
+      renderQueues();
+    }
+
+    function normalizeBookingDateValue(value) {
+      return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : '';
+    }
+
+    function pruneBookedDatesCache(bookings = [], nextBooking = null) {
+      const today = new Date();
+      const cutoff = new Date(today);
+      cutoff.setDate(cutoff.getDate() - BOOKING_CACHE_PAST_DAYS);
+      const cutoffStr = cutoff.toISOString().slice(0, 10);
+      const map = new Map();
+
+      [...bookings, ...(nextBooking ? [nextBooking] : [])].forEach((booking) => {
+        if (!booking || typeof booking !== 'object') return;
+        const gigId = String(booking.gigId || booking.id || '').trim();
+        const date = normalizeBookingDateValue(booking.date);
+        if (!gigId || !date || date < cutoffStr) return;
+        map.set(gigId, {
+          gigId,
+          id: gigId,
+          date,
+          venue: String(booking.venue || ''),
+          time: String(booking.time || ''),
+          pay: String(booking.pay || ''),
+          location: String(booking.location || ''),
+          genre: String(booking.genre || '')
+        });
+      });
+
+      return [...map.values()]
+        .sort((a, b) => {
+          if (a.date !== b.date) return a.date.localeCompare(b.date);
+          return String(a.time || '').localeCompare(String(b.time || ''));
+        })
+        .slice(-BOOKING_CACHE_LIMIT);
+    }
+
+    function parseCurrencyAmount(value) {
+      const match = String(value || '').replace(/,/g, '').match(/(\d+(?:\.\d+)?)/);
+      if (!match) return null;
+      const amount = Number(match[1]);
+      return Number.isFinite(amount) ? amount : null;
+    }
+
+    function formatUsd(amount) {
+      const num = Number(amount);
+      if (!Number.isFinite(num)) return '$0';
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(num);
+    }
+
+    function getWorkspaceTab() {
+      return 'radar';
+    }
+
+    function syncWorkspaceTabs() {
+      const activeTab = getWorkspaceTab();
+      workspaceTabs.forEach((tab) => {
+        const isActive = tab.dataset.workspaceTab === activeTab;
+        tab.classList.toggle('active', isActive);
+        if (isActive) tab.setAttribute('aria-current', 'page');
+        else tab.removeAttribute('aria-current');
+      });
+    }
+
+    function setWorkspacePane(activeTab) {
+      const matchedPane = document.getElementById('matched-gigs');
+      const radarPane = document.getElementById('gig-radar');
+      const analyticsPanel = document.getElementById('analyticsPanel');
+      const queueControlsBar = document.getElementById('queueControlsBar');
+      const noticesBar = document.getElementById('noticesBar');
+      const checklistBar = document.getElementById('checklistBar');
+      const bookingGuideBar = document.getElementById('bookingGuideBar');
+      const reviewSpotlight = document.getElementById('reviewSpotlight');
+      const upcomingSection = document.getElementById('upcomingSection');
+      const reviewsSection = document.getElementById('reviewsSection');
+      const showRadar = activeTab === 'radar';
+      matchedPane?.classList.toggle('hidden', activeTab !== 'matched');
+      radarPane?.classList.toggle('hidden', activeTab !== 'radar');
+      analyticsPanel?.classList.toggle('hidden', showRadar);
+      reviewSpotlight?.classList.toggle('hidden', showRadar);
+      upcomingSection?.classList.toggle('hidden', showRadar);
+      reviewsSection?.classList.toggle('hidden', showRadar);
+      queueControlsBar?.classList.toggle('hidden', !showRadar);
+      noticesBar?.classList.toggle('hidden', !showRadar);
+      checklistBar?.classList.toggle('hidden', !showRadar);
+      bookingGuideBar?.classList.toggle('hidden', !showRadar);
+      if (workspaceViewLabel) {
+        workspaceViewLabel.textContent = activeTab === 'radar' ? 'Gig Radar view' : 'Matched gigs view';
+      }
+      document.title = activeTab === 'radar'
+        ? 'CLTCH.NTWRK — Gig Radar'
+        : 'CLTCH.NTWRK — My Matched Gigs';
+    }
+
+    function scrollToWorkspacePane(activeTab) {
+      const pane = document.getElementById(activeTab === 'radar' ? 'gig-radar' : 'matched-gigs');
+      if (!pane) return;
+      requestAnimationFrame(() => {
+        pane.scrollIntoView({ behavior: 'auto', block: 'start' });
+      });
+    }
+
+    function handleWorkspaceNavigation() {
+      const activeTab = getWorkspaceTab();
+      syncWorkspaceTabs();
+      setWorkspacePane(activeTab);
+      scrollToWorkspacePane(activeTab);
+    }
+
+    workspaceTabs.forEach((tab) => {
+      const href = tab.getAttribute('href') || '';
+      if (!href.includes('musician-dashboard.html?tab=')) return;
+      tab.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.history.replaceState(null, '', href);
+        handleWorkspaceNavigation();
+      });
+    });
+
+    function updateAnalyticsPanel() {
+      const liveMatchesEl = document.getElementById('metricLiveMatches');
+      const avgMatchEl = document.getElementById('metricAvgMatch');
+      const acceptRateEl = document.getElementById('metricAcceptanceRate');
+      const acceptedEl = document.getElementById('metricAcceptedCount');
+      const passedEl = document.getElementById('metricPassedCount');
+      const upcomingEarningsEl = document.getElementById('metricUpcomingEarnings');
+      if (!liveMatchesEl || !avgMatchEl || !acceptRateEl || !acceptedEl || !passedEl || !upcomingEarningsEl) return;
+
+      liveMatchesEl.textContent = String(analyticsState.activeMatches || 0);
+      avgMatchEl.textContent = `${analyticsState.avgMatchPercent || 0}%`;
+      acceptRateEl.textContent = `${analyticsState.acceptanceRate || 0}%`;
+      acceptedEl.textContent = String(analyticsState.acceptedCount || 0);
+      passedEl.textContent = String(analyticsState.passedCount || 0);
+      upcomingEarningsEl.textContent = formatUsd(analyticsState.upcomingEarnings || 0);
+      renderMusicianNotifications();
+    }
+
+    function renderMusicianNotifications() {
+      const el = document.getElementById('musicianNotifications');
+      if (!el) return;
+      const notes = [];
+      if (!musicianProfile?.bio || !(musicianProfile?.genres || []).length) notes.push('Your profile is still light. Add a bio and style tags to improve match quality.');
+      if ((analyticsState.activeMatches || 0) > 0) notes.push(`${analyticsState.activeMatches} live match${analyticsState.activeMatches === 1 ? '' : 'es'} are available right now.`);
+      if ((analyticsState.acceptedCount || 0) > 0) notes.push(`${analyticsState.acceptedCount} accepted booking${analyticsState.acceptedCount === 1 ? '' : 's'} are already sitting in your upcoming list and calendar.`);
+      if ((analyticsState.acceptedCount || 0) === 0) notes.push('You have no accepted gigs yet. Keep your availability open and profile sharp to improve conversions.');
+      if (!reviewCache.length) notes.push('No reviews yet. Your first completed gig will start building public trust.');
+      if (!notes.length) notes.push('Your performer workspace is caught up. New matches and review signals will appear here.');
+      el.innerHTML = notes.map((note) => `<div style="margin-bottom:6px;">• ${note}</div>`).join('');
+    }
+
+    function renderChecklistStep(done, label, detail) {
+      return `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:999px;background:${done ? '#1f6f48' : '#2b3138'};color:${done ? '#d7ffe8' : '#8ea0b5'};font-size:11px;font-weight:700;flex:0 0 18px;">${done ? '✓' : '•'}</span>
+        <div>
+          <div style="color:${done ? '#f4f7fb' : '#d6e2ef'};font-weight:600;">${label}</div>
+          <div style="color:#8ea0b5;font-size:12px;">${detail}</div>
+        </div>
+      </div>`;
+    }
+
+    function renderMusicianChecklist() {
+      const el = document.getElementById('musicianChecklist');
+      if (!el) return;
+      const profileReady = !!(musicianProfile && (musicianProfile.stageName || musicianProfile.firstName || musicianProfile.lastName));
+      const hasGenres = !!(musicianProfile && Array.isArray(musicianProfile.genres) && musicianProfile.genres.length);
+      const payoutReady = !!(musicianProfile && (musicianProfile.payoutMethod === 'check' || musicianProfile.payoutHandle));
+      const acceptedCount = Number(analyticsState.acceptedCount || 0);
+      const steps = [
+        renderChecklistStep(profileReady && hasGenres, 'Finish your performer profile', profileReady && hasGenres ? 'Your identity and genres are in place.' : 'Add your stage identity and genres so hosts understand your fit.'),
+        renderChecklistStep(payoutReady, 'Add payout details', payoutReady ? 'Payout details are already on file.' : 'Set payout details on your profile so payment setup is ready later.'),
+        renderChecklistStep(acceptedCount > 0, 'Book your first gig', acceptedCount > 0 ? `${acceptedCount} accepted gig${acceptedCount === 1 ? '' : 's'} already on the board.` : 'Accept one strong match to move from browsing into active work.'),
+        renderChecklistStep(reviewCache.length > 0, 'Earn your first review', reviewCache.length > 0 ? `${reviewCache.length} review${reviewCache.length === 1 ? '' : 's'} recorded.` : 'A completed booking will start building your trust history.')
+      ];
+      el.innerHTML = steps.join('');
+    }
+
+    function renderMusicianBookingGuide() {
+      const el = document.getElementById('musicianBookingGuide');
+      if (!el) return;
+      const acceptedCount = Number(analyticsState.acceptedCount || 0);
+      const steps = [
+        renderChecklistStep(!!(musicianProfile && Array.isArray(musicianProfile.genres) && musicianProfile.genres.length), '1. Keep your profile bookable', !!(musicianProfile && Array.isArray(musicianProfile.genres) && musicianProfile.genres.length) ? 'Your style setup is ready for host matching.' : 'Add genres, bio, and payout details so hosts can trust the fit.'),
+        renderChecklistStep(acceptedCount > 0, '2. Accept the right gig', acceptedCount > 0 ? 'You already have an accepted booking in motion.' : 'Use the match reasons on each card to decide fast without guessing.'),
+        renderChecklistStep(reviewCache.length > 0, '3. Complete the gig and earn a review', reviewCache.length > 0 ? 'Your trust history is now visible to hosts.' : 'The first completed booking starts your public reputation.')
+      ];
+      el.innerHTML = steps.join('');
+    }
+
+    async function refreshPerformanceAnalytics() {
+      try {
+        const acceptedQ = buildAcceptedGigQuery(db, MUSICIAN_ID, { today: isoToday() });
+        const passedQ = query(
+          collection(db, 'gigs'),
+          where('passedBy', 'array-contains', MUSICIAN_ID)
+        );
+        const [acceptedSnap, passedSnap] = await Promise.all([getDocs(acceptedQ), getDocs(passedQ)]);
+
+        const acceptedCount = acceptedSnap.size;
+        const passedCount = passedSnap.size;
+        const decisions = acceptedCount + passedCount;
+
+        const todayStr = new Date().toISOString().slice(0, 10);
+        let upcomingTotal = 0;
+        acceptedSnap.forEach((docSnap) => {
+          const gig = docSnap.data();
+          if (!gig.date || gig.date < todayStr) return;
+          const amount = parseCurrencyAmount(gig.pay);
+          if (amount != null) upcomingTotal += amount;
+        });
+
+        analyticsState.acceptedCount = acceptedCount;
+        analyticsState.passedCount = passedCount;
+        analyticsState.acceptanceRate = decisions > 0 ? Math.round((acceptedCount / decisions) * 100) : 0;
+        analyticsState.upcomingEarnings = Math.round(upcomingTotal);
+        updateAnalyticsPanel();
+        renderMusicianChecklist();
+        renderMusicianBookingGuide();
+      } catch (err) {
+        console.error('Analytics refresh failed:', err);
+      }
+    }
+
+    function computeOverallGrade(reviews) {
+      const vals = reviews.filter(r => r.grade && r.grade !== 'N').map(r => GRADE_VALUES[r.grade] || 0);
+      if (!vals.length) return null;
+      const avg = vals.reduce((s,v)=>s+v,0)/vals.length;
+      return avg>=6.5?'AA':avg>=5.5?'A':avg>=4.5?'B':avg>=3.5?'C':avg>=2.5?'D':'F';
+    }
+
+    function initQueueControls() {
+      activeSearchTerm = (gigSearchInput?.value || '').trim().toLowerCase();
+      gigSearchInput?.addEventListener('input', () => {
+        if (feedRenderTimerId) window.clearTimeout(feedRenderTimerId);
+        feedRenderTimerId = window.setTimeout(() => {
+          feedRenderTimerId = 0;
+          activeSearchTerm = (gigSearchInput?.value || '').trim().toLowerCase();
+          renderQueues();
+        }, SEARCH_INPUT_DEBOUNCE_MS);
+      });
+      if (gigSortSelect) {
+        gigSortSelect.value = activeGigSort;
+        gigSortSelect.addEventListener('change', () => {
+          activeGigSort = gigSortSelect.value || 'best';
+          localStorage.setItem('cltch_gig_sort_v1', activeGigSort);
+          renderQueues();
+        });
+      }
+      gigFilterRow?.querySelectorAll('[data-filter]').forEach((button) => {
+        button.classList.toggle('active', button.dataset.filter === activeGigFilter);
+        button.addEventListener('click', () => {
+          activeGigFilter = button.dataset.filter || 'all';
+          localStorage.setItem('cltch_gig_filter_v1', activeGigFilter);
+          gigFilterRow.querySelectorAll('[data-filter]').forEach((chip) => {
+            chip.classList.toggle('active', chip.dataset.filter === activeGigFilter);
+          });
+          renderQueues();
+        });
+      });
+    }
+
+    function getVisibleMatches() {
+      return matchedGigFeed.filter(matchesFeedControls).sort(compareGigItems);
+    }
+
+    function renderQueues() {
+      renderMatchedQueue();
+      renderOpenRequests();
+    }
+
+    function matchesFeedControls(item) {
+      if (activeGigFilter === 'top' && item.match.percent < 90) return false;
+      if (activeGigFilter === 'urgent' && item.daysAway > 2) return false;
+      if (activeGigFilter === 'actionable' && !item.isActionable) return false;
+      if (activeGigFilter === 'saved' && !item.isSaved) return false;
+      if (activeGigFilter === 'week' && item.daysAway > 7) return false;
+      if (!activeSearchTerm) return true;
+      return item.searchText.includes(activeSearchTerm);
+    }
+
+    function compareGigItems(a, b) {
+      if (activeGigSort === 'soonest') {
+        const dayDiff = a.daysAway - b.daysAway;
+        if (dayDiff !== 0) return dayDiff;
+        return (b.match.percent || 0) - (a.match.percent || 0);
+      }
+      if (activeGigSort === 'pay') {
+        const payDiff = b.payAmount - a.payAmount;
+        if (payDiff !== 0) return payDiff;
+        return (b.match.percent || 0) - (a.match.percent || 0);
+      }
+      if ((b.match.percent || 0) !== (a.match.percent || 0)) return (b.match.percent || 0) - (a.match.percent || 0);
+      return a.daysAway - b.daysAway;
+    }
+
+    function getGigRadarInsight(item) {
+      if ((item.match.percent || 0) >= 94) return { cls: '', text: 'This is one of your strongest fits right now. Role, style, and timing all line up well.' };
+      if (item.daysAway <= 1) return { cls: '', text: 'This one is moving fast. If the details feel right, respond quickly before another performer takes it.' };
+      if (item.isSaved) return { cls: '', text: 'Saved for later. Use the Saved filter if you want to come back to this one without hunting for it.' };
+      if (item.payAmount >= 500) return { cls: '', text: 'Higher-value opportunity. Double-check travel, call time, and notes before you commit.' };
+      return { cls: '', text: 'Solid opportunity. Open the details page if you want to review the full booking context before deciding.' };
+    }
+
+    function isProfileRadarReady(profile) {
+      if (!profile || profile.available === false) return false;
+      const hasIdentity = !!(profile.stageName || profile.firstName || profile.lastName);
+      const hasGenres = Array.isArray(profile.genres) && profile.genres.length > 0;
+      return hasIdentity && hasGenres;
+    }
+
+    function isGigActionable(gig, blackouts, bookedGigIds, bookedDatesSet) {
+      if (!gig || !gig.date) return false;
+      if (bookedGigIds.has(gig.id || gig.gigId || '')) return false;
+      if (bookedDatesSet.has(gig.date)) return false;
+      if (blackouts.has(gig.date)) return false;
+      return true;
+    }
+
+    function renderRadarSummary() {
+      const bestValue = document.getElementById('radarBestMatchValue');
+      const bestNote = document.getElementById('radarBestMatchNote');
+      const urgentValue = document.getElementById('radarUrgentValue');
+      const urgentNote = document.getElementById('radarUrgentNote');
+      const savedValue = document.getElementById('radarSavedValue');
+      const savedNote = document.getElementById('radarSavedNote');
+      const conflictValue = document.getElementById('radarConflictValue');
+      const conflictNote = document.getElementById('radarConflictNote');
+      if (!bestValue || !bestNote || !urgentValue || !urgentNote || !savedValue || !savedNote || !conflictValue || !conflictNote) return;
+
+      const ordered = getVisibleMatches();
+      const best = ordered[0];
+      const urgent = matchedGigFeed.filter((item) => item.daysAway <= 7).length;
+      const saved = matchedGigFeed.filter((item) => item.isSaved).length;
+      const actionable = matchedGigFeed.filter((item) => item.isActionable).length;
+
+      bestValue.textContent = best ? `${best.match.percent}%` : '—';
+      bestNote.textContent = best ? `${best.g.venue || 'Opportunity'} • ${best.g.pay || 'Pay pending'}` : 'Waiting for live gigs.';
+      urgentValue.textContent = String(urgent);
+      urgentNote.textContent = urgent ? `${urgent} gig${urgent === 1 ? '' : 's'} need attention within 7 days.` : 'No urgent gigs yet.';
+      savedValue.textContent = String(saved);
+      savedNote.textContent = saved ? `${saved} saved gig${saved === 1 ? '' : 's'} ready to revisit.` : 'Save a gig if you need a minute.';
+      conflictValue.textContent = String(actionable);
+      conflictNote.textContent = actionable ? `${actionable} gig${actionable === 1 ? '' : 's'} are ready to book right now.` : 'Bookable gigs only.';
+    }
+
+    function updateReviewSpotlight() {
+      const gradeEl = document.getElementById('reviewSpotlightGrade');
+      const copyEl = document.getElementById('reviewSpotlightCopy');
+      const noteEl = document.getElementById('reviewSpotlightNote');
+      if (!gradeEl || !copyEl || !noteEl) return;
+      if (!reviewCache.length) {
+        gradeEl.textContent = '—';
+        gradeEl.style.color = '#555';
+        copyEl.textContent = 'Your review history will appear here once hosts submit ratings. This keeps your reputation visible near the top of the dashboard instead of burying it lower in the page.';
+        noteEl.innerHTML = '<em>No review feedback yet.</em>';
+        return;
+      }
+      const overall = computeOverallGrade(reviewCache);
+      const latest = reviewCache[0];
+      gradeEl.textContent = overall || '—';
+      gradeEl.style.color = overall ? GRADE_COLORS[overall] : '#555';
+      copyEl.textContent = `${reviewCache.length} review${reviewCache.length !== 1 ? 's' : ''} recorded. Hosts can see your grade trend and written feedback, so this is now surfaced near the top of the dashboard.`;
+      noteEl.innerHTML = latest?.feedback
+        ? `"${latest.feedback}"<br><em>${latest.hostName || 'Host'} · ${latest.grade || '—'}</em>`
+        : `<em>Latest rating: ${latest?.grade || '—'} from ${latest?.hostName || 'Host'}.</em>`;
+    }
+
+    // ── Dashboard Header ───────────────────────────────────────────────
+    function renderDashboardHeader() {
+      const p    = musicianProfile;
+      const meta = PERFORMER_META[p.performerType || 'musician'] || PERFORMER_META.musician;
+      document.getElementById('dashAvatar').textContent   = meta.icon;
+      document.getElementById('dashName').textContent     = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Performer';
+      document.getElementById('dashStage').textContent    = p.stageName || meta.label;
+      document.getElementById('dashLocation').textContent = p.location  || '';
+      const pill = document.getElementById('dashAvailPill');
+      const open = p.available !== false;
+      pill.innerHTML = `
+        <div class="avail-pill ${open ? 'open' : 'closed'}">
+          <div class="avail-dot ${open ? 'open' : 'closed'}"></div>
+          ${open ? 'Available' : 'Not Available'}
+        </div>`;
+    }
+
+    // ── Stats Strip ────────────────────────────────────────────────────
+    function renderStatsStrip(upcomingCount, reviewCount, overallGrade) {
+      const p = musicianProfile;
+      const grade = overallGrade || p.overallGrade || null;
+      const color = grade ? GRADE_COLORS[grade] : '#333';
+      const totalReviews = reviewCount ?? p.reviewCount ?? 0;
+      document.getElementById('statsStrip').innerHTML = `
+        <div class="stat-box">
+          <div class="stat-val" style="color:${color}">${grade || '—'}</div>
+          <div class="stat-lbl">Overall Grade</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="statUpcoming">${upcomingCount ?? '—'}</div>
+          <div class="stat-lbl">Upcoming Gigs</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">${totalReviews}</div>
+          <div class="stat-lbl">Reviews</div>
+        </div>`;
+    }
+
+    // ── Upcoming Booked Gigs ───────────────────────────────────────────
+    async function loadUpcomingGigs() {
+      const todayStr = isoToday();
+      const q = buildAcceptedGigQuery(db, MUSICIAN_ID, { today: todayStr });
+      const snap = await getDocs(q);
+      const gigs = [];
+      snap.forEach(d => gigs.push({ id: d.id, ...d.data() }));
+
+      // Split upcoming vs past
+      const upcoming = gigs.filter(g => g.date >= todayStr).sort((a,b) => a.date.localeCompare(b.date));
+      const past     = gigs.filter(g => g.date <  todayStr).sort((a,b) => b.date.localeCompare(a.date));
+
+      const el = document.getElementById('upcomingList');
+      const countPill = document.getElementById('upcomingCount');
+
+      if (upcoming.length === 0 && past.length === 0) {
+        el.innerHTML = '<div class="empty-sm">No bookings yet. Keep your availability open and watch the live requests queue below.</div>';
+        countPill.style.display = 'none';
+        return;
+      }
+
+      countPill.textContent = upcoming.length;
+      countPill.style.display = upcoming.length > 0 ? 'inline-block' : 'none';
+
+      // Update stat
+      const statEl = document.getElementById('statUpcoming');
+      if (statEl) statEl.textContent = upcoming.length;
+      renderMusicianChecklist();
+      renderMusicianBookingGuide();
+
+      el.innerHTML = '';
+      if (upcoming.length > 0) {
+        upcoming.forEach((g, i) => el.appendChild(buildBookedCard(g, i, false)));
+      }
+
+      if (past.length > 0) {
+        const toggle = document.createElement('div');
+        toggle.style.cssText = 'font-size:13px; color:#444; cursor:pointer; margin-top:8px; user-select:none;';
+        toggle.textContent   = `▸ ${past.length} past gig${past.length>1?'s':''}`;
+        const pastList = document.createElement('div');
+        pastList.style.display = 'none';
+        past.forEach((g, i) => pastList.appendChild(buildBookedCard(g, i, true)));
+        toggle.addEventListener('click', () => {
+          const shown = pastList.style.display !== 'none';
+          pastList.style.display = shown ? 'none' : 'block';
+          toggle.textContent = (shown ? '▸' : '▾') + ` ${past.length} past gig${past.length>1?'s':''}`;
+        });
+        el.appendChild(toggle);
+        el.appendChild(pastList);
+      }
+    }
+
+    function buildBookedCard(g, index, isPast) {
+      const card = document.createElement('div');
+      card.className = 'booked-card';
+      card.style.animationDelay = `${index * 50}ms`;
+
+      const [y, m, d] = (g.date || '').split('-').map(Number);
+      const dateObj  = new Date(y, m-1, d);
+      const month    = dateObj.toLocaleDateString('en-US', { month: 'short' });
+      const day      = d;
+      const dow      = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
+      const badge    = daysBadge(g.date, isPast);
+      const timeline = buildBookingTimeline(g, isPast);
+      const checkIn = checkInState(g);
+      const checkedInNote = g.checkedInAt
+        ? `<div style="margin-top:10px;font-size:12px;color:#b7f0ce;">Checked in and confirmed for arrival.</div>`
+        : (!isPast && checkIn.reason ? `<div style="margin-top:10px;font-size:12px;color:#9fb0c1;">${checkIn.reason}</div>` : '');
+
+      card.innerHTML = `
+        <div class="booked-date-block">
+          <div class="booked-month">${month}</div>
+          <div class="booked-day">${day}</div>
+          <div class="booked-dow">${dow}</div>
+        </div>
+        <div class="booked-body">
+          <div class="booked-venue">${g.venue || '—'}</div>
+          <div class="gig-meta">
+            <span>🕐 ${formatTime(g.time)}</span>
+            <span>📍 ${g.location || '—'}</span>
+            <span>🎵 ${g.genre || '—'}</span>
+            <span>💵 ${g.pay || '—'}</span>
+          </div>
+          ${timeline}
+          ${checkedInNote}
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;">
+            <a href="booking.html?id=${g.id || g.gigId || ''}" style="font-size:13px;color:#9edcff;text-decoration:none;">View Booking Details →</a>
+            ${!isPast ? `<button type="button" onclick="checkInForGig('${g.id || g.gigId || ''}')" ${checkIn.allowed ? '' : 'disabled'} style="min-height:34px;padding:0 12px;border-radius:10px;border:1px solid ${checkIn.allowed ? '#355e4e' : '#2c3640'};background:${checkIn.allowed ? '#15261f' : '#161c24'};color:${checkIn.allowed ? '#c7f0d7' : '#7f90a3'};font-size:12px;font-weight:700;cursor:${checkIn.allowed ? 'pointer' : 'not-allowed'};">${checkIn.label}</button>` : ''}
+            ${!isPast ? `<button type="button" onclick="cancelBooking('${g.id || g.gigId || ''}')" style="min-height:34px;padding:0 12px;border-radius:10px;border:1px solid #553333;background:#221516;color:#ffb4b4;font-size:12px;font-weight:700;cursor:pointer;">Cancel Booking</button>` : ''}
+          </div>
+        </div>
+        ${badge}`;
+      return card;
+    }
+
+    function buildBookingTimeline(g, isPast) {
+      const steps = [
+        { label: 'Booked', done: true, active: !isPast },
+        { label: 'Checked In', done: !!g.checkedInAt, active: !isPast && !g.checkedInAt },
+        { label: isPast ? 'Played' : 'Upcoming', done: isPast, active: !isPast },
+        { label: g.reviewed ? 'Reviewed' : 'Review Pending', done: !!g.reviewed, active: isPast && !g.reviewed }
+      ];
+      return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">${steps.map((step) => `
+        <span style="padding:6px 10px;border-radius:999px;border:1px solid ${step.done || step.active ? '#355e4e' : '#2c3640'};background:${step.done ? 'rgba(28,83,55,0.45)' : (step.active ? 'rgba(24,47,68,0.55)' : 'rgba(15,20,26,0.7)')};color:${step.done ? '#b7f0ce' : (step.active ? '#d8ecff' : '#8ea0b5')};font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">${step.label}</span>
+      `).join('')}</div>`;
+    }
+
+    function daysBadge(dateStr, isPast) {
+      if (!dateStr) return '';
+      const todayStr = new Date().toISOString().slice(0,10);
+      if (isPast || dateStr < todayStr)
+        return `<div class="days-badge past">Completed</div>`;
+      if (dateStr === todayStr)
+        return `<div class="days-badge today">Today</div>`;
+      const [y,m,d] = dateStr.split('-').map(Number);
+      const diff = Math.round((new Date(y,m-1,d) - new Date()) / 86400000);
+      if (diff === 1)    return `<div class="days-badge tomorrow">Tomorrow</div>`;
+      return `<div class="days-badge soon">In ${diff} days</div>`;
+    }
+
+    function formatTime(t) {
+      if (!t) return '—';
+      const [h, m] = t.split(':').map(Number);
+      const ampm   = h >= 12 ? 'PM' : 'AM';
+      const h12    = h % 12 || 12;
+      return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+    }
+
+    function gigDateTime(gig) {
+      if (!gig?.date || !gig?.time) return null;
+      const [y, m, d] = gig.date.split('-').map(Number);
+      const [hh, mm] = gig.time.split(':').map(Number);
+      if (![y, m, d, hh, mm].every(Number.isFinite)) return null;
+      return new Date(y, m - 1, d, hh, mm, 0, 0);
+    }
+
+    function checkInState(gig) {
+      const start = gigDateTime(gig);
+      if (!start || gig?.status !== 'accepted') return { allowed: false, label: 'Check-in unavailable', reason: '' };
+      if (gig.checkedInAt) return { allowed: false, label: 'Checked In', reason: 'You already confirmed this booking.' };
+      const now = new Date();
+      const opensAt = new Date(start.getTime() - (2 * 60 * 60 * 1000));
+      if (now < opensAt) return { allowed: false, label: 'Check-in opens later', reason: `Check-in opens 2 hours before start at ${formatTime(gig.time)}.` };
+      if (now > start) return { allowed: false, label: 'Check-in window closed', reason: 'The pre-event check-in window has closed.' };
+      return { allowed: true, label: 'Check In', reason: 'Confirm you will be there 2 hours before start.' };
+    }
+
+    // ── Gig cache (for booking writes) ────────────────────────────────
+    const gigDataCache = {};
+
+    // ── Matching helpers ───────────────────────────────────────────────
+    function miles(lat1, lng1, lat2, lng2) {
+      const R = 3958.8, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    // True if the gig's required performer type matches this performer
+    function performerTypeMatch(gig, profile) {
+      const required = (gig.performerType || 'any').toLowerCase();
+      if (required === 'any') return true;
+      return required === (profile.performerType || 'musician').toLowerCase();
+    }
+
+    // True if the performer plays the genre the gig is asking for
+    function genreMatch(gig, profile) {
+      const gigGenre   = gig.genre || '';
+      const perfGenres = profile.genres || [];
+      if (gigGenre === 'Open / Any') return true;  // host accepts anyone
+      if (perfGenres.includes('Open Format') || perfGenres.includes('Open / Any')) return true;  // performer accepts broad work
+      return perfGenres.includes(gigGenre);
+    }
+
+    function normalizeText(value) {
+      return String(value || '').toLowerCase().replace(/[^a-z0-9\s/+-]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    function tokenizeText(value) {
+      return normalizeText(value).split(' ').filter((token) => token.length >= 3);
+    }
+
+    function skillMatch(gig, profile) {
+      const requested = normalizeText(gig.skillNeed);
+      if (!requested) return { matched: true, bonus: 0, detail: '' };
+      const profileText = normalizeText([
+        profile.instruments,
+        profile.bio,
+        profile.stageName,
+        ...(profile.genres || [])
+      ].join(' '));
+      if (!profileText) return { matched: false, bonus: 0, detail: 'Skill gap' };
+      if (profileText.includes(requested)) return { matched: true, bonus: 22, detail: 'Direct skill match' };
+
+      const hits = tokenizeText(requested).filter((token) => profileText.includes(token));
+      if (hits.length >= 2) return { matched: true, bonus: 16, detail: 'Strong skill overlap' };
+      if (hits.length === 1) return { matched: true, bonus: 8, detail: 'Partial skill overlap' };
+      return { matched: false, bonus: 0, detail: 'Skill gap' };
+    }
+
+    // Returns a match descriptor with a percent score (Uber-style confidence ranking).
+    function matchScore(gig, profile, useFallback) {
+      if (profile.available === false) return null;
+      if (!performerTypeMatch(gig, profile)) return null;
+      if (!genreMatch(gig, profile)) return null;
+      const skill = skillMatch(gig, profile);
+      if (!skill.matched) return null;
+
+      const requiredType = (gig.performerType || 'any').toLowerCase();
+      const hasCoords = Number.isFinite(gig.lat) && Number.isFinite(gig.lng)
+        && Number.isFinite(profile.lat) && Number.isFinite(profile.lng);
+      let percent = 35;
+      percent += requiredType === 'any' ? 8 : 15;
+
+      const performerGenres = profile.genres || [];
+      if (performerGenres.includes('Open Format') || performerGenres.includes('Open / Any')) percent += 18;
+      else if ((gig.genre || '') === 'Open / Any') percent += 14;
+      else percent += 22;
+      percent += skill.bonus;
+
+      let css = 'match-genre';
+      let detail = skill.detail || 'Genre fit';
+      if (hasCoords) {
+        const dist = miles(gig.lat, gig.lng, profile.lat, profile.lng);
+        if (dist <= 5) {
+          percent += 32;
+          css = 'match-perfect';
+          detail = 'Perfect distance · ' + Math.round(dist) + ' mi';
+        } else if (dist <= 20) {
+          percent += 26;
+          css = 'match-close';
+          detail = (skill.detail ? skill.detail + ' · ' : '') + 'Close by · ' + Math.round(dist) + ' mi';
+        } else if (dist <= 40) {
+          percent += 18;
+          css = 'match-near';
+          detail = (skill.detail ? skill.detail + ' · ' : '') + 'Nearby · ' + Math.round(dist) + ' mi';
+        } else if (dist <= 65 && useFallback) {
+          percent += 10;
+          css = 'match-expanded';
+          detail = (skill.detail ? skill.detail + ' · ' : '') + 'Expanded radius · ' + Math.round(dist) + ' mi';
+        } else {
+          return null;
+        }
+      } else {
+        percent += useFallback ? 8 : 10;
+        detail = skill.detail ? skill.detail + ' · Profile fit' : 'Genre + profile fit';
+      }
+
+      const reasons = [];
+      reasons.push(requiredType === 'any' ? 'Any performer accepted' : `${(PERFORMER_META[requiredType] || PERFORMER_META.musician).label} role match`);
+      reasons.push((gig.genre || '') === 'Open / Any' ? 'Flexible genre request' : `Genre fit: ${gig.genre || 'Open / Any'}`);
+      if (skill.detail) reasons.push(skill.detail);
+      if (hasCoords) {
+        const dist = miles(gig.lat, gig.lng, profile.lat, profile.lng);
+        reasons.push(`${Math.round(dist)} miles away`);
+      } else {
+        reasons.push('Profile details filled in');
+      }
+
+      percent = Math.max(55, Math.min(99, Math.round(percent)));
+      if (percent < RADAR_MIN_MATCH_PERCENT) return null;
+      return { score: percent / 100, percent, detail, css, reasons };
+    }
+
+    // Days until a gig date (negative = past), used for urgency sort
+    function daysUntil(dateStr) {
+      if (!dateStr) return 9999;
+      const [y,m,d] = dateStr.split('-').map(Number);
+      return Math.round((new Date(y,m-1,d) - new Date()) / 86400000);
+    }
+
+    // ── Open Requests Feed ────────────────────────────────────────────
+    function startListening() {
+      const blackouts      = new Set(musicianProfile.blackoutDates  || []);
+      const bookedGigIds   = new Set((musicianProfile.bookedDates   || []).map(b => b.gigId));
+      const bookedDatesSet = new Set((musicianProfile.bookedDates   || []).map(b => b.date));
+
+      const q = buildOpenGigFeedQuery(db, { today: isoToday() });
+
+      subscribeWhenVisible(() => onSnapshot(q, (snapshot) => {
+        if (!isProfileRadarReady(musicianProfile)) {
+          matchedGigFeed = [];
+          analyticsState.activeMatches = 0;
+          analyticsState.avgMatchPercent = 0;
+          updateAnalyticsPanel();
+          renderRadarSummary();
+          renderQueues();
+          return;
+        }
+        const docs = [];
+        snapshot.forEach(d => docs.push(d));
+
+        // Hard filters: already-passed, already-accepted, blocked date, booked date, or self-booking
+        const eligible = docs.filter(d => {
+          const g = d.data();
+          if ((g.passedBy || []).includes(MUSICIAN_ID)) return false;
+          if (g.hostId === MUSICIAN_ID) return false;
+          if (!isGigActionable({ ...g, id: d.id }, blackouts, bookedGigIds, bookedDatesSet)) return false;
+          return true;
+        });
+
+        // Score pass — primary radius first, expand if nothing found
+        let matched = eligible
+          .map(d => ({ docSnap:d, match: matchScore(d.data(), musicianProfile, false) }))
+          .filter(x => x.match);
+
+        const useFallback = matched.length === 0;
+        if (useFallback) {
+          matched = eligible
+            .map(d => ({ docSnap:d, match: matchScore(d.data(), musicianProfile, true) }))
+            .filter(x => x.match);
+        }
+
+        // Sort: highest match score first, then soonest date.
+        matched.sort((a, b) => {
+          if (b.match.percent !== a.match.percent) return b.match.percent - a.match.percent;
+          return daysUntil(a.docSnap.data().date) - daysUntil(b.docSnap.data().date);
+        });
+
+        analyticsState.activeMatches = matched.length;
+        analyticsState.avgMatchPercent = matched.length > 0
+          ? Math.round(matched.reduce((sum, item) => sum + (item.match.percent || 0), 0) / matched.length)
+          : 0;
+        updateAnalyticsPanel();
+        matchedGigFeed = matched.map(({ docSnap, match }) => {
+          const g = docSnap.data();
+          const gigId = docSnap.id;
+          const daysAway = daysUntil(g.date);
+          gigDataCache[gigId] = g;
+          return {
+            gigId,
+            g,
+            match,
+            hasConflict: false,
+            isActionable: true,
+            isSaved: isSavedGig(gigId),
+            daysAway,
+            payAmount: parseCurrencyAmount(g.pay) || 0,
+            searchText: normalizeText([g.venue, g.location, g.genre, g.pay, g.notes].join(' '))
+          };
+        });
+        renderRadarSummary();
+        renderQueues();
+      }));
+    }
+
+    function renderMatchedQueue() {
+      const listEl = document.getElementById('matchedQueueList');
+      const countEl = document.getElementById('matchedQueueCount');
+      if (!listEl || !countEl) return;
+      const visibleMatches = getVisibleMatches();
+      if (!visibleMatches.length) {
+        countEl.style.display = 'none';
+        listEl.innerHTML = '<div class="empty-sm">No live matches yet. New matches will show up here as hosts post fitting gigs.</div>';
+        return;
+      }
+      countEl.textContent = String(visibleMatches.length);
+      countEl.style.display = 'inline-block';
+      listEl.innerHTML = visibleMatches.map((item) => {
+        const { gigId, g, match, isSaved, daysAway } = item;
+        const days = daysAway;
+        const dateLabel = days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : (days > 1 ? `In ${days} days` : (g.date || 'Date pending'));
+        const insight = getGigRadarInsight(item);
+        return `
+          <div style="padding:14px 0;border-top:1px solid #1d2833;">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+              <div style="min-width:0;flex:1;">
+                <div style="font-size:15px;font-weight:700;color:#f4f7fb;">${g.venue || 'Opportunity'}</div>
+                <div style="font-size:12px;color:#8ea0b5;margin-top:4px;">${dateLabel} • ${g.location || 'Location pending'} • ${g.pay || 'Pay pending'}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+                  <span style="padding:5px 9px;border-radius:999px;background:#111923;border:1px solid #25384a;color:#cfe0f1;font-size:11px;">${match.percent}% match</span>
+                  ${(match.reasons || []).slice(0, 3).map((reason) => `<span style="padding:5px 9px;border-radius:999px;background:#111923;border:1px solid #25384a;color:#cfe0f1;font-size:11px;">${reason}</span>`).join('')}
+                  ${isSaved ? '<span style="padding:5px 9px;border-radius:999px;background:#2b220c;border:1px solid #7a5b11;color:#ffd26d;font-size:11px;">Saved</span>' : ''}
+                </div>
+                <div class="radar-insight ${insight.cls}">${insight.text}</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button type="button" onclick="toggleSavedGig('${gigId}')" class="save-btn ${isSaved ? 'saved' : ''}">${isSaved ? 'Saved' : 'Save'}</button>
+                <a href="booking.html?id=${gigId}" style="display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 12px;border-radius:10px;border:1px solid #2a3d50;background:#13202d;color:#f4f7fb;text-decoration:none;font-size:12px;font-weight:700;">Details</a>
+                <button type="button" onclick="respond('${gigId}','accept')" style="min-height:38px;padding:0 12px;border-radius:10px;border:0;background:#f5a623;color:#111;font-size:12px;font-weight:800;cursor:pointer;">Approve</button>
+                <button type="button" onclick="respond('${gigId}','pass')" style="min-height:38px;padding:0 12px;border-radius:10px;border:1px solid #2a3d50;background:#13202d;color:#f4f7fb;font-size:12px;font-weight:700;cursor:pointer;">Pass</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderOpenRequests() {
+      const gigList  = document.getElementById('gigList');
+      const newBadge = document.getElementById('newBadge');
+      const visibleMatches = getVisibleMatches();
+
+      if (matchedGigFeed.length === 0) {
+        newBadge.style.display = 'none';
+        gigList.innerHTML = `<div class="empty"><span>🎵</span>No matching gigs right now. Tighten your profile, keep availability open, and check back as new host requests come in.</div>`;
+        return;
+      }
+
+      if (visibleMatches.length === 0) {
+        newBadge.style.display = 'inline-block';
+        newBadge.textContent = `${matchedGigFeed.length} LIVE`;
+        gigList.innerHTML = `<div class="empty"><span>🔎</span>No gigs match your current search or filter. Reset the queue controls or widen your view.</div>`;
+        return;
+      }
+
+      newBadge.style.display = 'inline-block';
+      newBadge.textContent   = `${visibleMatches.length} LIVE`;
+      gigList.innerHTML = '';
+
+      const tip = document.createElement('p');
+      tip.className   = 'swipe-tip';
+      tip.textContent = '← swipe to pass   •   swipe to accept →';
+      gigList.appendChild(tip);
+
+      visibleMatches.forEach((item, index) => {
+        const { gigId, g, match, isSaved, hasConflict, daysAway } = item;
+        const insight = getGigRadarInsight(item);
+        const card = document.createElement('div');
+        card.className = `gig-card`;
+        card.id        = `gig-${gigId}`;
+        card.style.animationDelay = `${index * 60}ms`;
+        if (hasConflict) card.style.borderColor = '#6e3a00';
+
+        const savedChip = isSaved
+          ? `<span class="conflict-chip" style="border-color:#7a5b11;background:#2b220c;color:#ffd26d;">★ Saved</span>`
+          : '';
+
+        const dateLabel = (() => {
+          const days = daysAway;
+          if (days === 0)  return `Today`;
+          if (days === 1)  return `Tomorrow`;
+          if (days > 1)    return `In ${days} days`;
+          return g.date;
+        })();
+
+        card.innerHTML = `
+          <div class="swipe-hint accept">Accept</div>
+          <div class="swipe-hint pass">Pass</div>
+          <div class="gig-topline">
+            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+              <span class="match-badge ${match.css}" style="margin-bottom:0;">${match.percent}% Match</span>
+              <span class="match-detail">${match.detail}</span>
+              ${savedChip}
+            </div>
+            <button class="save-btn ${isSaved ? 'saved' : ''}" onclick="toggleSavedGig('${gigId}')">${isSaved ? 'Saved' : 'Save'}</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+            ${(match.reasons || []).slice(0, 4).map((reason) => `<span style="padding:5px 9px;border-radius:999px;background:#111923;border:1px solid #25384a;color:#cfe0f1;font-size:11px;">${reason}</span>`).join('')}
+          </div>
+          <div class="venue">${g.venue}</div>
+          <div class="gig-meta">
+            <span>📅 ${dateLabel} @ ${formatTime(g.time)}</span>
+            <span>📍 ${g.location}</span>
+            <span>🎵 ${g.genre}</span>
+            <span>💵 ${g.pay}</span>
+            ${g.performerType && g.performerType !== 'any' ? `<span>🎭 ${(PERFORMER_META[g.performerType] || PERFORMER_META.musician).label}</span>` : ''}
+          </div>
+          ${g.skillNeed ? `<div class="gig-notes"><strong>Skill focus:</strong> ${g.skillNeed}</div>` : ''}
+          ${g.notes ? `<div class="gig-notes">${g.notes}</div>` : ''}
+          <div class="radar-insight ${insight.cls}">${insight.text}</div>
+          <div class="actions">
+            <a class="btn btn-pass" href="booking.html?id=${gigId}" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">Details</a>
+            <button class="btn btn-accept" onclick="respond('${gigId}','accept')">Accept</button>
+            <button class="btn btn-pass"   onclick="respond('${gigId}','pass')">Pass</button>
+          </div>
+          <div class="radar-foot"><span>${daysUntil(g.date) <= 2 ? 'Moves fast' : 'Still open'}</span><span>${isSaved ? 'Saved in radar' : 'Live in radar now'}</span></div>`;
+        gigList.appendChild(card);
+        addSwipeGesture(card, gigId);
+      });
+    }
+
+    // ── Swipe Gesture ─────────────────────────────────────────────────
+    const responding = new Set();
+
+    function addSwipeGesture(card, gigId) {
+      let startX=0, startY=0, currentX=0, active=false;
+      const THRESHOLD = 110;
+      const hintAccept = card.querySelector('.swipe-hint.accept');
+      const hintPass   = card.querySelector('.swipe-hint.pass');
+
+      function onStart(x,y) {
+        if (responding.has(gigId)) return;
+        startX=x; startY=y; currentX=0; active=true;
+        card.classList.add('dragging');
+      }
+      function onMove(x,y) {
+        if (!active) return;
+        const dx=x-startX, dy=y-startY;
+        if (!currentX && Math.abs(dy)>Math.abs(dx)*1.2) { active=false; card.classList.remove('dragging'); return; }
+        currentX=dx;
+        card.style.transform = `translateX(${dx}px) rotate(${dx*0.045}deg)`;
+        card.style.opacity   = String(Math.max(0.45, 1-Math.abs(dx)/280));
+        hintAccept.style.opacity = dx>15  ? String(Math.min(1,(dx-15)/55))  : '0';
+        hintPass.style.opacity   = dx<-15 ? String(Math.min(1,(-dx-15)/55)) : '0';
+      }
+      function onEnd() {
+        if (!active) return;
+        active=false; card.classList.remove('dragging');
+        hintAccept.style.opacity='0'; hintPass.style.opacity='0';
+        if      (currentX >  THRESHOLD) respond(gigId,'accept',card);
+        else if (currentX < -THRESHOLD) respond(gigId,'pass',card);
+        else { card.style.transform=''; card.style.opacity=''; }
+      }
+
+      card.addEventListener('touchstart', e=>onStart(e.touches[0].clientX,e.touches[0].clientY), {passive:true});
+      card.addEventListener('touchmove',  e=>{ if(active) onMove(e.touches[0].clientX,e.touches[0].clientY); }, {passive:true});
+      card.addEventListener('touchend',   onEnd);
+      card.addEventListener('mousedown',  e=>{ if(e.button===0) onStart(e.clientX,e.clientY); });
+      window.addEventListener('mousemove',e=>{ if(active) onMove(e.clientX,e.clientY); });
+      window.addEventListener('mouseup',  ()=>{ if(active) onEnd(); });
+    }
+
+    function exitCard(card, dir) {
+      card.classList.add(dir==='right' ? 'exit-right' : 'exit-left');
+    }
+
+    // ── Respond (accept / pass) ────────────────────────────────────────
+    window.toggleSavedGig = (gigId) => toggleSavedGig(gigId);
+
+    window.respond = async (gigId, action, card) => {
+      if (responding.has(gigId)) return;
+      responding.add(gigId);
+
+      card = card || document.getElementById(`gig-${gigId}`);
+      card.querySelectorAll('.btn').forEach(b => b.disabled=true);
+
+      const gigRef = doc(db, 'gigs', gigId);
+
+      try {
+        if (action === 'accept') {
+          const cachedGigData = gigDataCache[gigId] || {};
+          if (cachedGigData.hostId === MUSICIAN_ID) {
+            alert('You cannot accept your own gig as a performer.');
+            responding.delete(gigId);
+            card.style.transform=''; card.style.opacity='';
+            card.querySelectorAll('.btn').forEach(b => b.disabled=false);
+            return;
+          }
+
+          exitCard(card, 'right');
+          let acceptedGig = null;
+          const musicianRef = doc(db, 'musicians', MUSICIAN_ID);
+
+          await runTransaction(db, async (tx) => {
+            const gigSnap = await tx.get(gigRef);
+            const musicianSnap = await tx.get(musicianRef);
+            if (!gigSnap.exists()) throw new Error('Gig is no longer available.');
+
+            const liveGig = gigSnap.data();
+            if (liveGig.hostId === MUSICIAN_ID) {
+              throw new Error('You cannot accept your own gig as a performer.');
+            }
+            if (liveGig.status !== 'open') {
+              throw new Error('This gig has already been taken.');
+            }
+
+            tx.update(gigRef, {
+              status:'accepted',
+              acceptedBy: MUSICIAN_ID,
+              acceptedAt: serverTimestamp(),
+              lockedPay: liveGig.pay || '',
+              lockedDate: liveGig.date || '',
+              lockedTime: liveGig.time || '',
+              lockedLocation: liveGig.location || '',
+              ...(Number.isFinite(Number(liveGig.processingFeeAmount)) ? { lockedProcessingFeeAmount: Number(liveGig.processingFeeAmount) } : {}),
+              ...(Number.isFinite(Number(liveGig.hostTotalCharge)) ? { lockedHostTotalCharge: Number(liveGig.hostTotalCharge) } : {})
+            });
+            acceptedGig = liveGig;
+
+            if (liveGig.date) {
+              const booking = {
+                gigId,
+                id: gigId,
+                date:     liveGig.date,
+                venue:    liveGig.venue    || '',
+                time:     liveGig.time     || '',
+                pay:      liveGig.pay      || '',
+                location: liveGig.location || '',
+                genre:    liveGig.genre    || ''
+              };
+              const bookedDates = Array.isArray(musicianSnap.data()?.bookedDates) ? musicianSnap.data().bookedDates : [];
+              tx.update(musicianRef, {
+                bookedDates: pruneBookedDatesCache(bookedDates, booking)
+              });
+            }
+          });
+
+          if (acceptedGig && acceptedGig.date) {
+            const booking = {
+              gigId,
+              id: gigId,
+              date:     acceptedGig.date,
+              venue:    acceptedGig.venue    || '',
+              time:     acceptedGig.time     || '',
+              pay:      acceptedGig.pay      || '',
+              location: acceptedGig.location || '',
+              genre:    acceptedGig.genre    || ''
+            };
+            const existingBookings = musicianProfile.bookedDates || [];
+            musicianProfile.bookedDates = pruneBookedDatesCache(existingBookings, booking);
+          }
+
+          loadUpcomingGigs();
+          refreshPerformanceAnalytics();
+          renderMatchedQueue();
+
+          setTimeout(() => {
+            card.style.transition='none'; card.style.transform=''; card.style.opacity='';
+            card.classList.remove('exit-right');
+            card.querySelector('.actions').innerHTML =
+              '<div class="responded accepted">Booked — host will be in touch.</div>';
+          }, 340);
+
+        } else {
+          exitCard(card, 'left');
+          await updateDoc(gigRef, { passedBy: arrayUnion(MUSICIAN_ID) });
+          refreshPerformanceAnalytics();
+          renderMatchedQueue();
+          setTimeout(() => card.remove(), 340);
+        }
+      } catch (err) {
+        console.error(err);
+        responding.delete(gigId);
+        card.style.transform=''; card.style.opacity='';
+        card.querySelectorAll('.btn').forEach(b => b.disabled=false);
+      }
+    };
+
+    window.cancelBooking = async (gigId) => {
+      if (!gigId) return;
+      const gigRef = doc(db, 'gigs', gigId);
+      const musicianRef = doc(db, 'musicians', MUSICIAN_ID);
+      const currentGig = gigDataCache[gigId];
+      if (currentGig?.date && currentGig.date < new Date().toISOString().slice(0, 10)) {
+        alert('Past gigs cannot be canceled from this list.');
+        return;
+      }
+      if (!window.confirm('Cancel this booking and reopen it for other performers?')) return;
+      try {
+        await runTransaction(db, async (tx) => {
+          const gigSnap = await tx.get(gigRef);
+          const musicianSnap = await tx.get(musicianRef);
+          if (!gigSnap.exists()) throw new Error('This booking no longer exists.');
+          const gig = gigSnap.data();
+          if (gig.acceptedBy !== MUSICIAN_ID) throw new Error('This booking is no longer assigned to you.');
+          const bookedDates = Array.isArray(musicianSnap.data()?.bookedDates) ? musicianSnap.data().bookedDates : [];
+          tx.update(gigRef, {
+            status: 'open',
+            acceptedBy: deleteField(),
+            acceptedAt: deleteField(),
+            lockedPay: deleteField(),
+            lockedDate: deleteField(),
+            lockedTime: deleteField(),
+            lockedLocation: deleteField(),
+            lockedProcessingFeeAmount: deleteField(),
+            lockedHostTotalCharge: deleteField(),
+            checkedInAt: deleteField()
+          });
+          tx.update(musicianRef, {
+            bookedDates: pruneBookedDatesCache(bookedDates.filter((booking) => booking && booking.gigId !== gigId))
+          });
+        });
+        if (Array.isArray(musicianProfile.bookedDates)) {
+          musicianProfile.bookedDates = pruneBookedDatesCache(musicianProfile.bookedDates.filter((booking) => booking && booking.gigId !== gigId));
+        }
+        if (gigDataCache[gigId]) {
+          gigDataCache[gigId].status = 'open';
+          delete gigDataCache[gigId].acceptedBy;
+          delete gigDataCache[gigId].acceptedAt;
+          delete gigDataCache[gigId].lockedPay;
+          delete gigDataCache[gigId].lockedDate;
+          delete gigDataCache[gigId].lockedTime;
+          delete gigDataCache[gigId].lockedLocation;
+          delete gigDataCache[gigId].lockedProcessingFeeAmount;
+          delete gigDataCache[gigId].lockedHostTotalCharge;
+          delete gigDataCache[gigId].checkedInAt;
+        }
+        await loadUpcomingGigs();
+        await refreshPerformanceAnalytics();
+      } catch (err) {
+        console.error(err);
+        alert(err.message || 'Unable to cancel this booking right now.');
+      }
+    };
+
+    window.checkInForGig = async (gigId) => {
+      const gig = gigDataCache[gigId];
+      if (!gig) return;
+      const state = checkInState(gig);
+      if (!state.allowed) {
+        alert(state.reason || 'This booking cannot be checked in right now.');
+        return;
+      }
+      try {
+        await updateDoc(doc(db, 'gigs', gigId), { checkedInAt: serverTimestamp() });
+        if (gigDataCache[gigId]) gigDataCache[gigId].checkedInAt = new Date().toISOString();
+        await loadUpcomingGigs();
+      } catch (err) {
+        console.error(err);
+        alert('Unable to confirm check-in right now.');
+      }
+    };
+
+    // ── My Reviews ────────────────────────────────────────────────────
+    async function loadMyReviews() {
+      const snap = await getDocs(query(
+        collection(db, 'musicians', MUSICIAN_ID, 'reviews'),
+        orderBy('createdAt','desc'), limit(20)
+      ));
+      if (snap.empty) {
+        reviewCache = [];
+        updateReviewSpotlight();
+        renderMusicianChecklist();
+        renderMusicianBookingGuide();
+        return;
+      }
+
+      const reviews = [];
+      snap.forEach(r => reviews.push(r.data()));
+      reviewCache = reviews;
+      updateReviewSpotlight();
+      renderMusicianChecklist();
+      renderMusicianBookingGuide();
+
+      const overall  = computeOverallGrade(reviews);
+      const tally    = Object.fromEntries(GRADES_ORDER.map(g=>[g,0]));
+      reviews.forEach(r => { if(r.grade) tally[r.grade]=(tally[r.grade]||0)+1; });
+      const maxCount = Math.max(...Object.values(tally), 1);
+
+      const gradeEl = document.getElementById('myGradeLetter');
+      gradeEl.textContent  = overall || '—';
+      gradeEl.style.color  = overall ? GRADE_COLORS[overall] : '#444';
+      document.getElementById('myGradeCount').textContent =
+        `${reviews.length} review${reviews.length!==1?'s':''}${tally['N']?` · ${tally['N']} no-show${tally['N']>1?'s':''}` : ''}`;
+
+      document.getElementById('gradeBars').innerHTML = GRADES_ORDER.map(g => `
+        <div class="grade-bar-row">
+          <div class="grade-bar-label" style="color:${GRADE_COLORS[g]}">${g}</div>
+          <div class="grade-bar-track">
+            <div class="grade-bar-fill" style="width:${Math.round((tally[g]/maxCount)*100)}%; background:${GRADE_COLORS[g]};"></div>
+          </div>
+          <div class="grade-bar-count">${tally[g]}</div>
+        </div>`).join('');
+
+      document.getElementById('myReviewsList').innerHTML = reviews.map(r => {
+        const color = GRADE_COLORS[r.grade] || '#555';
+        const date  = r.createdAt ? new Date(r.createdAt.toDate()).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '';
+        return `
+        <div class="review-card">
+          <div class="review-top">
+            <div class="review-host">${r.hostName||'Host'}</div>
+            <div class="review-grade-pill" style="color:${color};border-color:${color};background:${color}18;">${r.grade||'—'}</div>
+          </div>
+          <div class="review-date">${date}</div>
+          ${r.feedback?`<div class="review-text">"${r.feedback}"</div>`:''}
+        </div>`;
+      }).join('');
+
+      document.getElementById('reviewsSection').style.display = 'block';
+
+      // Refresh stats with grade
+      renderStatsStrip(null, reviews.length, overall);
+      renderMusicianChecklist();
+      renderMusicianBookingGuide();
+    }
+
+    initQueueControls();
+  </script>
+  <script src="scripts/legal-components.js"></script>
+  <script src="scripts/host-performer-enhancements.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.Enhancements) {
+        window.Enhancements.initIntentFilters('intentFilter');
+      }
+    });
+  </script>
+
+</body>
+</html>

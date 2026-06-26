@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="ExcelBolt icon">
+  <defs>
+    <linearGradient id="g" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#2E7D32"/>
+      <stop offset="100%" stop-color="#66BB6A"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#F4F8F2"/>
+  <rect x="18" y="18" width="92" height="92" rx="20" fill="url(#g)"/>
+  <path d="M45 32h38a9 9 0 0 1 9 9v46a9 9 0 0 1-9 9H45a9 9 0 0 1-9-9V41a9 9 0 0 1 9-9Z" fill="#ffffff" opacity=".24"/>
+  <path d="M39 70h19l-7 27 38-39H68l7-27-36 39Z" fill="#ffffff"/>
+</svg>

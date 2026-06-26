@@ -1,0 +1,32 @@
+{
+  "name": "cltch-ntwrk-mobile",
+  "private": true,
+  "version": "1.0.0",
+  "description": "CLTCH.NTWRK mobile wrappers for iOS and Android.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "build:mobile": "node scripts/sync-mobile-web.mjs",
+    "clean": "rm -rf .next mobile-web android/app/build release",
+    "deploy:hosting": "node scripts/guard-deploy.mjs && npx firebase-tools deploy --only hosting --project cltch-ntwrk-social --account blacklionmediastudio@gmail.com",
+    "sync:mobile": "npm run build:mobile && npx cap sync",
+    "sync:ios": "npm run build:mobile && npx cap sync ios",
+    "sync:android": "npm run build:mobile && npx cap sync android",
+    "open:ios": "npx cap open ios",
+    "open:android": "npx cap open android",
+    "doctor:mobile": "npx cap doctor",
+    "log:policy": "node scripts/policy-log.mjs \"Compliance refresh\""
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/core": "^8.3.0",
+    "@capacitor/ios": "^8.3.0"
+  },
+  "dependencies": {
+    "next": "^14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

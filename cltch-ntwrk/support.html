@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLTCH.NTWRK Support Diagnostics</title>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script src="site-init.js" defer></script>
+  <style>
+    body { background:#0a0a0a; color:#f0f0f0; font-family:Helvetica,Arial,sans-serif; margin:0; }
+    .wrap { max-width:980px; margin:0 auto; padding:32px 20px 64px; }
+    .card { background:#121212; border:1px solid #262626; border-radius:18px; padding:20px; margin-bottom:18px; }
+    h1 { font-size:32px; margin:0 0 10px; }
+    .sub { color:#8f8f8f; margin:0 0 22px; line-height:1.6; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+    .stat { background:#0d0d0d; border:1px solid #202020; border-radius:14px; padding:14px; }
+    .label { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#8f8f8f; margin-bottom:8px; }
+    .value { font-size:15px; line-height:1.5; word-break:break-word; }
+    .mono { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; color:#d8d8d8; white-space:pre-wrap; }
+    .warn { color:#f5a623; }
+    .ok { color:#78d59a; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Support Diagnostics</h1>
+    <p class="sub">Internal account diagnostics for CLTCH.NTWRK. This page reads the current signed-in OneID so support can quickly see verification, role, profile completion, auth activity, and browser runtime details.</p>
+    <div class="card">
+      <div class="grid" id="statsGrid"></div>
+    </div>
+    <div class="card">
+      <div class="label">Raw User Summary</div>
+      <div class="mono" id="summaryDump">Loading…</div>
+    </div>
+    <div class="card">
+      <div class="label">Browser Runtime</div>
+      <div class="mono" id="runtimeDump">Loading…</div>
+    </div>
+  </div>
+  <script type="module">
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { onAuthStateChanged, reload, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { auth, db } from "./app/firebase-client.js";
+    import { DEFAULT_TIMEOUT_MS, clearResumeTarget, installIdleLogout } from "./app/idle-logout.js";
+    import { buildOneId, readUserSummary } from "./app/user-db.js";
+
+    const statsGrid = document.getElementById("statsGrid");
+    const summaryDump = document.getElementById("summaryDump");
+    const runtimeDump = document.getElementById("runtimeDump");
+
+    function addStat(label, value, cls = "") {
+      const card = document.createElement("div");
+      card.className = "stat";
+      card.innerHTML = `<div class="label">${label}</div><div class="value ${cls}">${value}</div>`;
+      statsGrid.appendChild(card);
+    }
+
+    function requiresVerifiedEmail(user) {
+      return !!(user && user.providerData && user.providerData.some((provider) => provider?.providerId === "password") && !user.emailVerified);
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "auth.html";
+        return;
+      }
+      try { await reload(user); } catch {}
+      if (requiresVerifiedEmail(user)) {
+        await signOut(auth).catch(() => {});
+        window.location.href = "auth.html?reason=verify-email";
+        return;
+      }
+      installIdleLogout(auth, DEFAULT_TIMEOUT_MS);
+      const summary = await readUserSummary(db, user.uid);
+      const hostSnap = await getDoc(doc(db, "hosts", user.uid));
+      const musicianSnap = await getDoc(doc(db, "musicians", user.uid));
+      const roleSnap = await getDoc(doc(db, "userRoles", user.uid));
+      const registrations = "serviceWorker" in navigator ? await navigator.serviceWorker.getRegistrations() : [];
+
+      addStat("Email", user.email || "—");
+      addStat("OneID", summary?.oneId || buildOneId(user.uid));
+      addStat("Verified", user.emailVerified ? "Yes" : "No", user.emailVerified ? "ok" : "warn");
+      addStat("UID", user.uid);
+      addStat("Role Summary", summary?.role || "—");
+      addStat("Role Record", roleSnap.exists() ? (roleSnap.data().role || "—") : "Missing", roleSnap.exists() ? "ok" : "warn");
+      addStat("Host Profile", hostSnap.exists() ? "Present" : "Missing", hostSnap.exists() ? "ok" : "warn");
+      addStat("Performer Profile", musicianSnap.exists() ? "Present" : "Missing", musicianSnap.exists() ? "ok" : "warn");
+      addStat("Profile Complete", summary?.profileComplete ? "Yes" : "No", summary?.profileComplete ? "ok" : "warn");
+      addStat("Last Sign-In", summary?.authLastSignInAt?.toDate?.()?.toLocaleString?.() || "Not recorded");
+      addStat("Last Sign-Out", summary?.authLastSignOutAt?.toDate?.()?.toLocaleString?.() || "Not recorded");
+      addStat("Last Password Reset", summary?.authLastPasswordResetAt?.toDate?.()?.toLocaleString?.() || "Not recorded");
+      addStat("SW Registrations", String(registrations.length), registrations.length ? "warn" : "ok");
+
+      summaryDump.textContent = JSON.stringify(summary || {}, null, 2);
+      runtimeDump.textContent = JSON.stringify({
+        href: window.location.href,
+        userAgent: navigator.userAgent,
+        online: navigator.onLine,
+        registrations: registrations.map((registration) => ({
+          scope: registration.scope,
+          active: !!registration.active
+        }))
+      }, null, 2);
+    });
+  </script>
+</body>
+</html>

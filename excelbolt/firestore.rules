@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create, update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly([
+          'name',
+          'firstName',
+          'lastName',
+          'email',
+          'company',
+          'workspace',
+          'workspaceSummary',
+          'security',
+          'updatedAt',
+          'createdAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.firstName is string
+        && request.resource.data.firstName.size() <= 40
+        && request.resource.data.lastName is string
+        && request.resource.data.lastName.size() <= 40
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 120
+        && request.resource.data.company is string
+        && request.resource.data.company.size() <= 80
+        && (!('workspace' in request.resource.data) || request.resource.data.workspace is map)
+        && (!('workspaceSummary' in request.resource.data) || request.resource.data.workspaceSummary is map)
+        && (!('security' in request.resource.data) || request.resource.data.security is map)
+        && (!('updatedAt' in request.resource.data) || request.resource.data.updatedAt is string)
+        && (!('createdAt' in request.resource.data) || request.resource.data.createdAt is string);
+      allow delete: if false;
+    }
+
+    match /users/{userId}/backups/{backupId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly([
+          'profile',
+          'workspace',
+          'workspaceSummary',
+          'reason',
+          'createdAt'
+        ])
+        && request.resource.data.profile is map
+        && request.resource.data.workspace is map
+        && request.resource.data.workspaceSummary is map
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() <= 40
+        && request.resource.data.createdAt is string;
+      allow update, delete: if false;
+    }
+  }
+}

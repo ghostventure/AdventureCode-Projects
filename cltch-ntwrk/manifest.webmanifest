@@ -1,0 +1,17 @@
+{
+  "name": "CLTCH.NTWRK",
+  "short_name": "CLTCH.NTWRK",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "description": "CLTCH.NTWRK connects hosts, venues, musicians, and DJs in a real-time booking marketplace.",
+  "icons": [
+    {
+      "src": "/icons/cltch-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

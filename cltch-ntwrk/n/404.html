@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLTCH.NTWRK | Route Not Found</title>
+  <style>
+    :root {
+      --bg: #090c11;
+      --panel: #111821;
+      --line: #223041;
+      --text: #edf4ff;
+      --muted: #9baac0;
+      --brand: #f5a623;
+      --accent: #58c7ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 14% 20%, #1b2f4f 0, transparent 32%),
+        radial-gradient(circle at 80% 84%, #3a2a11 0, transparent 38%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Avenir Next", Arial, sans-serif;
+      padding: 24px;
+    }
+    .card {
+      width: min(680px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .code {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #5d3a00;
+      color: var(--brand);
+      background: #2d1d07;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.1; margin-bottom: 10px; }
+    p { color: var(--muted); line-height: 1.6; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+    .primary { background: var(--brand); color: #000; }
+    .ghost { border-color: var(--line); color: #d9e9ff; background: #152131; }
+    .hint {
+      margin-top: 16px;
+      font-size: 13px;
+      border-left: 3px solid var(--accent);
+      padding: 8px 10px;
+      background: #102033;
+      color: #cae5ff;
+      border-radius: 8px;
+    }
+  </style>
+  <link rel="stylesheet" href="../cltch-boilerplate.css">
+</head>
+<body>
+  <section class="card">
+    <div class="code">404 Route Missing</div>
+    <h1>This page stepped off the set.</h1>
+    <p>The link may be out of date, or the route is still under construction. Use the actions below to jump back to the live host, performer, or boilerplate surfaces.</p>
+    <div class="actions">
+      <a class="btn primary" href="/index.html">Back to Home</a>
+      <a class="btn ghost" href="/musician-dashboard.html">Performer Dashboard</a>
+      <a class="btn ghost" href="/host.html">Host Dashboard</a>
+      <a class="btn ghost" href="/n/index.html">Boilerplate Hub</a>
+    </div>
+    <div class="hint">If this route should exist, add it to your Hosting assets and keep the boilerplate hub aligned with the live route map.</div>
+  </section>
+</body>
+</html>

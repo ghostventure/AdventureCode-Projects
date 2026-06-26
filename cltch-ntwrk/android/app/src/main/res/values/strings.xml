@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CLTCH.NTWRK</string>
+    <string name="title_activity_main">CLTCH.NTWRK</string>
+    <string name="package_name">com.cltch.ntwrk</string>
+    <string name="custom_url_scheme">com.cltch.ntwrk</string>
+</resources>

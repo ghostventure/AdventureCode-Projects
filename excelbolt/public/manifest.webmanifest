@@ -1,0 +1,17 @@
+{
+  "name": "ExcelBolt",
+  "short_name": "ExcelBolt",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F8F2",
+  "theme_color": "#1B5E20",
+  "description": "Secure spreadsheet exports, connector monitoring, and workspace recovery for ExcelBolt.",
+  "icons": [
+    {
+      "src": "/icons/excelbolt-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

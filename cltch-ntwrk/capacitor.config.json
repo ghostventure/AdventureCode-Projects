@@ -1,0 +1,19 @@
+{
+  "appId": "com.cltch.ntwrk",
+  "appName": "CLTCH.NTWRK",
+  "webDir": "mobile-web",
+  "bundledWebRuntime": false,
+  "backgroundColor": "#0a0f18",
+  "server": {
+    "androidScheme": "https",
+    "iosScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#0a0f18",
+    "allowMixedContent": false
+  },
+  "ios": {
+    "backgroundColor": "#0a0f18",
+    "contentInset": "automatic"
+  }
+}

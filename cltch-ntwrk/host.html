@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Post gigs and manage host activity on CLTCH.NTWRK.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK — Post a Gig</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    header nav {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 14px;
+    }
+    .mode-toggle {
+      margin-left: 24px;
+      display: inline-flex;
+      align-items: center;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .mode-btn {
+      border: 0;
+      background: transparent;
+      color: #8d98a8;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .mode-btn.active {
+      background: #f5a623;
+      color: #000;
+    }
+    .mode-toggle.busy { opacity: 0.7; }
+    .mode-toggle.busy .mode-btn { pointer-events: none; }
+    header nav select {
+      margin-left: 24px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #aaa;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 10px;
+      outline: none;
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    header nav select:focus { border-color: #f5a623; color: #fff; }
+
+    header nav a:hover { color: #fff; }
+
+    .container {
+      flex: 1;
+      max-width: 1040px;
+      width: 100%;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    .host-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 420px);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .host-main,
+    .host-side {
+      min-width: 0;
+    }
+
+    .ops-panel {
+      background: linear-gradient(180deg, rgba(19, 31, 49, 0.95), rgba(13, 22, 34, 0.94));
+      border: 1px solid #25364f;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.26);
+    }
+
+    .ops-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .ops-kicker {
+      color: #58c7ff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .ops-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .ops-copy {
+      color: #95a7bf;
+      font-size: 14px;
+      line-height: 1.7;
+      max-width: 600px;
+    }
+
+    .ops-pill {
+      border: 1px solid #34506f;
+      background: rgba(88, 199, 255, 0.12);
+      color: #9edcff;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .ops-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .ops-stat {
+      background: rgba(10, 16, 24, 0.78);
+      border: 1px solid #203142;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .ops-stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .ops-stat-label {
+      font-size: 11px;
+      color: #8ea4bf;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 36px;
+    }
+
+    .form-card,
+    .queue-card {
+      background: rgba(15, 23, 36, 0.94);
+      border: 1px solid #25364f;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .panel-copy {
+      color: #9bb0c7;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .preset-chip {
+      border: 1px solid #31465f;
+      background: rgba(19, 31, 49, 0.86);
+      border-radius: 999px;
+      padding: 9px 14px;
+      color: #cfe2fa;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+    }
+
+    .draft-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      border: 1px dashed #34506f;
+      background: rgba(12, 21, 31, 0.82);
+      border-radius: 12px;
+      margin-bottom: 18px;
+    }
+
+    .draft-note {
+      color: #9bb0c7;
+      font-size: 13px;
+    }
+
+    .draft-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ghost-btn {
+      border: 1px solid #31465f;
+      background: rgba(19, 31, 49, 0.86);
+      color: #d9e7f8;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #aaa;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 15px;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #f5a623;
+    }
+
+    select option { background: #141414; }
+
+    textarea { resize: vertical; min-height: 90px; }
+
+    .row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .row .form-group { flex: 1; }
+
+    .btn-post {
+      width: 100%;
+      padding: 14px;
+      background: #f5a623;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+      transition: background 0.2s;
+    }
+
+    .btn-post:hover { background: #e09510; }
+    .btn-post:disabled { background: #555; color: #333; cursor: not-allowed; }
+
+    .status {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status.success {
+      background: #0d2e1a;
+      border: 1px solid #1a5c34;
+      color: #4caf82;
+      display: block;
+    }
+
+    .status.error {
+      background: #2e0d0d;
+      border: 1px solid #5c1a1a;
+      color: #cf6679;
+      display: block;
+    }
+    .fee-note {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .fee-estimate {
+      margin-top: 8px;
+      background: #101010;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #aaa;
+      display: none;
+    }
+    .fee-estimate strong {
+      color: #f5a623;
+      font-weight: 700;
+    }
+
+    .posted-gigs h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #aaa;
+    }
+
+    .gig-card {
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+
+    .gig-card .gig-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .gig-card .gig-meta {
+      font-size: 13px;
+      color: #666;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .gig-status {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .gig-status.pending  { background: #2a2200; color: #f5a623; }
+    .gig-status.accepted { background: #0d2e1a; color: #4caf82; }
+    .gig-status.open     { background: #1a1a2e; color: #7b9cff; }
+    .fee-breakdown {
+      margin-top: 12px;
+      border-top: 1px solid #2a2a2a;
+      padding-top: 10px;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.5;
+    }
+    .fee-breakdown .fee-total {
+      color: #f5a623;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .queue-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 160px;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .queue-empty {
+      border: 1px dashed #31465f;
+      border-radius: 14px;
+      padding: 28px 20px;
+      text-align: center;
+      color: #9bb0c7;
+      background: rgba(12, 21, 31, 0.72);
+    }
+
+    .queue-empty strong {
+      display: block;
+      font-size: 16px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    /* Grade selector */
+    .grade-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .grade-chip-btn {
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      background: #1e1e1e;
+      color: #555;
+      transition: all 0.15s;
+    }
+    .grade-chip-btn:hover { border-color: currentColor; }
+    .grade-chip-btn.selected { border-color: currentColor; background: #0a0a0a; }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #333;
+      border-top: 1px solid #1e1e1e;
+    }
+
+    @media (max-width: 940px) {
+      .host-shell {
+        grid-template-columns: 1fr;
+      }
+      .ops-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .host-side {
+        order: 2;
+      }
+      .host-main {
+        order: 1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        margin: 28px auto;
+      }
+      .ops-grid,
+      .queue-toolbar {
+        grid-template-columns: 1fr;
+      }
+      .row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script src="site-init.js" defer></script>
+</head>
+<body class="cltch-workspace-page">
+
+  <header>
+    <div class="workspace-header-shell">
+      <a class="workspace-brand logo" href="index.html" aria-label="CLTCH.NTWRK home">
+        <span class="workspace-brand-mark" aria-hidden="true">C</span>
+        <span class="workspace-brand-copy">
+          <span class="workspace-brand-title">CLTCH.NTWRK</span>
+          <small>Host dispatch workspace</small>
+        </span>
+      </a>
+      <nav class="workspace-nav">
+        <div class="mode-toggle" id="modeSwitch" aria-label="Switch mode" role="tablist">
+          <button class="mode-btn" type="button" data-mode="host">Host</button>
+          <button class="mode-btn" type="button" data-mode="musician">Performer</button>
+        </div>
+        <a href="host-profile.html">My Account</a>
+        <a href="support.html">Support</a>
+        <a href="auth.html" id="signOutLink">Sign Out</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-shell container">
+    <section class="workspace-masthead">
+      <div class="workspace-masthead-grid">
+        <div class="workspace-masthead-copy">
+          <div class="workspace-kicker">Host Dispatch OS</div>
+          <h1 class="workspace-masthead-title">Run your booking floor without losing the thread.</h1>
+          <p>CLTCH now opens with a clearer host command surface: post the request, watch the queue, keep compliance visible, and move from draft to accepted booking from one place.</p>
+          <div class="workspace-quicklinks">
+            <a class="workspace-quicklink" href="#gigForm">Post Request</a>
+            <a class="workspace-quicklink" href="#command-center-panel">Open Command Center</a>
+            <a class="workspace-quicklink" href="#assurance-pack-panel">Review Assurance Pack</a>
+          </div>
+        </div>
+        <div class="workspace-summary-strip" aria-label="Host workspace summary">
+          <div class="workspace-summary-card">
+            <span class="workspace-summary-label">Posting Flow</span>
+            <span class="workspace-summary-value">Preset to live queue</span>
+            <span class="workspace-summary-note">Templates, draft recovery, and queue controls stay in view.</span>
+          </div>
+          <div class="workspace-summary-card">
+            <span class="workspace-summary-label">Booking Guardrails</span>
+            <span class="workspace-summary-value">Compliance + pay clarity</span>
+            <span class="workspace-summary-note">Local reminders, fee breakdowns, and first-booking guidance sit next to the form.</span>
+          </div>
+          <div class="workspace-summary-card">
+            <span class="workspace-summary-label">Operations Rhythm</span>
+            <span class="workspace-summary-value">Track open, accepted, canceled</span>
+            <span class="workspace-summary-note">The workspace now reads more like an operating console than a plain form page.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ops-panel">
+      <div class="ops-top">
+        <div>
+          <div class="ops-kicker">Host Operations</div>
+          <div class="ops-title">Post faster. Track faster. Close faster.</div>
+          <div class="ops-copy">Use presets for common event types, recover unfinished drafts automatically, and manage live, booked, or canceled gigs from one host queue.</div>
+        </div>
+        <div class="ops-pill" id="hostOpsPill">Live feed connected</div>
+      </div>
+      <div class="ops-grid">
+        <div class="ops-stat">
+          <div class="ops-stat-value" id="hostStatOpen">0</div>
+          <div class="ops-stat-label">Open Gigs</div>
+        </div>
+        <div class="ops-stat">
+          <div class="ops-stat-value" id="hostStatAccepted">0</div>
+          <div class="ops-stat-label">Accepted</div>
+        </div>
+        <div class="ops-stat">
+          <div class="ops-stat-value" id="hostStatPendingReview">0</div>
+          <div class="ops-stat-label">Need Review</div>
+        </div>
+        <div class="ops-stat">
+          <div class="ops-stat-value" id="hostStatCancelled">0</div>
+          <div class="ops-stat-label">Cancelled</div>
+        </div>
+        <div class="ops-stat">
+          <div class="ops-stat-value" id="hostStatThisWeek">0</div>
+          <div class="ops-stat-label">This Week</div>
+        </div>
+        <div class="ops-stat">
+          <div class="ops-stat-value" id="hostStatAvgPay">$0</div>
+          <div class="ops-stat-label">Avg Posted Pay</div>
+        </div>
+      </div>
+      <div class="ops-detail-grid">
+        <section class="ops-detail-card">
+          <div class="ops-detail-card-top">
+          <strong style="font-size:14px;">Host Alerts</strong>
+          <a href="support.html" style="font-size:12px;color:#9edcff;text-decoration:none;">Support</a>
+          </div>
+          <div id="hostNotifications" style="font-size:13px;line-height:1.65;color:#c8d7ea;">Loading your host alerts…</div>
+        </section>
+        <section class="ops-detail-card">
+          <div class="ops-detail-card-top">
+          <strong style="font-size:14px;">Next Steps</strong>
+          <a href="host-profile.html" style="font-size:12px;color:#9edcff;text-decoration:none;">Edit Profile</a>
+          </div>
+          <div id="hostChecklist" style="font-size:13px;line-height:1.65;color:#c8d7ea;">Building your host checklist…</div>
+        </section>
+        <section class="ops-detail-card">
+          <div class="ops-detail-card-top">
+          <strong style="font-size:14px;">First Booking Flow</strong>
+          <a href="support.html" style="font-size:12px;color:#9edcff;text-decoration:none;">Need help?</a>
+          </div>
+          <div id="hostBookingGuide" style="font-size:13px;line-height:1.65;color:#c8d7ea;">Loading your booking flow…</div>
+        </section>
+        <section class="ops-detail-card">
+          <div class="ops-detail-card-top">
+          <strong style="font-size:14px;">Queue Controls</strong>
+          <button type="button" onclick="resetHostQueueView()" style="padding:7px 12px;border-radius:999px;border:1px solid #27425b;background:#111a24;color:#d8ecff;font-size:12px;font-weight:700;cursor:pointer;">Reset View</button>
+          </div>
+          <div id="hostQueueShortcuts" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;"></div>
+          <div id="hostQueueSummary" style="font-size:13px;line-height:1.65;color:#c8d7ea;">Loading your queue controls…</div>
+        </section>
+      </div>
+    </section>
+
+    <div class="host-shell">
+      <section class="host-main">
+        <div class="form-card">
+          <h1>Post a Gig</h1>
+          <p class="subtitle">Fill in the details and we'll match you with available performers and creatives instantly.</p>
+
+          <div class="panel-title">Quick Presets</div>
+          <p class="panel-copy">Start from a host-friendly template, then adjust details instead of posting from scratch every time.</p>
+          <div class="preset-row">
+            <button class="preset-chip" type="button" onclick="applyHostPreset('rooftop')">Rooftop Set</button>
+            <button class="preset-chip" type="button" onclick="applyHostPreset('brunch')">Brunch Session</button>
+            <button class="preset-chip" type="button" onclick="applyHostPreset('private')">Private Event</button>
+            <button class="preset-chip" type="button" onclick="applyHostPreset('djNight')">DJ Night</button>
+            <button class="preset-chip" type="button" onclick="applyHostPreset('photoShoot')">Photo Shoot</button>
+            <button class="preset-chip" type="button" onclick="applyHostPreset('brandFilm')">Brand Film</button>
+            <button class="preset-chip" type="button" onclick="applyHostPreset('modelCall')">Model Call</button>
+          </div>
+
+          <div class="draft-row">
+            <div class="draft-note" id="draftStatus">Draft sync is on for this form.</div>
+            <div class="draft-actions">
+              <button class="ghost-btn" type="button" id="clearDraftBtn">Clear Draft</button>
+            </div>
+          </div>
+
+    <form id="gigForm">
+      <div class="form-group">
+        <label>Venue / Event Name</label>
+        <input type="text" id="venue" placeholder="e.g. The Blue Room" required>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="date" required>
+        </div>
+        <div class="form-group">
+          <label>Start Time</label>
+          <input type="time" id="time" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" id="location" placeholder="City, State" required>
+      </div>
+
+      <div class="form-group">
+        <label>Local Compliance Check</label>
+        <input type="text" id="localLawTrigger" placeholder="City, parish, or borough" aria-describedby="localLawHint">
+        <p id="local-law-message" class="local-law-message" style="margin-top:8px;">Enter a location to see local notice reminders.</p>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Looking For</label>
+          <select id="performerType">
+            <option value="any">Any Performer</option>
+            <option value="musician">Musician / Band</option>
+            <option value="dj">DJ</option>
+            <option value="photographer">Photographer</option>
+            <option value="cinematographer">Cinematographer</option>
+            <option value="model">Model</option>
+          </select>
+          <div class="fee-note" id="performerTypeHint">Choose the role first so the style list stays relevant to the kind of booking you need.</div>
+        </div>
+        <div class="form-group">
+          <label id="genreLabel">Style / Genre</label>
+          <select id="genre" required>
+            <option value="">Select style or genre</option>
+            <optgroup label="Live Music">
+              <option>Jazz</option>
+              <option>R&B / Soul</option>
+              <option>Hip-Hop</option>
+              <option>Blues</option>
+              <option>Rock</option>
+              <option>Country</option>
+              <option>Classical</option>
+              <option>Afrobeats</option>
+              <option>Reggae</option>
+              <option>Latin</option>
+            </optgroup>
+            <optgroup label="DJ">
+              <option>House</option>
+              <option>Techno</option>
+              <option>EDM</option>
+              <option>Electronic</option>
+              <option>Open Format</option>
+            </optgroup>
+            <optgroup label="Visual / Talent">
+              <option>Portrait</option>
+              <option>Editorial</option>
+              <option>Commercial</option>
+              <option>Lifestyle</option>
+              <option>Event Coverage</option>
+              <option>Fashion</option>
+              <option>Bridal</option>
+              <option>Streetwear</option>
+            </optgroup>
+            <option>Open / Any</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Pay Rate</label>
+        <input type="text" id="pay" placeholder="e.g. $150 flat" required>
+        <div class="fee-note">A 2% processing fee is added after a successful booking transaction.</div>
+        <div class="fee-estimate" id="payEstimate"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Skill / Specialty Needed</label>
+        <input type="text" id="skillNeed" placeholder="e.g. crowd reading, portrait lighting, runway presence, gimbal work">
+        <div class="fee-note">Use this to describe the exact skill, specialty, or setup you care about most. Matching now weighs this alongside type, style, and distance.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Set length, equipment provided, vibe, dress code, etc."></textarea>
+      </div>
+
+      <button class="btn-post" type="submit" id="submitBtn">Post Gig &rarr;</button>
+    </form>
+
+    <div class="status" id="statusMsg"></div>
+        </div>
+      </section>
+
+      <aside class="host-side">
+    <div class="posted-gigs queue-card">
+      <h2>Your Active Gigs</h2>
+      <div class="queue-toolbar">
+        <input type="search" id="gigSearch" placeholder="Search by venue, genre, location">
+        <select id="gigStatusFilter">
+          <option value="all">All statuses</option>
+          <option value="open">Open</option>
+          <option value="accepted">Accepted</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="review">Needs review</option>
+        </select>
+      </div>
+    <div id="gigList">
+      <div class="queue-empty"><strong>No gigs posted yet.</strong>Once you publish your first opportunity, it will show up here with status, payout summary, and review follow-up.</div>
+    </div>
+  </div>
+  <div class="ops-panel" id="assurance-pack-panel">
+    <div class="ops-kicker">Assurance Pack</div>
+    <div class="ops-title">Host Compliance Checklist</div>
+    <div class="ops-copy">Mark critical items (insurance, contracts, child protections) so the gig launches with confidence.</div>
+    <div id="assurance-pack" style="margin-top:12px;"></div>
+  </div>
+  <div class="ops-panel" id="command-center-panel">
+    <div class="ops-kicker">Command Center</div>
+    <div class="ops-title">Active Compliance Tasks</div>
+    <div class="ops-copy">Keep these checks visible before confirming a booking.</div>
+    <div id="command-center" style="margin-top:12px;"></div>
+  </div>
+  <div class="ops-panel">
+    <div class="ops-kicker">Trust Queue</div>
+    <div class="ops-title">Host Verification</div>
+    <div class="ops-copy">Keep the profile, payout preference, and work proof ready before bookings move to confirmed.</div>
+    <div id="hostTrustComponent" style="margin-top:12px;"></div>
+  </div>
+  <div class="ops-panel">
+    <div class="ops-kicker">Payment Ops</div>
+    <div class="ops-title">Booking Payment Readiness</div>
+    <div class="ops-copy">Use this as the manual payment checklist until automated rails are fully connected.</div>
+    <div id="hostPaymentComponent" style="margin-top:12px;"></div>
+  </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>&copy; 2026 CLTCH.NTWRK &mdash; <a href="about.html" style="color:#555;text-decoration:none;margin:0 6px;">About</a> <a href="faq.html" style="color:#555;text-decoration:none;margin:0 6px;">FAQ</a> <a href="contact.html" style="color:#555;text-decoration:none;margin:0 6px;">Contact</a> <a href="press.html" style="color:#555;text-decoration:none;margin:0 6px;">Press</a> <a href="accessibility.html" style="color:#555;text-decoration:none;margin:0 6px;">Accessibility</a> <a href="dmca.html" style="color:#555;text-decoration:none;margin:0 6px;">DMCA</a> <a href="terms.html" style="color:#555;text-decoration:none;margin:0 6px;">Terms</a> <a href="privacy.html" style="color:#555;text-decoration:none;margin:0 6px;">Privacy</a></footer>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, getDoc, getDocs, updateDoc, deleteField, serverTimestamp }
+      from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { onAuthStateChanged, signOut, reload } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { auth, db } from "./app/firebase-client.js";
+    import { buildAvailableMusiciansQuery, buildHostGigQuery } from "./app/gig-queries.js";
+    import { DEFAULT_TIMEOUT_MS, clearResumeTarget, installIdleLogout } from "./app/idle-logout.js";
+    import { bindModeSwitch } from "./app/mode-switch.js";
+    import { installUnsavedChangesGuard } from "./app/unsaved-changes.js";
+    import { subscribeWhenVisible } from "./app/visible-snapshot.js";
+    import { recordAuthEvent, writeUserSummary } from "./app/user-db.js";
+
+    async function refreshUserVerification(user) {
+      if (!user) return user;
+      try {
+        await reload(user);
+      } catch {}
+      return auth.currentUser || user;
+    }
+
+    function requiresVerifiedEmail(user) {
+      return !!(user && user.providerData && user.providerData.some((provider) => provider?.providerId === 'password') && !user.emailVerified);
+    }
+
+    async function redirectUnverifiedUser() {
+      await signOut(auth).catch(() => {});
+      window.location.href = 'auth.html?reason=verify-email';
+    }
+
+    let HOST_ID = null;
+    let hostProfile = null;
+    let hostProfileReady = false;
+
+    function applyHostWorkspaceState() {
+      const pill = document.getElementById('hostOpsPill');
+      if (!pill) return;
+      if (hostProfileReady) {
+        pill.textContent = 'Live feed connected';
+        pill.style.background = 'rgba(24,47,68,0.55)';
+        pill.style.color = '#d8ecff';
+      } else {
+        pill.textContent = 'Finish host profile to go live';
+        pill.style.background = 'rgba(68,44,18,0.55)';
+        pill.style.color = '#ffe1a6';
+      }
+    }
+
+    // Gate: must be signed in with a host profile
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'auth.html'; return; }
+      const freshUser = await refreshUserVerification(user);
+      if (requiresVerifiedEmail(freshUser)) { await redirectUnverifiedUser(); return; }
+      installIdleLogout(auth, DEFAULT_TIMEOUT_MS);
+      const profileSnap = await getDoc(doc(db, 'hosts', freshUser.uid));
+      HOST_ID = freshUser.uid;
+      hostProfileReady = profileSnap.exists();
+      const profileData = profileSnap.exists() ? profileSnap.data() : {};
+      hostProfile = profileData;
+      writeUserSummary(db, freshUser.uid, {
+        role: 'host',
+        email: freshUser.email || '',
+        displayName: `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim() || profileData.venueName || '',
+        city: profileData.city || '',
+        state: profileData.state || '',
+        status: 'active',
+        profileComplete: hostProfileReady,
+        payoutReady: profileData.payMethod === 'check' || !!profileData.payHandle
+      }).catch(() => {});
+      initModeSwitch('host', HOST_ID);
+      applyHostWorkspaceState();
+      startApp();
+      window.CLTCHLoading?.done();
+    });
+
+    // Sign out
+    document.getElementById('signOutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      clearResumeTarget();
+      if (auth.currentUser) await recordAuthEvent(db, auth.currentUser, 'sign_out').catch(() => {});
+      await signOut(auth);
+      window.location.href = 'auth.html';
+    });
+
+    async function initModeSwitch(currentMode, userId) {
+      const modeSwitch = document.getElementById('modeSwitch');
+      bindModeSwitch(modeSwitch, { db, userId, currentMode });
+    }
+
+    const form = document.getElementById('gigForm');
+    const statusMsg = document.getElementById('statusMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    const gigList = document.getElementById('gigList');
+    const payInput = document.getElementById('pay');
+    const payEstimate = document.getElementById('payEstimate');
+    const gigSearch = document.getElementById('gigSearch');
+    const gigStatusFilter = document.getElementById('gigStatusFilter');
+    const draftStatus = document.getElementById('draftStatus');
+    const clearDraftBtn = document.getElementById('clearDraftBtn');
+    const hostQueueShortcuts = document.getElementById('hostQueueShortcuts');
+    const hostQueueSummary = document.getElementById('hostQueueSummary');
+    const performerTypeSelect = document.getElementById('performerType');
+    const genreSelect = document.getElementById('genre');
+    const genreLabel = document.getElementById('genreLabel');
+    const performerTypeHint = document.getElementById('performerTypeHint');
+    const dirtyGuard = installUnsavedChangesGuard({
+      form,
+      statusEl: draftStatus,
+      message: 'You have an unfinished gig draft. Leave this page anyway?'
+    });
+    const HOST_DRAFT_KEY = 'cltch_host_gig_draft_v1';
+    const PROCESSING_FEE_RATE = 0.02;
+    let hostGigCache = [];
+    const HOST_STYLE_OPTIONS = {
+      any: {
+        label: 'Style / Genre',
+        hint: 'Use Any Performer if you want the broadest talent pool, then narrow by style only if needed.',
+        options: ['Open / Any', 'Jazz', 'R&B / Soul', 'Hip-Hop', 'Blues', 'Rock', 'Country', 'Classical', 'Afrobeats', 'Reggae', 'Latin', 'House', 'Techno', 'EDM', 'Electronic', 'Open Format', 'Portrait', 'Editorial', 'Commercial', 'Lifestyle', 'Event Coverage', 'Fashion', 'Bridal', 'Streetwear']
+      },
+      musician: {
+        label: 'Genre',
+        hint: 'Musician bookings focus on live music fit, instrumentation, and room energy.',
+        options: ['Jazz', 'R&B / Soul', 'Hip-Hop', 'Blues', 'Rock', 'Country', 'Classical', 'Afrobeats', 'Reggae', 'Latin', 'Open / Any']
+      },
+      dj: {
+        label: 'Genre',
+        hint: 'DJ bookings focus on crowd control, format range, and playback style.',
+        options: ['House', 'Techno', 'EDM', 'Electronic', 'Open Format', 'Hip-Hop', 'Latin', 'Open / Any']
+      },
+      photographer: {
+        label: 'Style',
+        hint: 'Photographer bookings should call out the visual style and coverage expectations clearly.',
+        options: ['Portrait', 'Editorial', 'Commercial', 'Lifestyle', 'Event Coverage', 'Fashion', 'Bridal', 'Streetwear', 'Open / Any']
+      },
+      cinematographer: {
+        label: 'Style',
+        hint: 'Cinematographer bookings should focus on motion coverage, content goals, and production style.',
+        options: ['Commercial', 'Lifestyle', 'Event Coverage', 'Editorial', 'Fashion', 'Streetwear', 'Open / Any']
+      },
+      model: {
+        label: 'Style',
+        hint: 'Model bookings should define the campaign or shoot style so talent can self-select accurately.',
+        options: ['Fashion', 'Editorial', 'Commercial', 'Lifestyle', 'Bridal', 'Streetwear', 'Open / Any']
+      }
+    };
+
+    const DRAFT_FIELDS = ['venue', 'date', 'time', 'location', 'genre', 'performerType', 'pay', 'skillNeed', 'notes'];
+    const HOST_PRESETS = {
+      rooftop: {
+        performerType: 'musician',
+        genre: 'Jazz',
+        pay: '$750 flat',
+        skillNeed: 'polished live set, cocktail-hour energy',
+        notes: 'Upscale rooftop set, cocktail-hour energy, polished wardrobe, compact setup preferred.'
+      },
+      brunch: {
+        performerType: 'musician',
+        genre: 'R&B / Soul',
+        pay: '$500 flat',
+        skillNeed: 'warm vocals, conversational volume',
+        notes: 'Late morning brunch crowd, warm but conversational volume, two 45-minute sets preferred.'
+      },
+      private: {
+        performerType: 'any',
+        genre: 'Open / Any',
+        pay: '$900 flat',
+        skillNeed: 'professional communication, punctual arrival',
+        notes: 'Private client event. Professional communication, punctual arrival, and clean setup required.'
+      },
+      djNight: {
+        performerType: 'dj',
+        genre: 'Open Format',
+        pay: '$850 flat',
+        skillNeed: 'crowd reading, club-ready setup',
+        notes: 'High-energy night set, strong crowd reading, hosted venue, standard club-ready setup.'
+      },
+      photoShoot: {
+        performerType: 'photographer',
+        genre: 'Event Coverage',
+        pay: '$900 flat',
+        skillNeed: 'clean portrait selects, event coverage',
+        notes: 'Need sharp event coverage plus clean portrait selects. Fast turnaround and professional direction on-site.'
+      },
+      brandFilm: {
+        performerType: 'cinematographer',
+        genre: 'Commercial',
+        pay: '$1400 flat',
+        skillNeed: 'stabilized motion, branded content coverage',
+        notes: 'Branded content shoot with a lean team. Stabilized motion, clean lighting instincts, and efficient coverage required.'
+      },
+      modelCall: {
+        performerType: 'model',
+        genre: 'Fashion',
+        pay: '$600 flat',
+        skillNeed: 'editorial posing, strong camera presence',
+        notes: 'Editorial-style booking with wardrobe direction, punctual call time, and strong camera presence expected.'
+      }
+    };
+
+    function normalizeText(value) {
+      return String(value || '').toLowerCase().replace(/[^a-z0-9\s/+-]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    function tokenizeText(value) {
+      return normalizeText(value).split(' ').filter((token) => token.length >= 3);
+    }
+
+    function skillMatchScore(skillNeed, profile) {
+      const requested = normalizeText(skillNeed);
+      if (!requested) return { matched: true, score: 0, detail: '' };
+      const profileText = normalizeText([
+        profile.instruments,
+        profile.bio,
+        profile.stageName,
+        ...(profile.genres || [])
+      ].join(' '));
+      if (!profileText) return { matched: false, score: 0, detail: 'Skill gap' };
+
+      if (profileText.includes(requested)) return { matched: true, score: 22, detail: 'Direct skill match' };
+
+      const tokens = tokenizeText(requested);
+      const hits = tokens.filter((token) => profileText.includes(token));
+      if (hits.length >= 2) return { matched: true, score: 16, detail: 'Strong skill overlap' };
+      if (hits.length === 1) return { matched: true, score: 8, detail: 'Partial skill overlap' };
+      return { matched: false, score: 0, detail: 'Skill gap' };
+    }
+
+    function parseCurrencyAmount(text) {
+      if (!text) return null;
+      const match = text.replace(/,/g, '').match(/-?\d+(\.\d+)?/);
+      if (!match) return null;
+      const n = Number(match[0]);
+      return Number.isFinite(n) && n > 0 ? n : null;
+    }
+
+    function formatUsd(amount) {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    }
+
+    function readDraft() {
+      try {
+        const draft = JSON.parse(localStorage.getItem(HOST_DRAFT_KEY) || '{}');
+        return draft && typeof draft === 'object' ? draft : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveDraft() {
+      dirtyGuard.markDirty();
+      const payload = {};
+      DRAFT_FIELDS.forEach((field) => {
+        payload[field] = document.getElementById(field)?.value || '';
+      });
+      localStorage.setItem(HOST_DRAFT_KEY, JSON.stringify(payload));
+      if (draftStatus) draftStatus.textContent = 'Draft saved locally while you work.';
+    }
+
+    function restoreDraft() {
+      const draft = readDraft();
+      let hasData = false;
+      DRAFT_FIELDS.forEach((field) => {
+        const value = draft[field];
+        if (typeof value !== 'string' || value === '') return;
+        const el = document.getElementById(field);
+        if (!el) return;
+        el.value = value;
+        hasData = true;
+      });
+      if (hasData && draftStatus) {
+        draftStatus.textContent = 'Recovered your last unfinished gig draft.';
+      }
+    }
+
+    function clearDraft() {
+      dirtyGuard.markSaved();
+      localStorage.removeItem(HOST_DRAFT_KEY);
+      if (draftStatus) draftStatus.textContent = 'Draft cleared. New changes will save automatically.';
+    }
+
+    function syncGenreOptionsForType(forceKeepValue = false) {
+      const selectedType = performerTypeSelect?.value || 'any';
+      const config = HOST_STYLE_OPTIONS[selectedType] || HOST_STYLE_OPTIONS.any;
+      const previousValue = genreSelect?.value || '';
+      if (genreLabel) genreLabel.textContent = config.label;
+      if (performerTypeHint) performerTypeHint.textContent = config.hint;
+      if (!genreSelect) return;
+
+      genreSelect.innerHTML = `<option value="">Select ${config.label.toLowerCase()}</option>` +
+        config.options.map((option) => `<option>${option}</option>`).join('');
+
+      const nextValue = forceKeepValue && config.options.includes(previousValue)
+        ? previousValue
+        : (config.options.includes(previousValue) ? previousValue : '');
+      genreSelect.value = nextValue;
+    }
+
+    function updateHostOpsStats(gigs) {
+      const open = gigs.filter((gig) => gig.status === 'open').length;
+      const accepted = gigs.filter((gig) => gig.status === 'accepted').length;
+      const cancelled = gigs.filter((gig) => gig.status === 'cancelled').length;
+      const pendingReview = gigs.filter((gig) => gig.status === 'accepted' && !gig.reviewed).length;
+      const today = new Date().toISOString().slice(0, 10);
+      const weekOut = new Date();
+      weekOut.setDate(weekOut.getDate() + 7);
+      const weekKey = weekOut.toISOString().slice(0, 10);
+      const thisWeek = gigs.filter((gig) => gig.date && gig.date >= today && gig.date <= weekKey && gig.status !== 'cancelled').length;
+      const pays = gigs.map((gig) => parseCurrencyAmount(gig.pay)).filter((amount) => Number.isFinite(amount));
+      const avg = pays.length ? pays.reduce((sum, amount) => sum + amount, 0) / pays.length : 0;
+      document.getElementById('hostStatOpen').textContent = String(open);
+      document.getElementById('hostStatAccepted').textContent = String(accepted);
+      document.getElementById('hostStatPendingReview').textContent = String(pendingReview);
+      document.getElementById('hostStatCancelled').textContent = String(cancelled);
+      document.getElementById('hostStatThisWeek').textContent = String(thisWeek);
+      document.getElementById('hostStatAvgPay').textContent = formatUsd(avg || 0);
+      renderHostNotifications({ open, accepted, cancelled, pendingReview, thisWeek });
+      renderHostChecklist({ open, accepted, cancelled, pendingReview });
+      renderHostBookingGuide({ open, accepted, cancelled, pendingReview });
+      renderHostQueueControls({ open, accepted, cancelled, pendingReview, thisWeek });
+    }
+
+    function renderHostNotifications(stats = {}) {
+      const el = document.getElementById('hostNotifications');
+      if (!el) return;
+      const notes = [];
+      if (!hostProfileReady) notes.push('Finish your host profile once so this workspace can post gigs live and save venue details correctly.');
+      if (!hostGigCache.length) notes.push('You have no live gigs yet. Post one offer to start matching with performers and creatives.');
+      if ((stats.pendingReview || 0) > 0) notes.push(`${stats.pendingReview} completed booking${stats.pendingReview === 1 ? '' : 's'} still need a review.`);
+      if ((stats.open || 0) > 0) notes.push(`${stats.open} open gig${stats.open === 1 ? '' : 's'} are waiting on talent responses.`);
+      if ((stats.accepted || 0) > 0) notes.push(`${stats.accepted} accepted booking${stats.accepted === 1 ? '' : 's'} are active in your host queue.`);
+      if ((stats.cancelled || 0) > 0) notes.push(`${stats.cancelled} gig${stats.cancelled === 1 ? '' : 's'} are cancelled but can still be reopened or duplicated.`);
+      if (!notes.length) notes.push('Your host workspace is caught up. New booking activity will appear here.');
+      el.innerHTML = notes.map((note) => `<div style="margin-bottom:6px;">• ${note}</div>`).join('');
+    }
+
+    function renderChecklistStep(done, label, detail) {
+      return `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:999px;background:${done ? '#1f6f48' : '#2b3138'};color:${done ? '#d7ffe8' : '#8ea0b5'};font-size:11px;font-weight:700;flex:0 0 18px;">${done ? '✓' : '•'}</span>
+        <div>
+          <div style="color:${done ? '#f4f7fb' : '#d6e2ef'};font-weight:600;">${label}</div>
+          <div style="color:#8ea0b5;font-size:12px;">${detail}</div>
+        </div>
+      </div>`;
+    }
+
+    function renderHostChecklist(stats = {}) {
+      const el = document.getElementById('hostChecklist');
+      if (!el) return;
+      const hasPayout = !!(hostProfile && (hostProfile.payMethod === 'check' || hostProfile.payHandle));
+      const accepted = Number(stats.accepted || 0);
+      const pendingReview = Number(stats.pendingReview || 0);
+      const steps = [
+        renderChecklistStep(hostProfileReady, 'Host profile is live', hostProfileReady ? 'Your venue identity is already attached to this workspace.' : 'Complete your host profile once so your gigs can go live.'),
+        renderChecklistStep(hostGigCache.length > 0, 'Post your first gig', hostGigCache.length > 0 ? 'Your booking pipeline is active.' : 'Use the quick presets to publish your first opportunity fast.'),
+        renderChecklistStep(accepted > 0, 'Book your first performer', accepted > 0 ? 'At least one gig has been accepted.' : 'Accepted gigs will show up here once talent commits.'),
+        renderChecklistStep(hasPayout, 'Add payout details', hasPayout ? 'Payout details are on file.' : 'Add a payout method on your host profile so payment setup is ready later.'),
+        renderChecklistStep(accepted > 0 && pendingReview === 0, 'Close the loop with reviews', accepted > 0 ? (pendingReview === 0 ? 'You are caught up on host reviews.' : `${pendingReview} accepted booking${pendingReview === 1 ? '' : 's'} still need feedback.`) : 'After a completed booking, leave feedback to build trust.')
+      ];
+      el.innerHTML = steps.join('');
+    }
+
+    function setHostStatusFilter(value) {
+      if (gigStatusFilter) gigStatusFilter.value = value;
+      renderHostGigList();
+    }
+
+    function renderHostQueueControls(stats = {}) {
+      if (hostQueueShortcuts) {
+        const buttons = [
+          { value: 'open', label: `Open (${stats.open || 0})` },
+          { value: 'accepted', label: `Booked (${stats.accepted || 0})` },
+          { value: 'review', label: `Reviews (${stats.pendingReview || 0})` },
+          { value: 'cancelled', label: `Cancelled (${stats.cancelled || 0})` }
+        ];
+        hostQueueShortcuts.innerHTML = buttons.map((button) => `
+          <button type="button"
+            onclick="setHostStatusFilter('${button.value}')"
+            style="padding:8px 12px;border-radius:999px;border:1px solid #27425b;background:#101923;color:#d6e8fb;font-size:12px;font-weight:700;cursor:pointer;">
+            ${button.label}
+          </button>
+        `).join('');
+      }
+      if (hostQueueSummary) {
+        const summary = [];
+        summary.push(`${stats.thisWeek || 0} gig${stats.thisWeek === 1 ? '' : 's'} are still active this week.`);
+        if ((stats.open || 0) > 0) summary.push('Use Open to track anything still waiting on a performer.');
+        if ((stats.accepted || 0) > 0) summary.push('Use Booked to review accepted jobs, performer links, and booking details.');
+        if ((stats.cancelled || 0) > 0) summary.push('Use Cancelled to reopen a paused job or duplicate it into a fresh post.');
+        hostQueueSummary.textContent = summary.join(' ');
+      }
+    }
+
+    function renderHostBookingGuide(stats = {}) {
+      const el = document.getElementById('hostBookingGuide');
+      if (!el) return;
+      const steps = [
+        {
+          done: hostProfileReady,
+          title: '1. Finish host profile once',
+          detail: hostProfileReady ? 'Your host identity and venue details are already attached.' : 'Add your venue details so gigs can post without getting rejected at the database layer.'
+        },
+        {
+          done: hostGigCache.length > 0,
+          title: '2. Post a clear gig',
+          detail: hostGigCache.length > 0 ? 'Your pipeline is live. Use View Details on any card to keep track of it.' : 'Use the presets below to draft date, location, style, and pay in one pass.'
+        },
+        {
+          done: Number(stats.accepted || 0) > 0,
+          title: '3. Wait for a performer to accept',
+          detail: Number(stats.accepted || 0) > 0 ? 'At least one booking is already in motion.' : 'Open gigs stay visible in your queue until a performer claims them.'
+        },
+        {
+          done: Number(stats.accepted || 0) > 0 && Number(stats.pendingReview || 0) === 0,
+          title: '4. Leave a review after the gig',
+          detail: Number(stats.accepted || 0) > 0 ? (Number(stats.pendingReview || 0) === 0 ? 'You are caught up on reviews.' : 'Accepted gigs move into review follow-up after the event date passes.') : 'Reviews build trust for repeat bookings and help the platform feel active.'
+        }
+      ];
+      el.innerHTML = steps.map((step) => renderChecklistStep(step.done, step.title, step.detail)).join('');
+    }
+
+    function buildGigTimeline(g) {
+      const steps = [
+        { label: 'Posted', done: true, active: g.status === 'open' },
+        { label: 'Booked', done: g.status === 'accepted', active: g.status === 'accepted' && !g.reviewed },
+        { label: 'Checked In', done: !!g.checkedInAt, active: g.status === 'accepted' && !g.checkedInAt && !g.reviewed },
+        { label: 'Reviewed', done: !!g.reviewed, active: g.status === 'accepted' && !!g.reviewed }
+      ];
+      return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">${steps.map((step) => `
+        <span style="padding:6px 10px;border-radius:999px;border:1px solid ${step.done || step.active ? '#355e4e' : '#2c3640'};background:${step.done ? 'rgba(28,83,55,0.45)' : (step.active ? 'rgba(24,47,68,0.55)' : 'rgba(15,20,26,0.7)')};color:${step.done ? '#b7f0ce' : (step.active ? '#d8ecff' : '#8ea0b5')};font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">${step.label}</span>
+      `).join('')}</div>`;
+    }
+
+    function matchesGigFilter(gig) {
+      const searchTerm = (gigSearch?.value || '').trim().toLowerCase();
+      const statusFilter = gigStatusFilter?.value || 'all';
+      if (statusFilter === 'review' && !(gig.status === 'accepted' && !gig.reviewed)) return false;
+      if (statusFilter !== 'all' && statusFilter !== 'review' && gig.status !== statusFilter) return false;
+      if (!searchTerm) return true;
+      const haystack = [gig.venue, gig.location, gig.genre, gig.pay, gig.time, gig.date, gig.skillNeed, gig.notes].join(' ').toLowerCase();
+      return haystack.includes(searchTerm);
+    }
+
+    function renderHostGigList() {
+      const gigs = hostGigCache.filter(matchesGigFilter);
+      if (!gigs.length) {
+        gigList.innerHTML = `<div class="queue-empty"><strong>No gigs match this view.</strong>Try another status filter, clear the search, or use the presets above to post a new opportunity faster.</div>`;
+        return;
+      }
+      gigList.innerHTML = '';
+      gigs.forEach(({ gigId, g }) => {
+        const card = document.createElement('div');
+        card.className = 'gig-card';
+        const storedBase = Number(g.payBaseAmount);
+        const storedFee = Number(g.processingFeeAmount);
+        const storedTotal = Number(g.hostTotalCharge);
+        const parsedPay = parseCurrencyAmount(g.pay);
+        const fallback = calculateChargeFromAmount(parsedPay);
+        const baseAmount = Number.isFinite(storedBase) ? storedBase : fallback?.baseAmount;
+        const feeAmount = Number.isFinite(storedFee) ? storedFee : fallback?.feeAmount;
+        const totalAmount = Number.isFinite(storedTotal) ? storedTotal : fallback?.totalAmount;
+        const hasChargeBreakdown =
+          Number.isFinite(baseAmount) && Number.isFinite(feeAmount) && Number.isFinite(totalAmount);
+        const feeBreakdown = hasChargeBreakdown
+          ? `<div class="fee-breakdown">
+              Performer pay: ${formatUsd(baseAmount)}<br>
+              Processing fee (2%): ${formatUsd(feeAmount)}
+              <div class="fee-total">${g.status === 'accepted' ? 'Successful transaction total' : 'Estimated host total'}: ${formatUsd(totalAmount)}</div>
+            </div>`
+          : '';
+
+        const reviewSection = (g.status === 'accepted' && !g.reviewed) ? `
+          <div class="review-form" id="review-${gigId}" style="margin-top:16px; border-top:1px solid #2a2a2a; padding-top:16px;">
+            <div style="font-size:13px; color:#aaa; margin-bottom:10px; font-weight:600;">Rate This Performance</div>
+            <div class="grade-row" id="grades-${gigId}">
+              ${GRADES.map(g => `
+                <button type="button" class="grade-chip-btn" data-grade="${g}"
+                  style="color:${GRADE_COLORS[g]};"
+                  onclick="setGrade('${gigId}','${g}')">${g}</button>
+              `).join('')}
+            </div>
+            <div id="grade-desc-${gigId}" style="font-size:12px; color:#555; min-height:16px; margin-bottom:10px;"></div>
+            <input type="text" id="feedback-${gigId}" maxlength="150"
+              placeholder="One sentence about the performance (optional)"
+              style="width:100%; background:#0a0a0a; border:1px solid #2a2a2a; border-radius:8px;
+                     color:#f0f0f0; padding:10px 14px; font-size:14px; font-family:inherit;
+                     outline:none; margin-bottom:4px;"
+              oninput="document.getElementById('fb-count-${gigId}').textContent=this.value.length+'/150'">
+            <div id="fb-count-${gigId}" style="text-align:right; font-size:11px; color:#333; margin-bottom:10px;">0/150</div>
+            <button onclick="submitReview('${gigId}', '${g.acceptedBy}')"
+              style="padding:8px 20px; background:#f5a623; color:#000; border:none;
+                     border-radius:6px; font-size:14px; font-weight:700; cursor:pointer;">
+              Submit
+            </button>
+          </div>` : (g.reviewed ? `<div style="margin-top:12px; font-size:13px; color:#4caf82;">✓ Reviewed</div>` : '');
+
+        const profileLink = g.acceptedBy
+          ? `<a href="performer-view.html?id=${g.acceptedBy}"
+               style="font-size:13px; color:#f5a623; text-decoration:none; display:inline-block; margin-top:8px;">
+               View Performer Profile →
+             </a>` : '';
+        const bookingLink = `<a href="booking.html?id=${gigId}" style="font-size:13px; color:#9edcff; text-decoration:none; display:inline-block; margin-top:8px;">View Booking Details →</a>`;
+        const isFutureGig = !g.date || g.date >= new Date().toISOString().slice(0, 10);
+        const actionButtons = `
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+            <button type="button" onclick="duplicateGigToForm('${gigId}')" style="min-height:34px;padding:0 12px;border-radius:10px;border:1px solid #335169;background:#101923;color:#d8ecff;font-size:12px;font-weight:700;cursor:pointer;">Duplicate</button>
+            ${g.status === 'cancelled'
+              ? `<button type="button" onclick="reopenGig('${gigId}')" style="min-height:34px;padding:0 12px;border-radius:10px;border:1px solid #355e4e;background:#15261f;color:#c7f0d7;font-size:12px;font-weight:700;cursor:pointer;">Reopen Gig</button>`
+              : (isFutureGig ? `<button type="button" onclick="cancelGig('${gigId}')" style="min-height:34px;padding:0 12px;border-radius:10px;border:1px solid #553333;background:#221516;color:#ffb4b4;font-size:12px;font-weight:700;cursor:pointer;">Cancel Gig</button>` : '')
+            }
+          </div>
+        `;
+        const checkedInCopy = g.checkedInAt
+          ? `<div class="gig-notes" style="margin-top:10px;"><strong>Performer checked in:</strong> ${g.checkedInAt?.toDate ? g.checkedInAt.toDate().toLocaleString() : new Date(g.checkedInAt).toLocaleString()}</div>`
+          : '';
+        const statusCopy = g.status === 'cancelled'
+          ? `<div class="gig-notes" style="margin-top:10px;"><strong>Cancelled:</strong> This gig is out of the live matching flow. Reopen it to continue matching, or duplicate it into a new post.</div>`
+          : '';
+
+        card.innerHTML = `
+          <div class="gig-title">${g.venue}</div>
+          <div class="gig-meta">
+            <span>📅 ${g.date} @ ${g.time}</span>
+            <span>📍 ${g.location}</span>
+            <span>🎵 ${g.genre}</span>
+            <span>💵 ${g.pay}</span>
+          </div>
+          ${g.skillNeed ? `<div class="gig-notes"><strong>Skill focus:</strong> ${g.skillNeed}</div>` : ''}
+          <span class="gig-status ${g.status}">${g.status.toUpperCase()}</span>
+          ${buildGigTimeline(g)}
+          ${checkedInCopy}
+          ${statusCopy}
+          ${feeBreakdown}
+          ${bookingLink}
+          ${profileLink}
+          ${actionButtons}
+          ${reviewSection}
+        `;
+        gigList.appendChild(card);
+      });
+    }
+
+    function calculateChargeFromAmount(baseAmount) {
+      if (!baseAmount) return null;
+      const feeAmount = Number((baseAmount * PROCESSING_FEE_RATE).toFixed(2));
+      const totalAmount = Number((baseAmount + feeAmount).toFixed(2));
+      return { baseAmount, feeAmount, totalAmount };
+    }
+
+    function fillGigFormFromData(gig) {
+      if (!gig) return;
+      document.getElementById('venue').value = gig.venue || '';
+      document.getElementById('date').value = gig.date || '';
+      document.getElementById('time').value = gig.time || '';
+      document.getElementById('location').value = gig.location || '';
+      performerTypeSelect.value = gig.performerType || 'any';
+      syncGenreOptionsForType(true);
+      document.getElementById('genre').value = gig.genre || '';
+      document.getElementById('pay').value = gig.pay || '';
+      document.getElementById('skillNeed').value = gig.skillNeed || '';
+      document.getElementById('notes').value = gig.notes || '';
+      renderPayEstimate();
+      saveDraft();
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderPayEstimate() {
+      const parsed = parseCurrencyAmount(payInput.value.trim());
+      const calc = calculateChargeFromAmount(parsed);
+      if (!calc) {
+        payEstimate.style.display = 'none';
+        payEstimate.innerHTML = '';
+        return;
+      }
+      payEstimate.style.display = 'block';
+      payEstimate.innerHTML =
+        `Performer pay: <strong>${formatUsd(calc.baseAmount)}</strong><br>` +
+        `Processing fee (2%): <strong>${formatUsd(calc.feeAmount)}</strong><br>` +
+        `Host total charge: <strong>${formatUsd(calc.totalAmount)}</strong>`;
+    }
+
+    payInput.addEventListener('input', renderPayEstimate);
+    renderPayEstimate();
+    restoreDraft();
+    syncGenreOptionsForType(true);
+    DRAFT_FIELDS.forEach((field) => {
+      document.getElementById(field)?.addEventListener('input', saveDraft);
+      document.getElementById(field)?.addEventListener('change', saveDraft);
+    });
+    performerTypeSelect?.addEventListener('change', () => {
+      syncGenreOptionsForType(false);
+      saveDraft();
+    });
+    gigSearch?.addEventListener('input', renderHostGigList);
+    gigStatusFilter?.addEventListener('change', renderHostGigList);
+    clearDraftBtn?.addEventListener('click', clearDraft);
+    window.setHostStatusFilter = setHostStatusFilter;
+    window.resetHostQueueView = () => {
+      if (gigSearch) gigSearch.value = '';
+      if (gigStatusFilter) gigStatusFilter.value = 'all';
+      renderHostGigList();
+    };
+
+    window.applyHostPreset = (presetKey) => {
+      const preset = HOST_PRESETS[presetKey];
+      if (!preset) return;
+      Object.entries(preset).forEach(([field, value]) => {
+        const el = document.getElementById(field);
+        if (!el) return;
+        if (field === 'performerType') {
+          el.value = value;
+          syncGenreOptionsForType(true);
+          return;
+        }
+        el.value = value;
+      });
+      syncGenreOptionsForType(true);
+      renderPayEstimate();
+      saveDraft();
+      if (draftStatus) draftStatus.textContent = 'Preset applied. Adjust anything before posting.';
+    };
+
+    window.duplicateGigToForm = (gigId) => {
+      const gig = hostGigCache.find((entry) => entry.gigId === gigId)?.g;
+      if (!gig) return;
+      fillGigFormFromData(gig);
+      statusMsg.className = 'status success';
+      statusMsg.textContent = 'Gig details copied back into the form. Update the date or notes, then repost when ready.';
+    };
+
+    window.reopenGig = async (gigId) => {
+      const gig = hostGigCache.find((entry) => entry.gigId === gigId)?.g;
+      if (!gig) return;
+      if (gig.date && gig.date < new Date().toISOString().slice(0, 10)) {
+        alert('Past gigs should be duplicated into a new post instead of reopened.');
+        return;
+      }
+      if (!window.confirm('Reopen this gig and return it to the live matching feed?')) return;
+      try {
+        await updateDoc(doc(db, 'gigs', gigId), {
+          status: 'open',
+          acceptedBy: deleteField(),
+          checkedInAt: deleteField()
+        });
+        statusMsg.className = 'status success';
+        statusMsg.textContent = 'Gig reopened and returned to the live matching feed with no prior performer attached.';
+      } catch (err) {
+        console.error(err);
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Unable to reopen this gig right now.';
+      }
+    };
+
+    window.cancelGig = async (gigId) => {
+      const currentGig = hostGigCache.find((entry) => entry.gigId === gigId)?.g;
+      if (!currentGig) return;
+      if (currentGig.date && currentGig.date < new Date().toISOString().slice(0, 10)) {
+        alert('Past gigs should stay as history. Duplicate them if you want to reuse the details.');
+        return;
+      }
+      const message = currentGig.status === 'accepted'
+        ? 'Cancel this booking as a whole? It will be removed from the active booking flow.'
+        : 'Cancel this gig as a whole and remove it from the live matching feed?';
+      if (!window.confirm(message)) return;
+      try {
+        const cancelReason = localStorage.getItem('cltch_last_cancel_reason_v1') || '';
+        const payload = { status: 'cancelled' };
+        if (currentGig.acceptedBy) payload.acceptedBy = deleteField();
+        if (currentGig.checkedInAt) payload.checkedInAt = deleteField();
+        if (cancelReason) payload.cancelReason = String(cancelReason).slice(0, 160);
+        payload.cancelledAt = serverTimestamp();
+        await updateDoc(doc(db, 'gigs', gigId), payload);
+        statusMsg.className = 'status success';
+        statusMsg.textContent = currentGig.status === 'accepted'
+          ? 'Gig cancelled. It is no longer active in the booking flow and no performer remains attached.'
+          : 'Gig cancelled and removed from the live matching feed.';
+      } catch (err) {
+        console.error(err);
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Unable to cancel this gig right now.';
+      }
+    };
+
+    // Geocode a location string → { lat, lng }
+    async function geocode(location) {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const data = await res.json();
+        if (data.length > 0) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+      } catch (e) { console.warn('Geocode failed:', e); }
+      return null;
+    }
+
+    // Haversine distance in miles
+    function miles(lat1, lng1, lat2, lng2) {
+      const R = 3958.8;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng/2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    async function countMatches(genre, performerType, gigLat, gigLng, skillNeed) {
+      if (!gigLat || !gigLng) return { count: 0, radius: 40 };
+      const snap = await getDocs(buildAvailableMusiciansQuery(db, performerType));
+      let count40 = 0, count65 = 0;
+      snap.forEach(d => {
+        const p = d.data();
+        if (!p.lat || !p.lng) return;
+        // Performer type filter: 'any' matches all; otherwise must match
+        if (performerType !== 'any' && (p.performerType || 'musician') !== performerType) return;
+        // Genre filter: 'Open / Any' gig matches all; 'Open Format' performer matches all gigs
+        const gMatch = genre === 'Open / Any'
+          || (p.genres || []).includes('Open Format')
+          || (p.genres || []).includes('Open / Any')
+          || (p.genres || []).includes(genre);
+        if (!gMatch) return;
+        const skillMatch = skillMatchScore(skillNeed, p);
+        if (!skillMatch.matched) return;
+        const dist = miles(gigLat, gigLng, p.lat, p.lng);
+        if (dist <= 40) count40++;
+        else if (dist <= 65) count65++;
+      });
+      return count40 > 0
+        ? { count: count40, radius: 40 }
+        : { count: count65, radius: 65 };
+    }
+
+    function applyRebookDraftIfPresent() {
+      try {
+        const draft = JSON.parse(localStorage.getItem('cltch_rebook_draft_v1') || '{}');
+        if (!draft || typeof draft !== 'object' || !draft.venue) return;
+        document.getElementById('venue').value = String(draft.venue || '').trim();
+        document.getElementById('location').value = String(draft.where || '').trim();
+        const when = String(draft.when || '');
+        const match = when.match(/(\d{4}-\d{2}-\d{2})\s*@\s*([0-9:]+\s*[AP]M)/i);
+        if (match) {
+          document.getElementById('date').value = match[1];
+          const parsed = new Date(`${match[1]} ${match[2]}`);
+          if (Number.isFinite(parsed.getTime())) {
+            const hh = String(parsed.getHours()).padStart(2, '0');
+            const mm = String(parsed.getMinutes()).padStart(2, '0');
+            document.getElementById('time').value = `${hh}:${mm}`;
+          }
+        }
+        saveDraft();
+        statusMsg.className = 'status success';
+        statusMsg.textContent = 'Rebook draft loaded from your latest booking. Update details and post.';
+        localStorage.removeItem('cltch_rebook_draft_v1');
+      } catch (error) {}
+    }
+
+    function startApp() {
+    applyRebookDraftIfPresent();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!hostProfileReady) {
+        saveDraft();
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Finish your host profile first. Your gig draft is saved and ready when you come back.';
+        setTimeout(() => { window.location.href = 'host-profile.html?reason=complete-host-profile'; }, 900);
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Posting...';
+
+      const location = document.getElementById('location').value.trim();
+      const genre    = document.getElementById('genre').value;
+
+      // Geocode gig location before posting
+      submitBtn.textContent = 'Locating…';
+      const coords = await geocode(location);
+
+      const gig = {
+        hostId:        HOST_ID,
+        venue:         document.getElementById('venue').value.trim(),
+        date:          document.getElementById('date').value,
+        time:          document.getElementById('time').value,
+        location,
+        genre,
+        performerType: document.getElementById('performerType').value,
+        pay:           document.getElementById('pay').value.trim(),
+        skillNeed:     document.getElementById('skillNeed').value.trim(),
+        notes:         document.getElementById('notes').value.trim(),
+        status:        'open',
+        createdAt:     serverTimestamp(),
+        ...(coords && { lat: coords.lat, lng: coords.lng })
+      };
+      const expiryHours = Number(document.getElementById('cltchOfferTtl')?.value || 0);
+      if (Number.isFinite(expiryHours) && expiryHours > 0) {
+        const expiresAt = new Date(Date.now() + (expiryHours * 60 * 60 * 1000));
+        gig.offerExpiryHours = expiryHours;
+        gig.expiresOn = expiresAt.toISOString();
+      }
+      const parsedPay = parseCurrencyAmount(gig.pay);
+      const charge = calculateChargeFromAmount(parsedPay);
+      if (charge) {
+        gig.payBaseAmount = charge.baseAmount;
+        gig.processingFeeRate = PROCESSING_FEE_RATE;
+        gig.processingFeeAmount = charge.feeAmount;
+        gig.hostTotalCharge = charge.totalAmount;
+      }
+
+      submitBtn.textContent = 'Posting…';
+
+      try {
+        await addDoc(collection(db, 'gigs'), gig);
+
+        // Count matching performers by radius
+        const performerType = document.getElementById('performerType').value;
+        const skillNeed = document.getElementById('skillNeed').value.trim();
+        const match = coords
+          ? await countMatches(genre, performerType, coords.lat, coords.lng, skillNeed)
+          : { count: 0, radius: 40 };
+
+        statusMsg.className = 'status success';
+        statusMsg.textContent = match.count > 0
+          ? `Gig posted! ${match.count} performer${match.count !== 1 ? 's' : ''} within ${match.radius} miles notified.`
+          : 'Gig posted! No performers matched nearby — expanding search automatically.';
+        form.reset();
+        renderPayEstimate();
+        clearDraft();
+        dirtyGuard.markSaved();
+      } catch (err) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Error posting gig. Check your Firebase config.';
+        console.error(err);
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Post Gig →';
+    });
+
+    // Listen for this host's gigs in real time
+    const q = buildHostGigQuery(db, HOST_ID);
+    subscribeWhenVisible(() => onSnapshot(q, (snapshot) => {
+      const nextHostGigCache = [];
+      snapshot.forEach(docSnap => {
+        nextHostGigCache.push({ gigId: docSnap.id, g: docSnap.data() });
+      });
+      hostGigCache = nextHostGigCache;
+      updateHostOpsStats(hostGigCache.map((item) => item.g));
+      renderHostGigList();
+    }));
+
+    // ── Grade system ──────────────────────────────────────────────────
+    const GRADES       = ['AA','A','B','C','D','F','N'];
+    const GRADE_COLORS = { AA:'#f5a623', A:'#4caf82', B:'#7bc67e', C:'#d4b44a', D:'#d4844a', F:'#cf6679', N:'#666' };
+    const GRADE_LABELS = { AA:'Above & beyond — exceptional', A:'Excellent — exceeded expectations', B:'Good — met expectations', C:'Average — got the job done', D:'Below expectations — significant issues', F:'Failed to deliver', N:'No show' };
+    const GRADE_VALUES = { AA:7, A:6, B:5, C:4, D:3, F:2 }; // N excluded from avg
+
+    const gigGrades = {};
+
+    window.setGrade = (gigId, grade) => {
+      gigGrades[gigId] = grade;
+      document.querySelectorAll(`#grades-${gigId} .grade-chip-btn`).forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.grade === grade);
+      });
+      document.getElementById(`grade-desc-${gigId}`).textContent = GRADE_LABELS[grade] || '';
+    };
+
+    window.submitReview = async (gigId, performerId) => {
+      const grade    = gigGrades[gigId];
+      const feedback = document.getElementById(`feedback-${gigId}`).value.trim();
+      if (!grade) { alert('Please select a grade.'); return; }
+
+      try {
+        const hostSnap = await getDoc(doc(db, 'hosts', HOST_ID));
+        const hostName = hostSnap.exists()
+          ? `${hostSnap.data().firstName} ${hostSnap.data().lastName}` : 'Host';
+
+        await addDoc(collection(db, 'musicians', performerId, 'reviews'), {
+          gigId, hostId: HOST_ID, hostName, grade, feedback, createdAt: serverTimestamp()
+        });
+        await updateDoc(doc(db, 'gigs', gigId), { reviewed: true });
+
+        document.getElementById(`review-${gigId}`).innerHTML =
+          `<div style="color:#4caf82; font-size:14px; padding-top:8px;">✓ Submitted — Grade: <strong style="color:${GRADE_COLORS[grade]}">${grade}</strong></div>`;
+      } catch (err) {
+        console.error(err);
+        alert('Error submitting review. Please try again.');
+      }
+    };
+    } // end startApp
+  </script>
+  <script src="scripts/legal-components.js"></script>
+  <script src="scripts/host-performer-enhancements.js"></script>
+  <script src="scripts/platform-components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.Enhancements) {
+        window.Enhancements.initAssurancePack('assurance-pack');
+        window.Enhancements.initCommandCenter('command-center');
+        window.Enhancements.initLocalLawAlerts('localLawTrigger', 'local-law-message');
+      }
+      if (window.PlatformComponents) {
+        window.PlatformComponents.initTrustVerification('hostTrustComponent');
+        window.PlatformComponents.initPaymentLifecycle('hostPaymentComponent');
+      }
+    });
+  </script>
+
+</body>
+</html>

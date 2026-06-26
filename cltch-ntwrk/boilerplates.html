@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLTCH.NTWRK Boilerplates</title>
+  <style>
+    :root {
+      --bg: #080d15;
+      --surface: #111a28;
+      --surface-2: #152335;
+      --line: #223447;
+      --text: #eef4ff;
+      --muted: #9fb1c8;
+      --brand: #f5a623;
+      --accent: #58c7ff;
+      --ok: #39c57e;
+      --warn: #ffcf63;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background:
+        radial-gradient(circle at 18% 14%, rgba(88,199,255,0.18), transparent 34%),
+        radial-gradient(circle at 84% 74%, rgba(245,166,35,0.16), transparent 38%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Avenir Next", Arial, sans-serif;
+      min-height: 100vh;
+    }
+    .wrap { width: min(1180px, 92%); margin: 0 auto; padding: 34px 0 60px; }
+    header {
+      background: rgba(15, 25, 40, 0.8);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(6px);
+    }
+    .kicker { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 1.3px; font-weight: 700; }
+    h1 { font-size: clamp(30px, 4.4vw, 48px); line-height: 1.08; margin: 8px 0 12px; }
+    .lede { color: var(--muted); max-width: 80ch; }
+    .cta { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 9px 13px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .btn-primary { background: var(--brand); color: #000; }
+    .btn-ghost { background: var(--surface-2); border-color: var(--line); color: #d8e8fb; }
+    .topbar {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .topbar a {
+      text-decoration: none;
+      color: #d8e8fb;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      background: rgba(17, 26, 39, 0.9);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    nav a {
+      text-decoration: none;
+      color: #c9dbf3;
+      border: 1px solid var(--line);
+      background: rgba(17, 26, 39, 0.9);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      padding: 7px 12px;
+      text-transform: uppercase;
+    }
+
+    .block {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .block h2 { font-size: 22px; margin-bottom: 8px; }
+    .block p { color: var(--muted); }
+
+    .demo-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 14px; margin-top: 14px; }
+    .demo {
+      border: 1px solid var(--line);
+      background: #0f1825;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .caption {
+      font-size: 11px;
+      color: #9ab0c8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .metric-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #121f30;
+      padding: 10px;
+      min-height: 68px;
+    }
+    .metric strong { font-size: 21px; line-height: 1; display: block; margin-bottom: 6px; }
+    .metric span { color: #8ea4bf; font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; }
+
+    .queue {
+      margin-top: 10px;
+      border: 1px solid #2d475f;
+      background: #102338;
+      border-radius: 10px;
+      padding: 11px 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+    .queue b { color: var(--accent); }
+    .queue small { color: #b5c7dc; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: #c8daef;
+      background: #132134;
+    }
+
+    .profile-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #0f1928;
+      padding: 14px;
+    }
+    .profile-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .profile-top h3 { font-size: 17px; }
+    .badge-ok {
+      border: 1px solid #1f6f45;
+      background: #103625;
+      color: #84dfb0;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 9px;
+      text-transform: uppercase;
+    }
+
+    .code {
+      border: 1px dashed #35506d;
+      background: #0d1522;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      color: #d4e5fb;
+      white-space: pre-wrap;
+    }
+
+    .warn {
+      margin-top: 10px;
+      border: 1px solid #694b17;
+      background: #2b210d;
+      color: var(--warn);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+    footer {
+      margin-top: 18px;
+      color: #7f93ab;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .demo-grid { grid-template-columns: 1fr; }
+      .metric-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .metric-row { grid-template-columns: 1fr; }
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('cltch_theme_v1');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var mode = saved === 'dark' || (!saved && prefersDark) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.style.colorScheme = mode;
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="kicker">CLTCH.NTWRK Starter Set</div>
+      <h1>Boilerplates that feel production-ready.</h1>
+      <p class="lede">This page gives you reusable, on-demand booking UI boilerplates tuned for speed, trust, and conversion. Use these as scaffolding for new pages instead of the minimal defaults.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="/index.html">Back to Live Site</a>
+        <a class="btn btn-ghost" href="/n/index.html">Open Boilerplate Hub</a>
+      </div>
+      <div class="topbar">
+        <a href="/auth.html">Auth</a>
+        <a href="/host.html">Host Flow</a>
+        <a href="/musician-matched-gigs.html">Performer Flow</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </header>
+
+    <nav>
+      <a href="#landing">Landing</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#profile">Profile</a>
+      <a href="#trust">Trust Layer</a>
+      <a href="#match">Match Queue</a>
+    </nav>
+
+    <section class="block" id="landing">
+      <h2>Landing Boilerplate</h2>
+      <p>Strong hero, clear role split, and immediate CTA for fast onboarding.</p>
+      <div class="demo-grid">
+        <div class="demo">
+          <div class="caption">Preview</div>
+          <h3 style="font-size:26px; line-height:1.12; margin-bottom:8px;">Book verified performers and creatives in minutes.</h3>
+          <p style="color:#a8bad1; margin-bottom:10px;">Choose the role, set the style, and match by type, skill, distance, and availability.</p>
+          <div class="chips">
+            <span class="chip">Same-day bookings</span>
+            <span class="chip">Verified profiles</span>
+            <span class="chip">Smart matching</span>
+          </div>
+          <div class="queue" style="margin-top:12px;"><b>58</b><small>performers currently available near Atlanta</small></div>
+        </div>
+        <div class="demo">
+          <div class="caption">Boilerplate Copy</div>
+          <div class="code">Headline: Book verified performers and creatives in minutes.
+Subhead: Match by role, style, skill, distance, and real-time availability.
+Primary CTA: Find Performers
+Secondary CTA: Post a Gig</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="dashboard">
+      <h2>Dashboard Boilerplate</h2>
+      <p>Metrics first, queue second, action controls always visible.</p>
+      <div class="demo-grid">
+        <div class="demo">
+          <div class="caption">Preview</div>
+          <div class="metric-row">
+            <div class="metric"><strong>18</strong><span>Live Matches</span></div>
+            <div class="metric"><strong>84%</strong><span>Avg Match Score</span></div>
+            <div class="metric"><strong>62%</strong><span>Accept Rate</span></div>
+            <div class="metric"><strong>$1,240</strong><span>Upcoming Earnings</span></div>
+          </div>
+          <div class="queue"><b>Priority Queue</b><small>3 same-day requests waiting</small></div>
+        </div>
+        <div class="demo">
+          <div class="caption">Boilerplate Copy</div>
+          <div class="code">Section title: Performance Analytics
+Queue subtitle: Highest confidence matches first
+Buttons: Accept / Pass / View Host</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="profile">
+      <h2>Profile Boilerplate</h2>
+      <p>Verification, specialty, and payout readiness should be obvious above the fold.</p>
+      <div class="demo-grid">
+        <div class="demo">
+          <div class="caption">Preview</div>
+          <article class="profile-card">
+            <div class="profile-top">
+              <h3>Nova Skye Studio</h3>
+              <span class="badge-ok">Verified</span>
+            </div>
+            <p style="color:#9eb2cb; margin-bottom:8px;">Atlanta, GA • Event Coverage / Editorial / Lifestyle</p>
+            <div class="chips">
+              <span class="chip">Payout Ready</span>
+              <span class="chip">Response under 10 min</span>
+              <span class="chip">Skill verified</span>
+            </div>
+          </article>
+        </div>
+        <div class="demo">
+          <div class="caption">Boilerplate Copy</div>
+          <div class="code">Status badges: Verified, Payout Ready, ID Confirmed
+CTA: Save Profile → Dashboard
+Trust line: Never share payout details in public notes.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="trust">
+      <h2>Trust & Safety Boilerplate</h2>
+      <p>Use this banner pattern when you need to reinforce signed-in-only actions.</p>
+      <div class="warn">Security lock: Users must be authenticated before posting, accepting, or messaging about gigs.</div>
+      <div class="code">Banner copy:
+"Security lock enabled: sign in required for posting and gig acceptance."
+Tone: calm, firm, non-technical.</div>
+    </section>
+
+    <section class="block" id="match">
+      <h2>On-Demand Match Queue Boilerplate</h2>
+      <p>Designed for urgent booking flow: confidence score, skill fit, time pressure, and one-tap decisions.</p>
+      <div class="demo-grid">
+        <div class="demo">
+          <div class="caption">Preview</div>
+          <div style="border:1px solid #28425d; background:#112235; border-radius:10px; padding:11px; margin-bottom:8px;">
+            <b style="color:#58c7ff;">91% Match</b>
+            <p style="margin-top:5px; color:#c0d7ef;">Close by · 6 mi • Starts in 2 hours</p>
+          </div>
+          <div class="chips">
+            <span class="chip">Style fit</span>
+            <span class="chip">Skill fit</span>
+            <span class="chip">Distance fit</span>
+            <span class="chip">Availability fit</span>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="caption">Boilerplate Copy</div>
+          <div class="code">Primary chip: 91% Match
+Secondary line: Close by · 6 mi
+Buttons: Accept (primary), Pass (secondary)
+Decision helper: "Host responds within 5 min"</div>
+        </div>
+      </div>
+    </section>
+    <footer>Boilerplates now mirror the live CLTCH.NTWRK host and performer language instead of the earlier DJ-only branch.</footer>
+  </main>
+</body>
+</html>

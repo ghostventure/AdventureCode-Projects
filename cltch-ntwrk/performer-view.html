@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="View verified performer profiles and reviews on CLTCH.NTWRK.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK — Performer Profile</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      text-decoration: none;
+    }
+    header nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 14px;
+    }
+    header nav a:hover { color: #fff; }
+    .container {
+      flex: 1;
+      max-width: 680px;
+      width: 100%;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    /* Profile Header */
+    .profile-header {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #1e1e1e;
+      border: 2px solid #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .profile-info { flex: 1; }
+    .profile-name {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .profile-stage {
+      font-size: 15px;
+      color: #f5a623;
+      margin-bottom: 6px;
+    }
+    .profile-meta {
+      font-size: 13px;
+      color: #666;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .performer-type-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .type-musician { background: #1a1a2e; color: #7b9cff; }
+    .type-dj       { background: #2a1a00; color: #f5a623; }
+    .type-photographer { background: #10221a; color: #74d6a7; }
+    .type-cinematographer { background: #19142a; color: #b499ff; }
+    .type-model { background: #2a161c; color: #ff9ab4; }
+    .business-class-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(201, 152, 63, 0.14);
+      border: 1px solid rgba(201, 152, 63, 0.4);
+      color: #c9983f;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .verified-performer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      margin-left: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(76, 175, 130, 0.16);
+      border: 1px solid rgba(76, 175, 130, 0.42);
+      color: #4caf82;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Grade Summary */
+    .grade-summary {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .grade-big   { font-size: 28px; font-weight: 900; line-height: 1; }
+    .grade-label { font-size: 13px; color: #888; }
+    .grade-count { font-size: 13px; color: #555; }
+    .tier-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #171717;
+      border: 1px solid #2a2a2a;
+      color: #f5a623;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+    .tier-note {
+      font-size: 12px;
+      color: #777;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    /* Availability pill */
+    .avail-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .avail-open   { background: #0d2e1a; color: #4caf82; }
+    .avail-closed { background: #1e1e1e; color: #555; }
+
+    /* Sections */
+    .section { margin-bottom: 32px; }
+    .section h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .bio-text {
+      font-size: 15px;
+      color: #aaa;
+      line-height: 1.7;
+    }
+    .genre-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      padding: 6px 14px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #ccc;
+    }
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 16px 20px;
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+    }
+    .stat-box .val {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f5a623;
+    }
+    .stat-box .lbl {
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    /* Reviews */
+    .review-card {
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .review-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .review-host  { font-size: 14px; font-weight: 600; }
+    .review-grade-pill {
+      font-size: 13px;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 5px;
+      border: 2px solid;
+      letter-spacing: 0.5px;
+    }
+    .review-date { font-size: 12px; color: #444; margin-bottom: 8px; }
+    .review-text { font-size: 14px; color: #aaa; line-height: 1.6; font-style: italic; }
+    .no-reviews  { color: #444; font-size: 14px; padding: 16px 0; }
+    .grade-breakdown { margin-bottom: 20px; }
+    .grade-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .grade-bar-label { width: 24px; text-align: right; font-weight: 800; flex-shrink: 0; }
+    .grade-bar-track {
+      flex: 1;
+      height: 6px;
+      background: #1e1e1e;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .grade-bar-fill  { height: 100%; border-radius: 3px; }
+    .grade-bar-count { width: 20px; color: #555; flex-shrink: 0; }
+
+    /* Book CTA */
+    .book-bar {
+      position: relative;
+      background: #0f0f0f;
+      border-top: 1px solid #1e1e1e;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .book-bar .rate-display { font-size: 15px; color: #aaa; }
+    .book-bar .rate-display span { color: #fff; font-weight: 700; }
+    .btn-book {
+      padding: 12px 32px;
+      background: #f5a623;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-book:hover { background: #e09510; }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #333;
+      border-top: 1px solid #1e1e1e;
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script src="site-init.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <a href="host.html">Post a Gig</a>
+      <a href="auth.html" id="signOutLink">Sign Out</a>
+    </nav>
+  </header>
+
+  <main class="container" id="profileContainer">
+    <p style="color:#444; padding: 60px 0; text-align:center;">Loading profile&hellip;</p>
+  </main>
+
+  <div class="book-bar" id="bookBar" style="display:none;">
+    <div class="rate-display">Rate: <span id="rateDisplay">—</span></div>
+    <button class="btn-book" id="bookBtn">Request This Performer</button>
+  </div>
+
+  <footer>&copy; 2026 CLTCH.NTWRK &mdash; <a href="about.html" style="color:#555;text-decoration:none;margin:0 6px;">About</a> <a href="faq.html" style="color:#555;text-decoration:none;margin:0 6px;">FAQ</a> <a href="contact.html" style="color:#555;text-decoration:none;margin:0 6px;">Contact</a> <a href="press.html" style="color:#555;text-decoration:none;margin:0 6px;">Press</a> <a href="accessibility.html" style="color:#555;text-decoration:none;margin:0 6px;">Accessibility</a> <a href="dmca.html" style="color:#555;text-decoration:none;margin:0 6px;">DMCA</a> <a href="terms.html" style="color:#555;text-decoration:none;margin:0 6px;">Terms</a> <a href="privacy.html" style="color:#555;text-decoration:none;margin:0 6px;">Privacy</a></footer>
+
+  <script type="module">
+    import { getFirestore, doc, getDoc, collection, query, orderBy, limit, getDocs }
+      from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { onAuthStateChanged, reload, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { auth, db } from "./app/firebase-client.js";
+    import { DEFAULT_TIMEOUT_MS, clearResumeTarget, installIdleLogout } from "./app/idle-logout.js";
+    import { derivePerformerTier, describeTierProgress } from "./app/performer-tier.js";
+    import { recordAuthEvent } from "./app/user-db.js";
+
+    // Get performer ID from URL: ?id=musician-demo-001
+    const params = new URLSearchParams(window.location.search);
+    const performerId = params.get('id');
+
+    function requiresVerifiedEmail(user) {
+      return !!(user && user.providerData && user.providerData.some((provider) => provider?.providerId === 'password') && !user.emailVerified);
+    }
+
+    async function refreshUserVerification(user) {
+      if (!user) return user;
+      try { await reload(user); } catch {}
+      return auth.currentUser || user;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = `auth.html?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+        return;
+      }
+      const freshUser = await refreshUserVerification(user);
+      if (requiresVerifiedEmail(freshUser)) {
+        await signOut(auth).catch(() => {});
+        window.location.href = 'auth.html?reason=verify-email';
+        return;
+      }
+      installIdleLogout(auth, DEFAULT_TIMEOUT_MS);
+      if (!performerId) {
+        document.getElementById('profileContainer').innerHTML =
+          '<p style="color:#555; text-align:center; padding:60px 0;">No performer specified.</p>';
+        window.CLTCHLoading?.done();
+        return;
+      }
+      loadProfile(performerId);
+    });
+
+    document.getElementById('signOutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      clearResumeTarget();
+      if (auth.currentUser) await recordAuthEvent(db, auth.currentUser, 'sign_out').catch(() => {});
+      await signOut(auth);
+      window.location.href = 'auth.html';
+    });
+
+    async function loadProfile(id) {
+      const profileRef = doc(db, 'musicians', id);
+      const snap = await getDoc(profileRef);
+
+      if (!snap.exists()) {
+        document.getElementById('profileContainer').innerHTML =
+          '<p style="color:#555; text-align:center; padding:60px 0;">Performer not found.</p>';
+        window.CLTCHLoading?.done();
+        return;
+      }
+
+      const d = snap.data();
+      const displayName = d.stageName || `${d.firstName} ${d.lastName}`;
+      const performerMeta = {
+        musician: { label: 'Musician', icon: '🎸', badge: 'type-musician', skillHeading: 'Instruments / Skills' },
+        dj: { label: 'DJ', icon: '🎧', badge: 'type-dj', skillHeading: 'Equipment / Setup' },
+        photographer: { label: 'Photographer', icon: '📸', badge: 'type-photographer', skillHeading: 'Gear / Specialties' },
+        cinematographer: { label: 'Cinematographer', icon: '🎥', badge: 'type-cinematographer', skillHeading: 'Gear / Specialties' },
+        model: { label: 'Model', icon: '✨', badge: 'type-model', skillHeading: 'Specialties / Experience' }
+      };
+      const meta        = performerMeta[d.performerType || 'musician'] || performerMeta.musician;
+
+      document.title = `CLTCH.NTWRK — ${displayName}`;
+
+      // Grade system constants
+      const GRADES_V       = ['AA','A','B','C','D','F','N'];
+      const GRADE_COLORS_V = { AA:'#f5a623', A:'#4caf82', B:'#7bc67e', C:'#d4b44a', D:'#d4844a', F:'#cf6679', N:'#555' };
+      const GRADE_LABELS_V = { AA:'Above & beyond', A:'Excellent', B:'Good', C:'Average', D:'Below average', F:'Unacceptable', N:'No show' };
+      const GRADE_VALUES_V = { AA:7, A:6, B:5, C:4, D:3, F:2 };
+
+      // Load reviews
+      const reviewsRef = collection(db, 'musicians', id, 'reviews');
+      const reviewsSnap = await getDocs(query(reviewsRef, orderBy('createdAt', 'desc')));
+      const reviews = [];
+      reviewsSnap.forEach(r => reviews.push(r.data()));
+      const reviewCount = reviews.length;
+
+      // Grade tally
+      const tally    = Object.fromEntries(GRADES_V.map(g => [g, 0]));
+      reviews.forEach(r => { if (r.grade) tally[r.grade] = (tally[r.grade] || 0) + 1; });
+      const maxTally = Math.max(...Object.values(tally), 1);
+
+      // Overall grade (exclude N)
+      const graded  = reviews.filter(r => r.grade && r.grade !== 'N').map(r => GRADE_VALUES_V[r.grade] || 0);
+      const overall = graded.length
+        ? (() => { const avg = graded.reduce((s,v)=>s+v,0)/graded.length; return avg>=6.5?'AA':avg>=5.5?'A':avg>=4.5?'B':avg>=3.5?'C':avg>=2.5?'D':'F'; })()
+        : null;
+      const tierSummary = derivePerformerTier(reviews);
+
+      const gradeBreakdown = reviews.length > 0 ? `
+        <div class="grade-breakdown">
+          ${GRADES_V.map(g => `
+            <div class="grade-bar-row">
+              <div class="grade-bar-label" style="color:${GRADE_COLORS_V[g]}">${g}</div>
+              <div class="grade-bar-track">
+                <div class="grade-bar-fill" style="width:${Math.round((tally[g]/maxTally)*100)}%; background:${GRADE_COLORS_V[g]};"></div>
+              </div>
+              <div class="grade-bar-count">${tally[g]}</div>
+            </div>`).join('')}
+        </div>` : '';
+
+      document.getElementById('profileContainer').innerHTML = `
+        <div class="profile-header">
+          <div class="avatar">${meta.icon}</div>
+          <div class="profile-info">
+            <div class="profile-name">${d.firstName} ${d.lastName}</div>
+            ${d.stageName ? `<div class="profile-stage">${d.stageName}</div>` : ''}
+            <div class="profile-meta">
+              <span>📍 ${d.location || '—'}</span>
+              ${d.experience ? `<span>⏱ ${d.experience} yrs experience</span>` : ''}
+            </div>
+            <span class="performer-type-badge ${meta.badge}">
+              ${meta.label}
+            </span>
+            ${d.businessClassActive === true ? `<div class="business-class-badge">Business Class Verified</div>` : ''}
+            ${d.verifiedPerformerActive === true ? `<div class="verified-performer-badge">Verified Performer • Legit Account</div>` : ''}
+            <div class="grade-summary">
+              <div class="grade-big" style="color:${overall ? GRADE_COLORS_V[overall] : '#333'}">${overall || '—'}</div>
+              ${overall ? `<div class="grade-label">${GRADE_LABELS_V[overall]}</div>` : ''}
+              <div class="grade-count">${reviewCount > 0 ? `${reviewCount} review${reviewCount !== 1 ? 's' : ''}` : 'No reviews yet'}</div>
+            </div>
+            <div class="tier-pill">${tierSummary.tier}</div>
+            <div class="tier-note">${describeTierProgress(tierSummary)}</div>
+            <div class="avail-pill ${d.available ? 'avail-open' : 'avail-closed'}">
+              ${d.available ? 'Available for Gigs' : 'Not Available'}
+            </div>
+          </div>
+        </div>
+
+        ${d.bio ? `
+        <div class="section">
+          <h2>About</h2>
+          <p class="bio-text">${d.bio}</p>
+        </div>` : ''}
+
+        <div class="section">
+          <h2>Stats</h2>
+          <div class="stats-row">
+            <div class="stat-box">
+              <div class="val" style="color:${overall ? GRADE_COLORS_V[overall] : '#555'}">${overall || '—'}</div>
+              <div class="lbl">Overall Grade</div>
+            </div>
+            <div class="stat-box">
+              <div class="val">${reviewCount}</div>
+              <div class="lbl">Gigs Reviewed</div>
+            </div>
+            <div class="stat-box">
+              <div class="val" style="font-size:18px;">${tierSummary.tier}</div>
+              <div class="lbl">Performer Tier</div>
+            </div>
+            <div class="stat-box">
+              <div class="val">${d.experience || '—'}</div>
+              <div class="lbl">Yrs Experience</div>
+            </div>
+          </div>
+        </div>
+
+        ${d.genres && d.genres.length ? `
+        <div class="section">
+          <h2>Styles / Genres</h2>
+          <div class="genre-chips">
+            ${d.genres.map(g => `<div class="chip">${g}</div>`).join('')}
+          </div>
+        </div>` : ''}
+
+        ${d.instruments ? `
+        <div class="section">
+          <h2>${meta.skillHeading}</h2>
+          <p class="bio-text">${d.instruments}</p>
+        </div>` : ''}
+
+        ${d.blackoutDates && d.blackoutDates.length ? `
+        <div class="section">
+          <h2>Unavailable Dates</h2>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            ${d.blackoutDates.sort().map(date => {
+              const [y,m,day] = date.split('-');
+              const label = new Date(+y,+m-1,+day).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+              return `<div class="chip" style="background:#2e0d0d; border-color:#5c1a1a; color:#cf6679;">${label}</div>`;
+            }).join('')}
+          </div>
+        </div>` : ''}
+
+        <div class="section">
+          <h2>Testimonials</h2>
+          ${reviews.length === 0
+            ? '<p class="no-reviews">No reviews yet — be the first to book and review.</p>'
+            : gradeBreakdown + reviews.slice(0,10).map(r => {
+                const color = GRADE_COLORS_V[r.grade] || '#555';
+                const date  = r.createdAt ? new Date(r.createdAt.toDate()).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '';
+                return `
+              <div class="review-card">
+                <div class="review-top">
+                  <div class="review-host">${r.hostName || 'Host'}</div>
+                  <div class="review-grade-pill" style="color:${color}; border-color:${color}; background:${color}18;">${r.grade || '—'}</div>
+                </div>
+                <div class="review-date">${date}</div>
+                ${r.feedback ? `<div class="review-text">"${r.feedback}"</div>` : ''}
+              </div>`;}).join('')
+          }
+        </div>
+      `;
+      window.CLTCHLoading?.done();
+
+      // Show book bar
+      document.getElementById('rateDisplay').textContent = d.rate || 'Negotiable';
+      document.getElementById('bookBar').style.display = d.available ? 'flex' : 'none';
+      document.getElementById('bookBtn').onclick = () => {
+        window.location.href = `host.html?performer=${id}`;
+      };
+    }
+  </script>
+
+</body>
+</html>

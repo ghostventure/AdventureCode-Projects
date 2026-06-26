@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLTCH.NTWRK — Terms of Service</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      text-decoration: none;
+    }
+    header nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 14px;
+    }
+    header nav a:hover { color: #fff; }
+    .container {
+      flex: 1;
+      max-width: 720px;
+      width: 100%;
+      margin: 48px auto;
+      padding: 0 24px 60px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .effective {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 40px;
+    }
+    h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f5a623;
+      margin: 32px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    p {
+      font-size: 15px;
+      color: #aaa;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+    ul li {
+      font-size: 15px;
+      color: #aaa;
+      line-height: 1.8;
+      margin-bottom: 6px;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #1e1e1e;
+      margin: 32px 0;
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #333;
+      border-top: 1px solid #1e1e1e;
+    }
+    footer a { color: #555; text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: #aaa; }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('cltch_theme_v1');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var mode = saved === 'dark' || (!saved && prefersDark) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.style.colorScheme = mode;
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <a href="auth.html">Sign In</a>
+      <a href="auth.html?tab=signup">Sign Up</a>
+    </nav>
+  </header>
+
+  <main class="page-shell container">
+    <h1>Terms of Service</h1>
+    <p class="effective">Effective Date: April 8, 2026</p>
+
+    <p>Welcome to CLTCH.NTWRK. These Terms of Service govern your access to and use of the CLTCH.NTWRK website, mobile wrappers, booking tools, account system, and related services. By creating an account, signing in, or using the platform, you agree to these terms.</p>
+
+    <h2>1. About the Platform</h2>
+    <p>CLTCH.NTWRK is a booking and matching platform for hosts and performers. Hosts can publish gig opportunities and manage booking activity. Performers can create profiles, manage availability, review matched opportunities, and accept gigs. CLTCH.NTWRK helps users discover and manage opportunities, but except where we expressly say otherwise, we are not the employer, agent, manager, venue operator, or direct contracting party for either side.</p>
+
+    <h2>2. Eligibility and Account Accuracy</h2>
+    <p>You must be at least 18 years old to use CLTCH.NTWRK. You agree to provide accurate account, profile, payment, and contact information and to keep that information current. You may not create an account for someone else without authorization, impersonate another person or business, or submit false or misleading identity information.</p>
+
+    <h2>3. Account Security and Verification</h2>
+    <p>Your CLTCH.NTWRK account works as one sign-in across the network. That single OneID can be used for hosting, performing, booking, support, and other protected CLTCH.NTWRK tools tied to your account.</p>
+    <ul>
+      <li>You are responsible for your sign-in credentials and all activity that occurs under your account.</li>
+      <li>Password-based accounts may be required to verify the email address attached to the account before access to protected pages is granted.</li>
+      <li>CLTCH.NTWRK may sign out inactive sessions automatically as part of platform security.</li>
+      <li>You must notify us promptly if you believe your account, email, or session has been compromised.</li>
+    </ul>
+
+    <h2>4. Roles, Profiles, and Workspace Access</h2>
+    <p>CLTCH.NTWRK supports host and performer workspaces. A user may complete one or both profile types if the platform makes that available. Certain actions require a completed profile. For example, a host profile may be required before a gig can be posted live, and a performer profile may be required before a user can appear in matching or accept gigs.</p>
+
+    <h2>5. Host Responsibilities</h2>
+    <p>Hosts are responsible for posting truthful and complete gig information, including venue or event details, date, time, location, performer type, pay, and any important creative or operational expectations. Hosts agree not to use misleading job posts, bait-and-switch tactics, fake availability requests, or intentionally underdescribed working conditions. When a host posts or manages a gig, the host is responsible for honoring the commitments reflected in that posting unless the gig is properly canceled.</p>
+
+    <h2>6. Performer Responsibilities</h2>
+    <p>Performers are responsible for maintaining an accurate profile, correct availability, truthful genre and skill information, and professional conduct. Accepting a booking means the performer is representing that they are available and willing to complete the work as described. No-shows, repeated cancellations, profile fraud, or materially misleading skill claims may lead to reduced platform trust, feature restrictions, suspension, or termination.</p>
+
+    <h2>7. Matching, Gig Radar, and Booking Flow</h2>
+    <p>CLTCH.NTWRK uses profile information, availability, location, performer type, and other signals to decide which gigs appear to performers and which performers are eligible for hosts. The platform may suppress low-quality, unavailable, or conflicting matches. A gig appearing in Gig Radar or a matched queue does not guarantee work, income, or a completed booking. A booking is only active when the platform reflects the relevant accepted state.</p>
+
+    <h2>8. Cancellations, Reopens, and Booking Changes</h2>
+    <p>Hosts and performers may have tools to cancel future bookings or cancel a gig as a whole. Hosts may also have tools to reopen or duplicate certain gigs. Those tools exist to manage live scheduling, but they do not remove user responsibility for reasonable communication or professional behavior. Excessive cancellations, misuse of booking tools, or abuse of the platform workflow may result in penalties, removal of features, or account action.</p>
+
+    <h2>9. Reviews, Ratings, and Reputation Signals</h2>
+    <p>CLTCH.NTWRK may allow hosts to leave ratings, grades, or written feedback after a completed booking. Reviews and ratings must be based on actual booking experience and may not be fabricated, manipulated, retaliatory, threatening, or abusive. We may remove, moderate, hide, or refuse to display reviews or reputation signals that we determine violate these terms or undermine platform integrity.</p>
+
+    <h2>10. Payments and Payout Methods</h2>
+    <p>Users are responsible for providing accurate payout and payment information where required. The live platform may prioritize certain payout or payment methods, and some future payment features may appear in the interface or codebase before they are fully active in production. Unless CLTCH.NTWRK expressly states that it is acting as the payment processor or escrow party for a transaction, hosts and performers remain responsible for honoring agreed payment obligations and resolving payment issues tied to their booking relationship.</p>
+
+    <h2>11. Fees and Platform Charges</h2>
+    <p>CLTCH.NTWRK may display estimated platform or processing fees in connection with host gig posting or booking workflows. Any such fee disclosures are part of the platform terms for using those features.</p>
+    <p>CLTCH.NTWRK may also offer optional paid profile features, including Verified Performer at <strong>$20/month</strong>. If you enable a paid feature, you agree to the disclosed recurring price and feature terms. Unless we expressly state otherwise in-product, optional paid profile features are non-transferable, can be changed or discontinued, and do not guarantee booking volume, earnings, or business outcomes.</p>
+    <p>We may change fees, pricing structure, or paid feature availability in the future by updating the platform or these terms.</p>
+
+    <h2>12. Prohibited Conduct</h2>
+    <ul>
+      <li>Creating fake, misleading, duplicate, or unauthorized accounts.</li>
+      <li>Attempting to bypass sign-in protections, verification checks, authorization rules, session controls, or access restrictions.</li>
+      <li>Scraping, copying, harvesting, or mass-exporting profile, booking, or account data without permission.</li>
+      <li>Posting fraudulent gigs, fake reviews, false availability, or intentionally deceptive profile information.</li>
+      <li>Harassing, threatening, stalking, impersonating, or abusing other users.</li>
+      <li>Using CLTCH.NTWRK for unlawful activity or in violation of venue, event, labor, licensing, or safety requirements that apply to you.</li>
+    </ul>
+
+    <h2>13. Data, Privacy, and Platform Security</h2>
+    <p>You agree not to interfere with the platform's security, performance, database rules, or session integrity. CLTCH.NTWRK may use authentication, verification, inactivity timeouts, database rules, access controls, logging, and other technical safeguards to protect users and the service. Your use of CLTCH.NTWRK is also subject to our Privacy Policy.</p>
+
+    <h2>14. Availability of the Service</h2>
+    <p>We may update, suspend, change, or remove features at any time. We do not guarantee that every page, payment path, notification channel, or matching path will always be available, uninterrupted, or error-free. We may also pause or change features while improving security, stability, or performance.</p>
+
+    <h2>15. Suspension and Termination</h2>
+    <p>We may suspend, restrict, or terminate access to some or all of CLTCH.NTWRK if we believe you violated these terms, created risk for other users, abused booking workflows, interfered with platform integrity, or exposed the service to legal or operational harm. We may also remove specific content, disable a profile, or restrict access to certain features without first issuing a warning when necessary to protect the platform.</p>
+
+    <h2>16. Disclaimers</h2>
+    <p>CLTCH.NTWRK is provided on an "as is" and "as available" basis. We do not guarantee gig volume, booking success, artist quality, venue quality, user conduct, payout timing, or uninterrupted access. We are not responsible for the acts, omissions, promises, cancellations, safety failures, business decisions, or off-platform conduct of hosts, performers, venues, vendors, or third parties.</p>
+
+    <h2>17. Limitation of Liability</h2>
+    <p>To the fullest extent allowed by law, CLTCH.NTWRK and its operators will not be liable for indirect, incidental, special, consequential, exemplary, or punitive damages, or for lost profits, lost business, lost data, reputational harm, or booking-related losses arising out of or related to your use of the platform. If we are found liable despite the foregoing, our total liability will be limited to the amount you paid us directly, if any, for the specific feature or service giving rise to the claim.</p>
+
+    <h2>18. Changes to These Terms</h2>
+    <p>We may revise these Terms of Service from time to time. Updated terms become effective when posted to the platform unless we state otherwise. Your continued use of CLTCH.NTWRK after updated terms are posted means you accept the revised terms.</p>
+
+    <h2>19. Compliance with U.S. Law</h2>
+    <p>CLTCH.NTWRK operates under U.S. federal, state, and local law. We build the platform to align with the Americans with Disabilities Act (Title III) and Section 508 accessibility requirements, the Children’s Online Privacy Protection Act (COPPA) by limiting accounts to individuals 18 and over, the California Consumer Privacy Act (CCPA/CPRA) along with Colorado’s CPA, Virginia’s VCDPA, Connecticut’s CPA, and related state privacy regimes, FTC marketing and unfair/deceptive acts guidance, local city/county/borough/parish ordinances where they apply, and the Digital Millennium Copyright Act (DMCA) for copyright notices and counter-notices. We also monitor for compliance with anti-discrimination principles inspired by Title VII to keep onboarding and matching equitable for hosts and performers. When a provision would otherwise clash with a mandatory local or state rule, we honor the mandatory element while leaving the rest of these terms in force.</p>
+
+    <h2>20. Accessibility & Non-Discrimination</h2>
+    <p>We provide keyboard focus cues, descriptive markup, captioned media, and contrast-safe palettes to meet WCAG 2.1 AA-style criteria so the interface remains usable for screen readers, keyboard-only navigation, and assistive technology. We proactively examine workflows to avoid discriminatory outcomes and provide reasonable accommodations when requested. Email <a href="mailto:support@cltch.ntwrk" style="color:#f5a623;">support@cltch.ntwrk</a> or use the accessibility hotline on <a href="accessibility.html" style="color:#f5a623;">our accessibility page</a> if you encounter a barrier.</p>
+
+    <h2>21. Privacy Rights & Data Governance</h2>
+    <p>You may request access, correction, deletion, or a portable copy of your personal data. California residents can also request restriction on the sale or sharing of personal information, and residents of Colorado, Connecticut, Virginia, or similar jurisdictions can invoke their statutorily recognized rights. Submit requests through the <a href="contact.html" style="color:#f5a623;">platform contact form</a> or email <a href="mailto:privacy@cltch.ntwrk" style="color:#f5a623;">privacy@cltch.ntwrk</a>. We acknowledge requests within 10 business days and plan to complete them within 45 days unless a verified need for additional time arises. We do not discriminate against residents who exercise their data rights.</p>
+
+    <h2>22. Copyright & DMCA Compliance</h2>
+    <p>We respect copyright under 17 U.S.C. § 512. Send takedown notices that include the required elements from § 512(c)(3), and we will act expeditiously to remove or disable access to allegedly infringing material. Counter-notices satisfying § 512(g)(3) are forwarded to the original complainant, and we may restore the material after 10 business days unless notified that a lawsuit has been filed. Repeat infringers are disabled consistent with § 512(i)(1)(A), and knowingly false notices or counter-notices may expose the sender to liability under § 512(f). The designated agent contact details are listed in our <a href="dmca.html" style="color:#f5a623;">DMCA Policy</a>.</p>
+
+    <h2>23. Child Safety & Labor Compliance</h2>
+    <p>We do not permit individuals under 18 to maintain accounts, and we require age verification before granting access to any protected booking workflows. This allows us to comply with COPPA (Children’s Online Privacy Protection Act), FLSA child labor provisions, and local child employment laws that apply to the venues and events on our platform. If we learn that an underage person has created an account, we close the account and delete their data unless the user obtains parental consent in jurisdictions where limited activity is permitted.</p>
+    <p>Hosts and performers must also comply with all applicable local child labor, venue, and school district ordinances whenever minors are involved in events; the platform provides reporting channels so you can flag situations that may require adult supervision or additional permits.</p>
+
+    <h2>24. Contact</h2>
+    <p>Questions about these terms, compliance, or legal requests can be directed to the CLTCH.NTWRK legal team: <strong>CLTCH.NTWRK, Inc.</strong><br>
+      123 Creative Ave, Suite 200<br>
+      Raleigh, NC 27601<br>
+      <a href="mailto:legal@cltch.ntwrk" style="color:#f5a623;">legal@cltch.ntwrk</a><br>
+      (919) 555-0199</p>
+  </main>
+
+  <footer>
+    &copy; 2026 CLTCH.NTWRK &mdash;
+    <a href="about.html">About</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+  </footer>
+
+  <script src="scripts/legal-components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.LegalComponents) {
+        window.LegalComponents.initPolicyLayout();
+      }
+    });
+  </script>
+
+</body>
+</html>

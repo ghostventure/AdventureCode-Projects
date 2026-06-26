@@ -1,0 +1,27 @@
+[
+  {
+    "jurisdiction": "Raleigh, NC",
+    "type": "city",
+    "notes": [
+      "Noise ordinance permits for late-night gigs",
+      "Child performer supervision rules",
+      "Alcohol service certification"
+    ]
+  },
+  {
+    "jurisdiction": "Wake County, NC",
+    "type": "county",
+    "notes": [
+      "Special event zoning approvals",
+      "Gig worker tax reporting guidance"
+    ]
+  },
+  {
+    "jurisdiction": "New Orleans Parish, LA",
+    "type": "parish",
+    "notes": [
+      "Sound-level and curfew limits",
+      "Parade and street-performer licenses"
+    ]
+  }
+]

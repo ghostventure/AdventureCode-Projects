@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Set up and manage your host profile on CLTCH.NTWRK.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK — Host Profile</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      text-decoration: none;
+    }
+    header nav {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 14px;
+    }
+    .mode-toggle {
+      margin-left: 24px;
+      display: inline-flex;
+      align-items: center;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .mode-btn {
+      border: 0;
+      background: transparent;
+      color: #8d98a8;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .mode-btn.active {
+      background: #f5a623;
+      color: #000;
+    }
+    .mode-toggle.busy { opacity: 0.7; }
+    .mode-toggle.busy .mode-btn { pointer-events: none; }
+    header nav select {
+      margin-left: 24px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #aaa;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 10px;
+      outline: none;
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    header nav select:focus { border-color: #f5a623; color: #fff; }
+    header nav a:hover { color: #fff; }
+    .container {
+      flex: 1;
+      max-width: 1180px;
+      width: 100%;
+      margin: 36px auto 64px;
+      padding: 0 24px;
+    }
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 36px; }
+    .section-divider {
+      border: none;
+      border-top: 1px solid #1e1e1e;
+      margin: 32px 0 28px;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #444;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    #profileForm {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    #profileForm > .section-divider,
+    #profileForm > .section-label,
+    #profileForm > .payment-box,
+    #profileForm > .btn-save {
+      grid-column: 1 / -1;
+    }
+
+    .form-group { margin-bottom: 0; }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #aaa;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 15px;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #f5a623; }
+    input.invalid, select.invalid { border-color: #cf6679 !important; }
+    .field-error { font-size: 12px; color: #cf6679; margin-top: 5px; min-height: 16px; }
+    select option { background: #141414; }
+    textarea { resize: vertical; min-height: 90px; }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      grid-column: 1 / -1;
+    }
+    .row .form-group {
+      min-width: 0;
+    }
+    .payment-box {
+      background: #0e0e0e;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .payment-box > .form-group:first-child,
+    .payment-box > #payHandleGroup,
+    .payment-box > #plaidConnectGroup,
+    .payment-box > #payNote {
+      grid-column: 1 / -1;
+    }
+    .payment-note {
+      font-size: 12px;
+      color: #444;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    .btn-plaid {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #2a5c95;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #1f4f84, #163d66);
+      color: #eaf4ff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .btn-plaid:hover { border-color: #4d88ca; }
+    .btn-plaid:disabled { opacity: 0.65; cursor: not-allowed; }
+    .plaid-status-ok { color: #4caf82; }
+    .plaid-status-err { color: #cf6679; }
+    .btn-save {
+      width: 100%;
+      padding: 14px;
+      background: #f5a623;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .btn-save:hover { background: #e09510; }
+    .btn-save:disabled { background: #555; color: #333; cursor: not-allowed; }
+    .status {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    .status.success {
+      background: #0d2e1a;
+      border: 1px solid #1a5c34;
+      color: #4caf82;
+      display: block;
+    }
+    .status.error {
+      background: #2e0d0d;
+      border: 1px solid #5c1a1a;
+      color: #cf6679;
+      display: block;
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #333;
+      border-top: 1px solid #1e1e1e;
+    }
+
+    @media (max-width: 760px) {
+      .container {
+        max-width: 560px;
+        margin-top: 32px;
+        padding: 0 12px;
+      }
+
+      #profileForm,
+      .payment-box,
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-save {
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 1180px) {
+      #profileForm {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .payment-box {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script src="site-init.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <div class="mode-toggle" id="modeSwitch" aria-label="Switch mode" role="tablist">
+        <button class="mode-btn" type="button" data-mode="host">Host</button>
+        <button class="mode-btn" type="button" data-mode="musician">Performer</button>
+      </div>
+      <a href="host.html">Post a Gig</a>
+      <a href="support.html">Support</a>
+      <a href="auth.html" id="signOutLink">Sign Out</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Host Profile</h1>
+    <p class="subtitle">Tell performers and creatives about your venue, event style, and how you pay.</p>
+    <div style="background:#111;border:1px solid #262626;border-radius:14px;padding:16px 18px;margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+        <strong style="font-size:15px;">Profile Completion</strong>
+        <span id="profileCompletionText" style="font-size:13px;color:#8ea4bf;">0% complete</span>
+      </div>
+      <div style="height:10px;border-radius:999px;background:#1b1b1b;overflow:hidden;margin-bottom:10px;">
+        <div id="profileCompletionFill" style="height:100%;width:0%;background:linear-gradient(90deg,#f5a623,#ffd16a);"></div>
+      </div>
+      <div id="draftRestoreText" style="font-size:12px;color:#8f8f8f;line-height:1.5;">Profile drafts save locally while you work.</div>
+      <div id="authActivityText" style="font-size:12px;color:#8f8f8f;line-height:1.5;margin-top:6px;">Auth activity will appear here once available.</div>
+    </div>
+
+    <form id="profileForm">
+
+      <!-- ── Contact ──────────────────────────────────────── -->
+      <div class="row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="firstName" placeholder="First" required>
+          <div class="field-error" id="err-firstName"></div>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="lastName" placeholder="Last" required>
+          <div class="field-error" id="err-lastName"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="e.g. (404) 555-0100">
+      </div>
+
+      <!-- ── Venue ────────────────────────────────────────── -->
+      <hr class="section-divider">
+      <p class="section-label">Venue / Event</p>
+
+      <div class="form-group">
+        <label>Venue / Event Name</label>
+        <input type="text" id="venueName" placeholder="e.g. The Blue Room" required>
+        <div class="field-error" id="err-venueName"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Venue Type</label>
+        <select id="venueType" required>
+          <option value="">Select type</option>
+          <option>Bar / Lounge</option>
+          <option>Restaurant</option>
+          <option>Concert Hall</option>
+          <option>Private Event</option>
+          <option>Festival</option>
+          <option>Hotel</option>
+          <option>Corporate Event</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Zip Code <span style="color:#f5a623;">*</span></label>
+        <input type="text" id="zipCode" placeholder="e.g. 30301" maxlength="10" required
+          style="letter-spacing:2px;">
+        <div id="locationResolved" style="margin-top:8px; font-size:13px; color:#555; min-height:18px;"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Website (optional)</label>
+        <input type="url" id="website" placeholder="https://yourvenue.com">
+      </div>
+
+      <div class="form-group">
+        <label>About Your Venue</label>
+        <textarea id="bio" placeholder="Capacity, vibe, typical crowd, what you look for in musicians..."></textarea>
+      </div>
+
+      <!-- ── Payment ──────────────────────────────────────── -->
+      <hr class="section-divider">
+      <p class="section-label">Payment Info</p>
+
+      <div class="payment-box">
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>How You Pay Performers</label>
+          <p class="payment-note" style="margin-bottom:10px;">Recommended: prioritize Apple Pay first, then Google Pay, for the fastest and cleanest payout flow.</p>
+          <select id="payMethod" required onchange="updatePayHandle()">
+            <option value="">Select payment method</option>
+            <option value="applepay">Apple Pay (Recommended)</option>
+            <option value="googlepay">Google Pay (Recommended)</option>
+            <option value="venmo">Venmo</option>
+            <option value="cashapp">Cash App</option>
+            <option value="zelle">Zelle</option>
+            <option value="paypal">PayPal</option>
+            <option value="ach">ACH / Bank Transfer</option>
+            <option value="plaid">Plaid Bank Transfer (Coming Soon)</option>
+            <option value="check">Check / Cash</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="payHandleGroup" style="display:none; margin-bottom:0;">
+          <label id="payHandleLabel">Payment Handle</label>
+          <input type="text" id="payHandle" placeholder="">
+        </div>
+
+        <div class="form-group" id="plaidConnectGroup" style="display:none; margin-top:12px; margin-bottom:0;">
+          <button type="button" class="btn-plaid blaze-disabled" id="connectPlaidBtn" disabled aria-disabled="true">Plaid Connect (Blaze required)</button>
+          <p class="payment-note" id="plaidStatus">Plaid bank connection requires the Blaze backend setup and is temporarily disabled.</p>
+        </div>
+
+        <p class="payment-note" id="payNote"></p>
+        <div class="form-group" style="margin-top:12px; margin-bottom:0;">
+          <button type="button" class="btn-plaid blaze-disabled" id="checkStripeReadyBtn" disabled aria-disabled="true">Automated Checkout Disabled</button>
+          <p class="payment-note" id="stripeReadyStatus">Stripe automated checkout requires the Blaze backend setup and is temporarily disabled. Use manual payment details for now.</p>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:20px;">
+        <label>Typical Budget Per Gig</label>
+        <input type="text" id="budget" placeholder="e.g. $100–$300">
+      </div>
+
+      <button class="btn-save" type="submit" id="saveBtn">Save Profile</button>
+    </form>
+
+    <div class="status" id="statusMsg"></div>
+  </main>
+
+  <footer>&copy; 2026 CLTCH.NTWRK &mdash; <a href="about.html" style="color:#555;text-decoration:none;margin:0 6px;">About</a> <a href="faq.html" style="color:#555;text-decoration:none;margin:0 6px;">FAQ</a> <a href="contact.html" style="color:#555;text-decoration:none;margin:0 6px;">Contact</a> <a href="press.html" style="color:#555;text-decoration:none;margin:0 6px;">Press</a> <a href="accessibility.html" style="color:#555;text-decoration:none;margin:0 6px;">Accessibility</a> <a href="dmca.html" style="color:#555;text-decoration:none;margin:0 6px;">DMCA</a> <a href="terms.html" style="color:#555;text-decoration:none;margin:0 6px;">Terms</a> <a href="privacy.html" style="color:#555;text-decoration:none;margin:0 6px;">Privacy</a></footer>
+
+  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+  <script type="module">
+    import { doc, setDoc, getDoc, serverTimestamp }
+      from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { onAuthStateChanged, signOut, reload } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { auth, db } from "./app/firebase-client.js";
+    import { DEFAULT_TIMEOUT_MS, clearResumeTarget, installIdleLogout } from "./app/idle-logout.js";
+    import { bindModeSwitch } from "./app/mode-switch.js";
+    import { getStripeConfig } from "./app/stripe-connect.js";
+    import { initProfileDrafts } from "./app/profile-drafts.js";
+    import { installUnsavedChangesGuard } from "./app/unsaved-changes.js";
+    import { buildOneId, readUserSummary, recordAuthEvent, writeUserSummary } from "./app/user-db.js";
+
+    async function refreshUserVerification(user) {
+      if (!user) return user;
+      try {
+        await reload(user);
+      } catch {}
+      return auth.currentUser || user;
+    }
+
+    function requiresVerifiedEmail(user) {
+      return !!(user && user.providerData && user.providerData.some((provider) => provider?.providerId === 'password') && !user.emailVerified);
+    }
+
+    async function redirectUnverifiedUser() {
+      await signOut(auth).catch(() => {});
+      window.location.href = 'auth.html?reason=verify-email';
+    }
+
+    let HOST_ID    = null;
+    let resolvedGeo = null;
+    const HOST_PROFILE_DRAFT_KEY = 'cltch_host_profile_draft_v1';
+    let profileDraftApi = null;
+    const profileForm = document.getElementById('profileForm');
+    const dirtyGuard = installUnsavedChangesGuard({
+      form: profileForm,
+      statusEl: document.getElementById('statusMsg'),
+      message: 'You have unsaved host profile changes. Leave this page anyway?'
+    });
+
+    let stripeConfigState = { ready: false, publishableKey: '', error: '' };
+
+    function setPlaidStatus(message, isError = false) {
+      const statusEl = document.getElementById('plaidStatus');
+      if (!statusEl) return;
+      statusEl.textContent = message;
+      statusEl.classList.remove('plaid-status-ok', 'plaid-status-err');
+      statusEl.classList.add(isError ? 'plaid-status-err' : 'plaid-status-ok');
+    }
+
+    function setPlaidButtonBusy(isBusy) {
+      const btn = document.getElementById('connectPlaidBtn');
+      if (!btn) return;
+      btn.disabled = true;
+      btn.textContent = isBusy ? 'Connecting...' : 'Plaid Connect (Coming Soon)';
+    }
+
+    function setStripeReadyStatus(message, isError = false) {
+      const statusEl = document.getElementById('stripeReadyStatus');
+      if (!statusEl) return;
+      statusEl.textContent = message;
+      statusEl.style.color = isError ? '#b54d56' : '';
+    }
+
+    function setStripeReadyButton(label, disabled) {
+      const btn = document.getElementById('checkStripeReadyBtn');
+      if (!btn) return;
+      btn.textContent = label;
+      btn.disabled = !!disabled;
+    }
+
+    async function refreshStripeReadiness() {
+      stripeConfigState = await getStripeConfig();
+      if (stripeConfigState.ready) {
+        setStripeReadyButton('Automated Checkout Ready', false);
+        setStripeReadyStatus('Stripe Connect is configured for this platform. Once the live checkout wiring is turned on, CLTCH can auto-collect the host total and retain the 2% platform fee.');
+      } else {
+        setStripeReadyButton('Automated Checkout Pending', false);
+        setStripeReadyStatus(stripeConfigState.error || 'Stripe Connect is prepared in the codebase, but the live platform account has not been connected yet.', true);
+      }
+    }
+
+    function cleanMask(mask) {
+      return (mask || '').replace(/[^0-9]/g, '').slice(-4);
+    }
+
+    function plaidDisplayHandle(institution, mask) {
+      const safeMask = cleanMask(mask);
+      const base = institution ? ('Plaid ' + institution) : 'Plaid Connected';
+      return safeMask ? (base + ' ••••' + safeMask) : base;
+    }
+
+    // Gate: must be signed in
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'auth.html'; return; }
+      const freshUser = await refreshUserVerification(user);
+      if (requiresVerifiedEmail(freshUser)) { await redirectUnverifiedUser(); return; }
+      installIdleLogout(auth, DEFAULT_TIMEOUT_MS);
+      HOST_ID = freshUser.uid;
+      initModeSwitch('host', HOST_ID);
+      document.getElementById('payMethod').value = 'applepay';
+      window.updatePayHandle();
+      await loadProfile();
+      window.CLTCHLoading?.done();
+    });
+
+    document.getElementById('signOutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      clearResumeTarget();
+      if (auth.currentUser) await recordAuthEvent(db, auth.currentUser, 'sign_out').catch(() => {});
+      await signOut(auth);
+      window.location.href = 'auth.html';
+    });
+
+    function formatTs(value) {
+      if (!value) return 'Not recorded yet.';
+      const date = value.toDate ? value.toDate() : new Date(value);
+      return Number.isFinite(date.getTime()) ? date.toLocaleString() : 'Not recorded yet.';
+    }
+
+    function updateProfileCompletion() {
+      const checks = [
+        document.getElementById('firstName').value.trim(),
+        document.getElementById('lastName').value.trim(),
+        document.getElementById('venueName').value.trim(),
+        document.getElementById('venueType').value,
+        document.getElementById('zipCode').value.trim(),
+        document.getElementById('payMethod').value,
+        document.getElementById('payMethod').value === 'check' || document.getElementById('payHandle').value.trim(),
+        document.getElementById('bio').value.trim()
+      ];
+      const completion = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+      document.getElementById('profileCompletionText').textContent = `${completion}% complete`;
+      document.getElementById('profileCompletionFill').style.width = `${completion}%`;
+    }
+
+    async function refreshAccountActivity() {
+      const summary = await readUserSummary(db, HOST_ID);
+      const oneId = summary?.oneId || buildOneId(HOST_ID);
+      document.getElementById('authActivityText').textContent = `OneID: ${oneId} • Last sign-in: ${formatTs(summary?.authLastSignInAt)} • Last sign-out: ${formatTs(summary?.authLastSignOutAt)}`;
+    }
+
+    async function initModeSwitch(currentMode, userId) {
+      const modeSwitch = document.getElementById('modeSwitch');
+      bindModeSwitch(modeSwitch, { db, userId, currentMode });
+    }
+
+    // Payment method UI
+    const PAY_CONFIGS = {
+      applepay:  { label: 'Apple Pay Phone / Email', placeholder: 'you@icloud.com or (404) 555-0100', note: 'Recommended. Musicians will be paid via Apple Pay for the fastest payout handoff.' },
+      googlepay: { label: 'Google Pay Email',        placeholder: 'you@gmail.com',                     note: 'Recommended. Musicians will be paid via Google Pay when Apple Pay is not preferred.' },
+      venmo:     { label: 'Venmo Username',          placeholder: '@YourUsername',                     note: 'Musicians will be paid via Venmo.' },
+      cashapp:   { label: 'Cash App $Cashtag',       placeholder: '$YourCashtag',                      note: 'Musicians will be paid via Cash App.' },
+      zelle:     { label: 'Zelle Phone / Email',     placeholder: 'e.g. (404) 555-0100',              note: 'Musicians will be paid via Zelle.' },
+      paypal:    { label: 'PayPal Email',            placeholder: 'you@example.com',                  note: 'Musicians will be paid via PayPal.' },
+      ach:       { label: 'Bank Name',               placeholder: 'e.g. Chase',                       note: 'Payment details will be shared privately after booking.' },
+      plaid:     { label: '',                        placeholder: '',                                  note: 'Plaid Connect is coming soon. Please choose Apple Pay, Google Pay, or another method for now.' },
+      check:     { label: '',                        placeholder: '',                                  note: 'Payment delivered by check or cash on the day of the gig.' }
+    };
+
+    async function connectPlaidAccount() {
+      setPlaidStatus('Plaid Connect is coming soon. Please choose Apple Pay, Google Pay, or another method for now.', true);
+      setPlaidButtonBusy(false);
+    }
+
+    window.updatePayHandle = () => {
+      const method     = document.getElementById('payMethod').value;
+      const group      = document.getElementById('payHandleGroup');
+      const label      = document.getElementById('payHandleLabel');
+      const input      = document.getElementById('payHandle');
+      const note       = document.getElementById('payNote');
+      const plaidGroup = document.getElementById('plaidConnectGroup');
+      const cfg        = PAY_CONFIGS[method];
+
+      if (!cfg) {
+        group.style.display = 'none';
+        if (plaidGroup) plaidGroup.style.display = 'none';
+        note.textContent = '';
+        return;
+      }
+
+      note.textContent = cfg.note;
+      const isPlaid = method === 'plaid';
+      if (plaidGroup) plaidGroup.style.display = isPlaid ? 'block' : 'none';
+
+      if (isPlaid) {
+        group.style.display = 'none';
+        if (input.value.trim()) setPlaidStatus('Connected: ' + input.value.trim(), false);
+        else setPlaidStatus('Plaid Connect is coming soon. Please choose another payment method for now.', true);
+        return;
+      }
+
+      if (cfg.label) {
+        label.textContent = cfg.label;
+        input.placeholder = cfg.placeholder;
+        group.style.display = 'block';
+      } else {
+        group.style.display = 'none';
+      }
+    };
+
+    const connectPlaidBtn = document.getElementById('connectPlaidBtn');
+    if (connectPlaidBtn) connectPlaidBtn.addEventListener('click', () => connectPlaidAccount());
+    const checkStripeReadyBtn = document.getElementById('checkStripeReadyBtn');
+    if (checkStripeReadyBtn) {
+      checkStripeReadyBtn.addEventListener('click', async () => {
+        setStripeReadyButton('Checking...', true);
+        await refreshStripeReadiness();
+      });
+    }
+
+    // Geocode zip → { lat, lng, city, state, location }
+    async function geocodeZip(zip) {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?postalcode=${encodeURIComponent(zip)}&country=US&format=json&addressdetails=1&limit=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const data = await res.json();
+        if (data.length > 0) {
+          const addr  = data[0].address;
+          const city  = addr.city || addr.town || addr.village || addr.county || '';
+          const state = addr.state || '';
+          return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), city, state, location: `${city}, ${state}` };
+        }
+      } catch (e) { console.warn('Geocode failed:', e); }
+      return null;
+    }
+
+    // Auto-resolve zip
+    let zipTimer = null;
+    document.getElementById('zipCode').addEventListener('input', (e) => {
+      const zip = e.target.value.trim();
+      const el  = document.getElementById('locationResolved');
+      resolvedGeo = null;
+      el.style.color = '#555';
+      el.textContent = '';
+      clearTimeout(zipTimer);
+      if (zip.length < 5) return;
+      el.textContent = 'Looking up zip code…';
+      zipTimer = setTimeout(async () => {
+        const geo = await geocodeZip(zip);
+        if (geo) {
+          resolvedGeo = geo;
+          el.style.color = '#4caf82';
+          el.textContent = `✓ ${geo.city}, ${geo.state}`;
+        } else {
+          el.style.color = '#cf6679';
+          el.textContent = '✗ Zip code not found. Please check and try again.';
+        }
+      }, 500);
+    });
+
+    // Load existing profile
+    async function loadProfile() {
+      const profileRef = doc(db, 'hosts', HOST_ID);
+      const snap = await getDoc(profileRef);
+      if (snap.exists()) {
+        const d = snap.data();
+        document.getElementById('firstName').value  = d.firstName  || '';
+        document.getElementById('lastName').value   = d.lastName   || '';
+        document.getElementById('phone').value      = d.phone      || '';
+        document.getElementById('venueName').value  = d.venueName  || '';
+        document.getElementById('venueType').value  = d.venueType  || '';
+        document.getElementById('website').value    = d.website    || '';
+        document.getElementById('bio').value        = d.bio        || '';
+        document.getElementById('budget').value     = d.budget     || '';
+        if (d.zip) {
+          document.getElementById('zipCode').value = d.zip;
+          if (d.city && d.state) {
+            const el = document.getElementById('locationResolved');
+            el.style.color = '#4caf82';
+            el.textContent = `✓ ${d.city}, ${d.state}`;
+            resolvedGeo = { lat: d.lat, lng: d.lng, city: d.city, state: d.state, location: d.location };
+          }
+        }
+        if (d.payMethod) {
+          document.getElementById('payMethod').value = d.payMethod;
+          document.getElementById('payHandle').value = d.payHandle || '';
+          window.updatePayHandle();
+        }
+      }
+      updateProfileCompletion();
+      await refreshAccountActivity();
+      await refreshStripeReadiness();
+    }
+
+    // Save profile
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!HOST_ID) return;
+      const saveBtn   = document.getElementById('saveBtn');
+      const statusMsg = document.getElementById('statusMsg');
+
+      const zip = document.getElementById('zipCode').value.trim();
+      if (!resolvedGeo) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Please enter a valid zip code before saving.';
+        return;
+      }
+
+      const payMethod = document.getElementById('payMethod').value;
+      if (!payMethod) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Please select a payment method.';
+        return;
+      }
+
+      if (payMethod === 'plaid') {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Plaid Connect is coming soon. Please choose Apple Pay, Google Pay, or another method before saving.';
+        return;
+      }
+
+      const payHandle = document.getElementById('payHandle').value.trim();
+      if (payMethod !== 'check' && !payHandle) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Please provide your payment handle before saving.';
+        return;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      const profile = {
+        firstName:  document.getElementById('firstName').value.trim(),
+        lastName:   document.getElementById('lastName').value.trim(),
+        phone:      document.getElementById('phone').value.trim(),
+        venueName:  document.getElementById('venueName').value.trim(),
+        venueType:  document.getElementById('venueType').value,
+        zip,
+        location:   resolvedGeo.location,
+        city:       resolvedGeo.city,
+        state:      resolvedGeo.state,
+        lat:        resolvedGeo.lat,
+        lng:        resolvedGeo.lng,
+        website:    document.getElementById('website').value.trim(),
+        bio:        document.getElementById('bio').value.trim(),
+        budget:     document.getElementById('budget').value.trim(),
+        payMethod,
+        payHandle:  payHandle,
+        type:       'host',
+        updatedAt:  serverTimestamp()
+      };
+
+      try {
+        await setDoc(doc(db, 'hosts', HOST_ID), profile, { merge: true });
+        await writeUserSummary(db, HOST_ID, {
+          role: 'host',
+          displayName: `${profile.firstName} ${profile.lastName}`.trim() || profile.venueName,
+          city: profile.city,
+          state: profile.state,
+          status: 'active',
+          profileComplete: true,
+          payoutReady: payMethod === 'check' || !!payHandle
+        });
+        statusMsg.className = 'status success';
+        statusMsg.textContent = 'Profile saved! Redirecting…';
+        profileDraftApi?.clear();
+        dirtyGuard.markSaved();
+        setTimeout(() => window.location.href = 'host.html', 1000);
+      } catch (err) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Error saving profile.';
+        console.error(err);
+      }
+
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Profile';
+    });
+
+    // ── Inline field validation ────────────────────────────────────────
+    function validateField(input, errId, message) {
+      const err = document.getElementById(errId);
+      if (!err) return;
+      const empty = !input.value.trim();
+      input.classList.toggle('invalid', empty);
+      err.textContent = empty ? message : '';
+    }
+
+    [
+      ['firstName', 'err-firstName', 'First name is required'],
+      ['lastName',  'err-lastName',  'Last name is required'],
+      ['venueName', 'err-venueName', 'Venue name is required'],
+    ].forEach(([id, errId, msg]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('blur', () => validateField(el, errId, msg));
+      el.addEventListener('input', () => { if (el.classList.contains('invalid')) validateField(el, errId, msg); updateProfileCompletion(); });
+    });
+
+    ['phone','venueType','zipCode','website','bio','payMethod','payHandle','budget'].forEach((id) => {
+      document.getElementById(id)?.addEventListener('input', updateProfileCompletion);
+      document.getElementById(id)?.addEventListener('change', updateProfileCompletion);
+    });
+
+    profileDraftApi = initProfileDrafts({
+      form: document.getElementById('profileForm'),
+      key: HOST_PROFILE_DRAFT_KEY,
+      fields: [
+        { id: 'firstName' }, { id: 'lastName' }, { id: 'phone' }, { id: 'venueName' },
+        { id: 'venueType' }, { id: 'zipCode' }, { id: 'website' }, { id: 'bio' },
+        { id: 'payMethod' }, { id: 'payHandle' }, { id: 'budget' }
+      ],
+      onStatus(message) {
+        document.getElementById('draftRestoreText').textContent = message;
+      },
+      onRestore() {
+        window.updatePayHandle();
+        updateProfileCompletion();
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Sign in to CLTCH.NTWRK to book talent, find gigs, build your profile, and move between hosting and performing with less friction.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK — Sign In / Sign Up</title>
+  <style>
+    :root {
+      --accent: #f5a623;
+      --accent-strong: #e09510;
+      --bg-ink: #080808;
+      --panel: rgba(20, 20, 20, 0.94);
+      --panel-2: #1f1f1f;
+      --field: rgba(10,10,10,0.85);
+      --border: #2f2f2f;
+      --border-soft: #3b3b3b;
+      --text: #f0f0f0;
+      --muted: #8f8f8f;
+      --muted-2: #6f6f6f;
+      --link: #d8b06a;
+      --success-bg: #102617;
+      --success-border: #245634;
+      --success-text: #78d59a;
+      --error-bg: #341114;
+      --error-border: #6f242b;
+      --error-text: #f08da0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(245, 166, 35, 0.22), transparent 22%),
+        radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.08), transparent 26%),
+        linear-gradient(180deg, var(--bg-ink) 0%, #101010 48%, #1a130a 100%);
+      color: var(--text);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 24px 32px 0;
+      display: flex;
+      align-items: center;
+    }
+    header .logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: #fff;
+      text-decoration: none;
+    }
+    .container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px 48px;
+    }
+    .auth-shell {
+      width: min(1120px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 440px);
+      gap: 22px;
+      align-items: stretch;
+    }
+    .hero {
+      border-radius: 30px;
+      padding: 38px clamp(24px, 4vw, 54px);
+      background: linear-gradient(160deg, rgba(10,10,10,0.97) 0%, rgba(24,24,24,0.95) 55%, rgba(98,67,20,0.92) 100%);
+      color: #f7f0e6;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.28);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: -80px;
+      bottom: -80px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,166,35,0.28) 0%, rgba(245,166,35,0) 70%);
+    }
+    .hero-inner { position: relative; }
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .hero-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-size: clamp(2.6rem, 6vw, 4.8rem);
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+      max-width: 540px;
+    }
+    .hero-copy {
+      margin-top: 18px;
+      max-width: 540px;
+      font-size: 16px;
+      line-height: 1.72;
+      color: rgba(247,240,230,0.82);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 30px;
+    }
+    .hero-card {
+      border-radius: 22px;
+      padding: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+    }
+    .hero-card strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .hero-card span {
+      font-size: 13px;
+      line-height: 1.65;
+      color: rgba(247,240,230,0.72);
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 30px;
+      padding: 28px clamp(22px, 3vw, 34px);
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+      backdrop-filter: blur(18px);
+    }
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .heading {
+      font-size: 34px;
+      line-height: 0.98;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .subheading {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 18px;
+      padding: 6px;
+    }
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: 14px;
+      transition: all 0.2s;
+      background: transparent;
+      border: 0;
+      font-family: inherit;
+      text-decoration: none;
+    }
+    .tab.active {
+      color: #fff;
+      background: var(--panel-2);
+    }
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #b8b8b8;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    input, select {
+      width: 100%;
+      background: var(--field);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 15px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+    select option { background: #141414; }
+    .password-wrap { position: relative; }
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-auth {
+      width: 100%;
+      min-height: 52px;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      color: #000;
+      border: none;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .btn-auth:hover { background: var(--accent-strong); }
+    .btn-auth:disabled { background: #555; color: #333; cursor: not-allowed; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: var(--muted-2);
+      font-size: 13px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .btn-google {
+      width: 100%;
+      min-height: 52px;
+      padding: 13px;
+      background: rgba(255,255,255,0.04);
+      color: #f0f0f0;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .btn-google:hover { border-color: var(--muted-2); }
+    .btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary {
+      width: 100%;
+      padding: 13px;
+      background: transparent;
+      color: #f0f0f0;
+      border: 1px solid var(--border-soft);
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: inherit;
+    }
+    .btn-secondary:hover { border-color: var(--accent); background: #171717; }
+    .btn-secondary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      display: none;
+    }
+    .status.error {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+      display: block;
+    }
+    .status.success {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success-text);
+      display: block;
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--muted-2);
+      margin-top: -8px;
+      margin-bottom: 12px;
+    }
+    .auth-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .auth-link {
+      color: var(--link);
+      font-size: 12px;
+      text-decoration: none;
+    }
+    .auth-link:hover {
+      color: #fff;
+    }
+    .auth-note {
+      color: var(--muted-2);
+      font-size: 12px;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--muted-2);
+    }
+    @media (max-width: 920px) {
+      .auth-shell {
+        grid-template-columns: 1fr;
+      }
+      .hero {
+        display: none;
+      }
+      header {
+        padding: 20px 20px 0;
+      }
+      .container {
+        padding: 20px 16px 36px;
+      }
+      .card {
+        border-radius: 24px;
+      }
+      .heading {
+        font-size: 30px;
+      }
+    }
+    @media (max-width: 520px) {
+      .auth-meta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <style>
+    :root {
+      --auth-page: #fafaf8;
+      --auth-panel: #ffffff;
+      --auth-ink: #181818;
+      --auth-muted: #626967;
+      --auth-line: rgba(24, 24, 24, 0.14);
+      --auth-soft: #f2f6f3;
+      --auth-red: #c53d36;
+      --auth-teal: #157a7e;
+      --auth-green: #2f7a4b;
+      --auth-focus: rgba(21, 122, 126, 0.18);
+      --auth-shadow: 0 20px 44px rgba(20, 20, 20, 0.12);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--auth-page) !important;
+      color: var(--auth-ink) !important;
+      font-family: 'Space Grotesk', 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    }
+
+    main {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    header {
+      position: static;
+      padding: 18px 0 0 !important;
+      border-bottom: 0 !important;
+      background: transparent !important;
+      backdrop-filter: none !important;
+    }
+
+    header .logo {
+      width: min(1120px, calc(100% - 40px));
+      min-height: 48px;
+      margin: 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--auth-ink) !important;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+    }
+
+    header .logo::before {
+      content: "C";
+      width: 32px;
+      height: 32px;
+      display: inline-grid;
+      place-items: center;
+      border: 2px solid var(--auth-ink);
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .container {
+      align-items: center;
+      padding: 28px 20px 48px;
+    }
+
+    .auth-shell {
+      width: min(1120px, 100%);
+      grid-template-columns: minmax(0, 0.9fr) minmax(360px, 440px);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(190px, 0.62fr) minmax(0, 1fr);
+      grid-template-rows: 1fr;
+      gap: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--auth-line);
+      border-radius: 8px;
+      background: var(--auth-panel);
+      color: var(--auth-ink);
+      box-shadow: var(--auth-shadow);
+    }
+
+    .hero::after {
+      display: none;
+    }
+
+    .hero-media {
+      min-height: 100%;
+      background: #111;
+    }
+
+    .hero-media img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: contrast(1.04) saturate(0.92);
+    }
+
+    .hero-inner {
+      display: grid;
+      gap: 18px;
+      padding: clamp(22px, 3vw, 32px);
+    }
+
+    .hero-kicker {
+      width: fit-content;
+      gap: 10px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--auth-muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+
+    .hero-dot {
+      width: 34px;
+      height: 3px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--auth-red), var(--auth-teal), var(--auth-green));
+    }
+
+    .hero-title {
+      max-width: 560px !important;
+      color: var(--auth-ink);
+      font-family: 'Space Grotesk', 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+      font-size: clamp(36px, 4.4vw, 56px) !important;
+      line-height: 1.02 !important;
+      letter-spacing: 0 !important;
+      font-weight: 800 !important;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-copy {
+      max-width: 560px !important;
+      margin-top: 0;
+      color: var(--auth-muted) !important;
+      font-size: 15px !important;
+      line-height: 1.65 !important;
+    }
+
+    .hero-grid {
+      display: none;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .hero-card {
+      min-height: 110px;
+      padding: 14px;
+      border: 1px solid var(--auth-line);
+      border-radius: 8px;
+      background: var(--auth-soft);
+      backdrop-filter: none;
+    }
+
+    .hero-card strong {
+      color: var(--auth-ink);
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .hero-card span {
+      display: block;
+      margin-top: 8px;
+      color: var(--auth-muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .card {
+      align-self: center;
+      max-width: 440px;
+      padding: clamp(22px, 3vw, 30px);
+      border: 1px solid var(--auth-line);
+      border-radius: 8px;
+      background: var(--auth-panel);
+      color: var(--auth-ink);
+      box-shadow: 0 14px 34px rgba(20, 20, 20, 0.09);
+      backdrop-filter: none;
+    }
+
+    .eyebrow {
+      color: var(--auth-teal);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+
+    .heading {
+      color: var(--auth-ink);
+      font-family: 'Space Grotesk', 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+      font-size: clamp(30px, 4vw, 38px) !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+      font-weight: 800 !important;
+    }
+
+    .subheading {
+      color: var(--auth-muted) !important;
+      font-size: 14px !important;
+      line-height: 1.6 !important;
+    }
+
+    .tabs {
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--auth-line);
+      border-radius: 8px;
+      background: var(--auth-soft);
+    }
+
+    .tab {
+      min-height: 42px;
+      border-radius: 6px;
+      color: var(--auth-muted);
+      font-weight: 900;
+    }
+
+    .tab.active {
+      background: #111 !important;
+      color: #fff !important;
+    }
+
+    label {
+      color: #3f4642;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+    }
+
+    input,
+    select {
+      min-height: 48px;
+      border: 1px solid var(--auth-line) !important;
+      border-radius: 8px !important;
+      background: #fff !important;
+      color: var(--auth-ink) !important;
+      font-size: 15px;
+      padding: 12px 14px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--auth-teal) !important;
+      box-shadow: 0 0 0 4px var(--auth-focus) !important;
+    }
+
+    select option {
+      background: #fff;
+      color: var(--auth-ink);
+    }
+
+    .toggle-password {
+      right: 12px;
+      color: var(--auth-teal);
+      font-weight: 900;
+    }
+
+    .btn-auth,
+    .btn-google,
+    .btn-secondary {
+      min-height: 50px;
+      border-radius: 8px !important;
+      font-family: inherit;
+      font-weight: 900;
+    }
+
+    .btn-auth {
+      border: 1px solid #111;
+      background: #111 !important;
+      color: #fff !important;
+      transition: transform 0.16s ease, box-shadow 0.18s ease;
+    }
+
+    .btn-auth:hover {
+      background: #111 !important;
+      box-shadow: 0 12px 28px rgba(20, 20, 20, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .btn-auth:disabled {
+      border-color: var(--auth-line);
+      background: #d5dad7 !important;
+      color: #7b827f !important;
+    }
+
+    .btn-google,
+    .btn-secondary {
+      border: 1px solid var(--auth-line) !important;
+      background: #fff !important;
+      color: var(--auth-ink) !important;
+    }
+
+    .btn-google:hover,
+    .btn-secondary:hover {
+      border-color: var(--auth-teal) !important;
+      background: var(--auth-soft) !important;
+    }
+
+    .divider {
+      color: var(--auth-muted);
+    }
+
+    .divider::before,
+    .divider::after {
+      background: var(--auth-line);
+    }
+
+    .hint,
+    .auth-note {
+      color: var(--auth-muted);
+      line-height: 1.55;
+    }
+
+    .auth-meta {
+      align-items: flex-start;
+    }
+
+    .auth-link {
+      flex: 0 0 auto;
+      color: var(--auth-teal);
+      font-weight: 900;
+    }
+
+    .auth-link:hover {
+      color: var(--auth-red);
+    }
+
+    .status {
+      border-radius: 8px;
+      line-height: 1.45;
+    }
+
+    .status.error {
+      background: #fff1f0;
+      border-color: rgba(197, 61, 54, 0.34);
+      color: #85211d;
+    }
+
+    .status.success {
+      background: #eff8f2;
+      border-color: rgba(47, 122, 75, 0.28);
+      color: #1f6238;
+    }
+
+    footer {
+      color: var(--auth-muted);
+      font-size: 12px;
+    }
+
+    footer a {
+      color: var(--auth-muted) !important;
+    }
+
+    @media (max-width: 980px) {
+      .auth-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 240px auto;
+      }
+
+      .card {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header .logo {
+        width: 100%;
+        padding-right: 20px;
+        padding-left: 20px;
+      }
+
+      .container {
+        padding: 18px 20px 36px;
+      }
+
+      .hero {
+        grid-template-rows: 180px auto;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        font-size: 32px !important;
+        max-width: 12ch !important;
+      }
+
+      .hero-copy {
+        max-width: none !important;
+        width: min(100%, 30ch);
+      }
+
+      .card {
+        padding: 22px;
+      }
+
+      .auth-meta {
+        flex-direction: column;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('cltch_theme_v1');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var mode = saved === 'dark' || (!saved && prefersDark) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.style.colorScheme = mode;
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+  </header>
+
+  <div class="container">
+    <div class="auth-shell">
+      <section class="hero" aria-hidden="true">
+        <figure class="hero-media">
+          <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1400&q=82" alt="">
+        </figure>
+        <div class="hero-inner">
+          <div class="hero-kicker"><span class="hero-dot"></span> Welcome To CLTCH.NTWRK</div>
+          <div class="hero-title">Get into the room. Book the gig. Find the right people.</div>
+          <div class="hero-copy">Whether you run the venue or take the stage, this is where you get into CLTCH.NTWRK. One account gets you into the whole network, then you can move between hosting, performing, bookings, radar, messages, support, and payouts.</div>
+          <div class="hero-grid">
+            <div class="hero-card">
+              <strong>For hosts and venues</strong>
+              <span>Post opportunities, review talent, and keep bookings moving without extra steps.</span>
+            </div>
+            <div class="hero-card">
+              <strong>For performers and creatives</strong>
+              <span>Keep your profile live, watch for gigs, and respond when the right fit shows up.</span>
+            </div>
+            <div class="hero-card">
+              <strong>OneID for CLTCH</strong>
+              <span>Use one sign-in for every CLTCH.NTWRK workspace. No separate account for each page.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="card">
+        <div class="eyebrow">Start Here</div>
+        <div class="heading">Sign in or create your account</div>
+        <div class="subheading">Pick the easiest way in. This OneID works across hosting, performing, bookings, radar, support, and payments.</div>
+
+      <div class="tabs" role="tablist" aria-label="Authentication">
+        <button class="tab active" id="tabSignIn" type="button" data-tab="signin" aria-selected="true">Sign In</button>
+        <button class="tab" id="tabSignUp" type="button" data-tab="signup" aria-selected="false">Sign Up</button>
+      </div>
+
+      <form id="signinForm">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="siEmail" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="siPassword" placeholder="********" autocomplete="current-password" style="padding-right:72px;">
+            <button class="toggle-password" type="button" data-toggle-password="siPassword">Show</button>
+          </div>
+        </div>
+        <input type="text" id="siWebsite" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:1px;width:1px;">
+        <button class="btn-auth" id="siBtn" type="submit">Sign In</button>
+        <div class="auth-meta">
+          <span class="hint" style="margin:0;">Use the email tied to your account. If the message does not show up right away, check spam or junk within a minute.</span>
+          <a class="auth-link" href="#" id="forgotPasswordLink">Forgot password?</a>
+        </div>
+        <button class="btn-secondary" id="siEmailLinkBtn" type="button" style="margin-top:10px;">Email Me a Sign-In Link</button>
+        <div class="divider">or</div>
+        <button class="btn-google" id="siGoogleBtn" type="button">
+          <svg width="18" height="18" viewBox="0 0 48 48">
+            <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.9z"/>
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 19 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.2 0-9.7-3.3-11.3-8H6.3C9.7 35.7 16.3 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.2 5.2C41.1 35.2 44 30 44 24c0-1.3-.1-2.7-.4-3.9z"/>
+          </svg>
+          Continue with Google
+        </button>
+      </form>
+
+      <form id="signupForm" style="display:none;">
+        <div class="form-group">
+          <label>I am a</label>
+          <select id="suRole">
+            <option value="musician">Performer / Creative</option>
+            <option value="host">Host / Venue</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="suPassword" placeholder="8+ chars, upper/lower/number" autocomplete="new-password" style="padding-right:72px;">
+            <button class="toggle-password" type="button" data-toggle-password="suPassword">Show</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <div class="password-wrap">
+            <input type="password" id="suConfirm" placeholder="********" autocomplete="new-password" style="padding-right:72px;">
+            <button class="toggle-password" type="button" data-toggle-password="suConfirm">Show</button>
+          </div>
+        </div>
+        <input type="text" id="suWebsite" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:1px;width:1px;">
+        <div class="hint">Use at least 8 characters with uppercase, lowercase, and a number. Performer accounts can be used for musicians, DJs, photographers, cinematographers, and models. Verification emails can land in spam or junk.</div>
+        <button class="btn-auth" id="suBtn" type="submit">Create Account</button>
+        <div class="divider">or</div>
+        <button class="btn-google" id="suGoogleBtn" type="button">
+          <svg width="18" height="18" viewBox="0 0 48 48">
+            <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.9z"/>
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 19 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.2 0-9.7-3.3-11.3-8H6.3C9.7 35.7 16.3 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.2 5.2C41.1 35.2 44 30 44 24c0-1.3-.1-2.7-.4-3.9z"/>
+          </svg>
+          Continue with Google
+        </button>
+        <div class="auth-note">Once your OneID is created, CLTCH.NTWRK sends you into the right setup flow for hosting or performing.</div>
+        <button class="btn-secondary" id="suEmailLinkBtn" type="button" style="margin-top:14px;">Email Me a Magic Link Instead</button>
+      </form>
+
+      <div class="status" id="authStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>&copy; 2026 CLTCH.NTWRK &mdash; <a href="about.html" style="color:#555;text-decoration:none;margin:0 6px;">About</a> <a href="faq.html" style="color:#555;text-decoration:none;margin:0 6px;">FAQ</a> <a href="contact.html" style="color:#555;text-decoration:none;margin:0 6px;">Contact</a> <a href="press.html" style="color:#555;text-decoration:none;margin:0 6px;">Press</a> <a href="accessibility.html" style="color:#555;text-decoration:none;margin:0 6px;">Accessibility</a> <a href="dmca.html" style="color:#555;text-decoration:none;margin:0 6px;">DMCA</a> <a href="terms.html" style="color:#555;text-decoration:none;margin:0 6px;">Terms</a> <a href="privacy.html" style="color:#555;text-decoration:none;margin:0 6px;">Privacy</a></footer>
+
+  <script type="module">
+    import {
+      onAuthStateChanged,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signInWithRedirect,
+      getRedirectResult,
+      isSignInWithEmailLink,
+      sendSignInLinkToEmail,
+      signInWithEmailLink,
+      sendPasswordResetEmail,
+      sendEmailVerification,
+      signOut,
+      reload
+    } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { doc, getDoc }
+      from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { auth, db } from "./app/firebase-client.js";
+    import { clearResumeTarget, readResumeTarget } from "./app/idle-logout.js";
+    import { ensureRoleRecord, normalizeRole, readUserSummary, recordAuthEvent, writeUserSummary } from "./app/user-db.js";
+
+    const ROLE_CACHE_KEY = "cltch_last_role_v1";
+    const EMAIL_LINK_KEY = "emailForSignIn";
+    const AUTH_TIMEOUT_MS = 15000;
+    const FAST_ROLE_LOOKUP_MS = 2200;
+
+    const statusEl = document.getElementById("authStatus");
+    const signInForm = document.getElementById("signinForm");
+    const signUpForm = document.getElementById("signupForm");
+    const tabSignIn = document.getElementById("tabSignIn");
+    const tabSignUp = document.getElementById("tabSignUp");
+    const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+    const siEmailLinkBtn = document.getElementById("siEmailLinkBtn");
+    const suEmailLinkBtn = document.getElementById("suEmailLinkBtn");
+    const siBtn = document.getElementById("siBtn");
+    const suBtn = document.getElementById("suBtn");
+    const siGoogleBtn = document.getElementById("siGoogleBtn");
+    const suGoogleBtn = document.getElementById("suGoogleBtn");
+    const passwordToggleButtons = Array.from(document.querySelectorAll("[data-toggle-password]"));
+    let hasRedirected = false;
+
+    function withTimeout(promise, timeoutMs, message) {
+      let timeoutId;
+      const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error(message)), timeoutMs);
+      });
+      return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timeoutId));
+    }
+
+    function normalizeEmailValue(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function validEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function strongPassword(value) {
+      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(String(value || ""));
+    }
+
+    function clearStatus() {
+      statusEl.className = "status";
+      statusEl.textContent = "";
+    }
+
+    function showError(message) {
+      statusEl.className = "status error";
+      statusEl.textContent = message;
+    }
+
+    function showSuccess(message) {
+      statusEl.className = "status success";
+      statusEl.textContent = message;
+    }
+
+    function setButtonsBusy(isBusy) {
+      siBtn.disabled = isBusy;
+      suBtn.disabled = isBusy;
+      siGoogleBtn.disabled = isBusy;
+      suGoogleBtn.disabled = isBusy;
+      siEmailLinkBtn.disabled = isBusy;
+      suEmailLinkBtn.disabled = isBusy;
+      siBtn.textContent = isBusy ? "Signing in..." : "Sign In";
+      suBtn.textContent = isBusy ? "Creating account..." : "Create Account";
+    }
+
+    function resetPasswordToggles() {
+      passwordToggleButtons.forEach((button) => {
+        const inputId = button.getAttribute("data-toggle-password");
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        input.type = "password";
+        button.textContent = "Show";
+      });
+    }
+
+    function syncTabLocation(tab) {
+      const url = new URL(window.location.href);
+      if (tab === "signup") {
+        url.searchParams.set("tab", "signup");
+        url.hash = "signup";
+      } else {
+        url.searchParams.delete("tab");
+        url.hash = "";
+      }
+      window.history.replaceState({}, "", url.toString());
+    }
+
+    function cacheRole(role) {
+      if (role === "host" || role === "musician") {
+        localStorage.setItem(ROLE_CACHE_KEY, role);
+      }
+    }
+
+    function readCachedRole() {
+      const role = localStorage.getItem(ROLE_CACHE_KEY);
+      return role === "host" || role === "musician" ? role : null;
+    }
+
+    function setActiveTab(tab) {
+      const isSignup = tab === "signup";
+      signInForm.style.display = isSignup ? "none" : "block";
+      signUpForm.style.display = isSignup ? "block" : "none";
+      tabSignIn.classList.toggle("active", !isSignup);
+      tabSignUp.classList.toggle("active", isSignup);
+      tabSignIn.setAttribute("aria-selected", isSignup ? "false" : "true");
+      tabSignUp.setAttribute("aria-selected", isSignup ? "true" : "false");
+      setButtonsBusy(false);
+      resetPasswordToggles();
+      clearStatus();
+      syncTabLocation(tab);
+    }
+
+    function resolveInitialTab() {
+      const queryTab = new URLSearchParams(window.location.search).get("tab");
+      if (queryTab === "signup" || window.location.hash === "#signup") return "signup";
+      return "signin";
+    }
+
+    function buildEmailLinkSettings(role) {
+      const url = new URL(window.location.origin + window.location.pathname);
+      url.searchParams.set("emailLink", "1");
+      url.searchParams.set("role", role === "host" ? "host" : "musician");
+      return {
+        url: url.toString(),
+        handleCodeInApp: true
+      };
+    }
+
+    function friendlyError(err) {
+      const code = err?.code || "";
+      if (
+        code === "auth/user-not-found" ||
+        code === "auth/wrong-password" ||
+        code === "auth/invalid-credential" ||
+        code === "auth/invalid-login-credentials"
+      ) {
+        return "Invalid email or password.";
+      }
+      if (code === "auth/email-already-in-use") return "This email is already registered.";
+      if (code === "auth/weak-password") return "Use at least 8 characters with uppercase, lowercase, and a number.";
+      if (code === "auth/invalid-email") return "Please enter a valid email address.";
+      if (code === "auth/network-request-failed") return "Network error. Check your connection and try again.";
+      if (code === "auth/too-many-requests") return "Too many attempts. Please wait and try again.";
+      if (code === "auth/operation-not-allowed") return "This sign-in method is not enabled in Firebase Authentication.";
+      if (code === "auth/unauthorized-continue-uri" || code === "auth/invalid-continue-uri" || code === "auth/missing-continue-uri") {
+        return "Verification email could not be sent because the auth return URL is not allowed in Firebase.";
+      }
+      if (err?.message?.includes("timed out")) return err.message;
+      return "Authentication failed. Please try again.";
+    }
+
+    function routeForRole(role, hasProfile) {
+      if (role === "host") return hasProfile ? "host.html" : "host-profile.html";
+      return hasProfile ? "musician-matched-gigs.html" : "musician-profile.html";
+    }
+
+    function roleAllowsResume(role, targetPath) {
+      if (!targetPath) return false;
+      const safePath = String(targetPath).split("?")[0];
+      const hostPaths = new Set(["/host.html", "/host-profile.html"]);
+      const musicianPaths = new Set(["/musician-dashboard.html", "/musician-matched-gigs.html", "/gig-radar.html", "/musician-profile.html"]);
+      if (role === "host") return hostPaths.has(safePath);
+      if (role === "musician") return musicianPaths.has(safePath);
+      return false;
+    }
+
+    function routeWithResume(role, hasProfile) {
+      const resumeTarget = readResumeTarget();
+      if (roleAllowsResume(role, resumeTarget)) {
+        clearResumeTarget();
+        return resumeTarget.slice(1);
+      }
+      clearResumeTarget();
+      return routeForRole(role, hasProfile);
+    }
+
+    function buildVerificationSettings() {
+      const url = new URL(window.location.origin + window.location.pathname);
+      url.searchParams.set("verified", "1");
+      return {
+        url: url.toString(),
+        handleCodeInApp: false
+      };
+    }
+
+    async function sendVerificationOrThrow(user) {
+      await withTimeout(
+        sendEmailVerification(user, buildVerificationSettings()),
+        5000,
+        "Verification email timed out."
+      );
+    }
+
+    async function refreshUserVerification(user) {
+      if (!user) return user;
+      try {
+        await withTimeout(reload(user), 5000, "Account refresh timed out.");
+      } catch {}
+      return auth.currentUser || user;
+    }
+
+    function requiresVerifiedEmail(user) {
+      return !!(user && user.providerData && user.providerData.some((provider) => provider?.providerId === "password") && !user.emailVerified);
+    }
+
+    async function blockUntilVerified(user, message, useSuccess = false) {
+      if (!requiresVerifiedEmail(user)) return false;
+      await sendVerificationOrThrow(user);
+      await signOut(auth).catch(() => {});
+      setActiveTab("signin");
+      if (useSuccess) {
+        showSuccess(message);
+      } else {
+        showError(message);
+      }
+      return true;
+    }
+
+    async function finishPasswordSignup(user, role) {
+      cacheRole(role);
+      await sendVerificationOrThrow(user);
+      await signOut(auth).catch(() => {});
+      setActiveTab("signin");
+      showSuccess("Account created. Check your email to verify your address before signing in.");
+    }
+
+    async function readRole(uid, fallback = "musician") {
+      try {
+        const summary = await readUserSummary(db, uid);
+        if (summary?.role === "host" || summary?.role === "musician") {
+          cacheRole(summary.role);
+          return summary.role;
+        }
+        const roleSnap = await withTimeout(getDoc(doc(db, "userRoles", uid)), FAST_ROLE_LOOKUP_MS, "Role lookup timed out.");
+        if (roleSnap.exists()) {
+          const role = roleSnap.data().role;
+          if (role === "host" || role === "musician") {
+            cacheRole(role);
+            return role;
+          }
+        }
+      } catch {
+        // Fall back below.
+      }
+      return fallback;
+    }
+
+    async function ensureRole(uid, role) {
+      await withTimeout(ensureRoleRecord(db, uid, role), 5000, "Saving role timed out.");
+    }
+
+    async function upsertUserSummary(user, role, profileComplete = false) {
+      const safeRole = normalizeRole(role, "musician");
+      await withTimeout(
+        writeUserSummary(db, user.uid, {
+          role: safeRole,
+          email: user.email || "",
+          displayName: user.displayName || "",
+          status: "active",
+          profileComplete
+        }),
+        5000,
+        "Saving account summary timed out."
+      );
+    }
+
+    async function readProfileExists(role, uid) {
+      try {
+        const collection = role === "host" ? "hosts" : "musicians";
+        const profileSnap = await withTimeout(getDoc(doc(db, collection, uid)), 4000, "Profile lookup timed out.");
+        return profileSnap.exists();
+      } catch {
+        return false;
+      }
+    }
+
+    function goToRole(role, hasProfile) {
+      if (hasRedirected) return;
+      hasRedirected = true;
+      window.location.href = routeWithResume(role, hasProfile);
+    }
+
+    async function forceRouteAfterLogin(user, preferredRole = "musician") {
+      const fallbackRole = readCachedRole() || preferredRole;
+      const role = await readRole(user.uid, fallbackRole);
+      cacheRole(role);
+      const hasProfile = await readProfileExists(role, user.uid);
+      goToRole(role, hasProfile);
+    }
+
+    async function redirectAfterAuth(user, preferredRole = "musician") {
+      const freshUser = await refreshUserVerification(user);
+      if (await blockUntilVerified(freshUser, "Verify your email before accessing CLTCH.NTWRK. We sent another verification link.")) {
+        return;
+      }
+      const fallbackRole = readCachedRole() || preferredRole;
+      const role = await readRole(freshUser.uid, fallbackRole);
+      cacheRole(role);
+      const hasProfile = await readProfileExists(role, freshUser.uid);
+      upsertUserSummary(freshUser, role, hasProfile).catch(() => {});
+      goToRole(role, hasProfile);
+    }
+
+    async function sendMagicLink(email, role) {
+      await withTimeout(
+        sendSignInLinkToEmail(auth, email, buildEmailLinkSettings(role)),
+        AUTH_TIMEOUT_MS,
+        "Email link request timed out. Please try again."
+      );
+      localStorage.setItem(EMAIL_LINK_KEY, email);
+      cacheRole(role);
+      showSuccess("Check your email for a secure sign-in link.");
+    }
+
+    tabSignIn.addEventListener("click", () => { setActiveTab("signin"); });
+    tabSignUp.addEventListener("click", () => { setActiveTab("signup"); });
+
+    passwordToggleButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const inputId = button.getAttribute("data-toggle-password");
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const showing = input.type === "text";
+        input.type = showing ? "password" : "text";
+        button.textContent = showing ? "Show" : "Hide";
+      });
+    });
+
+    forgotPasswordLink.addEventListener("click", async (event) => {
+      event.preventDefault();
+      clearStatus();
+      const email = normalizeEmailValue(document.getElementById("siEmail").value);
+      if (!validEmail(email)) {
+        showError("Enter your account email first, then use password reset.");
+        return;
+      }
+      try {
+        await withTimeout(sendPasswordResetEmail(auth, email), AUTH_TIMEOUT_MS, "Password reset timed out. Please try again.");
+        if (auth.currentUser) {
+          recordAuthEvent(db, auth.currentUser, "password_reset").catch(() => {});
+        }
+        showSuccess("Password reset email sent.");
+      } catch (err) {
+        showError(friendlyError(err));
+      }
+    });
+
+    signInForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearStatus();
+      if (document.getElementById("siWebsite").value) {
+        showError("Unable to process request.");
+        return;
+      }
+      const email = normalizeEmailValue(document.getElementById("siEmail").value);
+      const password = document.getElementById("siPassword").value;
+      if (!validEmail(email) || !password) {
+        showError("Please enter a valid email and password.");
+        return;
+      }
+      setButtonsBusy(true);
+      try {
+        const credential = await withTimeout(signInWithEmailAndPassword(auth, email, password), AUTH_TIMEOUT_MS, "Sign-in timed out. Please try again.");
+        const freshUser = await refreshUserVerification(credential.user);
+        if (await blockUntilVerified(freshUser, "Check your email and verify your account before signing in. We sent another verification link.")) {
+          return;
+        }
+        recordAuthEvent(db, freshUser, "sign_in").catch(() => {});
+        showSuccess("Signed in. Loading your workspace...");
+        await Promise.race([
+          redirectAfterAuth(freshUser, readCachedRole() || "musician"),
+          new Promise((resolve) => setTimeout(resolve, 2200))
+        ]);
+        if (!hasRedirected) {
+          await forceRouteAfterLogin(freshUser, readCachedRole() || "musician");
+        }
+      } catch (err) {
+        showError(friendlyError(err));
+      } finally {
+        setButtonsBusy(false);
+      }
+    });
+
+    signUpForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearStatus();
+      if (document.getElementById("suWebsite").value) {
+        showError("Unable to process request.");
+        return;
+      }
+      const role = document.getElementById("suRole").value;
+      const email = normalizeEmailValue(document.getElementById("suEmail").value);
+      const password = document.getElementById("suPassword").value;
+      const confirm = document.getElementById("suConfirm").value;
+      if (!validEmail(email)) {
+        showError("Please enter a valid email address.");
+        return;
+      }
+      if (!strongPassword(password)) {
+        showError("Use 8+ chars with uppercase, lowercase, and a number.");
+        return;
+      }
+      if (password !== confirm) {
+        showError("Passwords do not match.");
+        return;
+      }
+      setButtonsBusy(true);
+      try {
+        const credential = await withTimeout(createUserWithEmailAndPassword(auth, email, password), AUTH_TIMEOUT_MS, "Account creation timed out. Please try again.");
+        await finishPasswordSignup(credential.user, role);
+        return;
+      } catch (err) {
+        showError(friendlyError(err));
+      } finally {
+        setButtonsBusy(false);
+      }
+    });
+
+    async function startGoogleSignIn() {
+      clearStatus();
+      setButtonsBusy(true);
+      const provider = new GoogleAuthProvider();
+      const selectedRole = document.getElementById("suRole").value || "musician";
+      try {
+        const credential = await withTimeout(signInWithPopup(auth, provider), AUTH_TIMEOUT_MS, "Google sign-in timed out. Please try again.");
+        let role = await readRole(credential.user.uid, selectedRole);
+        cacheRole(role);
+        await ensureRole(credential.user.uid, role);
+        const hasProfile = await readProfileExists(role, credential.user.uid);
+        await upsertUserSummary(credential.user, role, hasProfile);
+        goToRole(role, hasProfile);
+      } catch (err) {
+        if (err?.code === "auth/popup-blocked" || err?.code === "auth/popup-closed-by-user") {
+          cacheRole(selectedRole);
+          showSuccess("Switching to redirect sign-in...");
+          await signInWithRedirect(auth, provider);
+          return;
+        }
+        showError(friendlyError(err));
+      } finally {
+        setButtonsBusy(false);
+      }
+    }
+
+    siGoogleBtn.addEventListener("click", startGoogleSignIn);
+    suGoogleBtn.addEventListener("click", startGoogleSignIn);
+
+    siEmailLinkBtn.addEventListener("click", async () => {
+      clearStatus();
+      const email = normalizeEmailValue(document.getElementById("siEmail").value);
+      if (!validEmail(email)) {
+        showError("Enter a valid email address first.");
+        return;
+      }
+      setButtonsBusy(true);
+      try {
+        await sendMagicLink(email, readCachedRole() || "musician");
+      } catch (err) {
+        showError(friendlyError(err));
+      } finally {
+        setButtonsBusy(false);
+      }
+    });
+
+    suEmailLinkBtn.addEventListener("click", async () => {
+      clearStatus();
+      const role = document.getElementById("suRole").value;
+      const email = normalizeEmailValue(document.getElementById("suEmail").value);
+      if (!validEmail(email)) {
+        showError("Enter a valid email address first.");
+        return;
+      }
+      setButtonsBusy(true);
+      try {
+        await sendMagicLink(email, role);
+      } catch (err) {
+        showError(friendlyError(err));
+      } finally {
+        setButtonsBusy(false);
+      }
+    });
+
+    setActiveTab(resolveInitialTab());
+
+    const authReason = new URLSearchParams(window.location.search).get("reason");
+    if (authReason === "verify-email") {
+      showError("Verify your email before accessing CLTCH.NTWRK.");
+    } else if (authReason === "idle-timeout") {
+      showError("You were signed out after 5 minutes of inactivity. Sign in again to continue.");
+    }
+
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      (async () => {
+        const storedEmail = localStorage.getItem(EMAIL_LINK_KEY);
+        const confirmedEmail = storedEmail || window.prompt("Confirm your email to finish signing in:");
+        const roleFromLink = new URL(window.location.href).searchParams.get("role") === "host" ? "host" : (readCachedRole() || "musician");
+        if (!confirmedEmail) {
+          showError("Email confirmation is required to complete sign-in.");
+          return;
+        }
+        setButtonsBusy(true);
+        try {
+        const credential = await withTimeout(
+          signInWithEmailLink(auth, normalizeEmailValue(confirmedEmail), window.location.href),
+          AUTH_TIMEOUT_MS,
+          "Email link sign-in timed out. Please try again."
+        );
+        localStorage.removeItem(EMAIL_LINK_KEY);
+        cacheRole(roleFromLink);
+        await ensureRole(credential.user.uid, roleFromLink);
+        const hasProfile = await readProfileExists(roleFromLink, credential.user.uid);
+        await upsertUserSummary(credential.user, roleFromLink, hasProfile);
+        recordAuthEvent(db, credential.user, "sign_in").catch(() => {});
+        goToRole(roleFromLink, hasProfile);
+        } catch (err) {
+          showError(friendlyError(err));
+        } finally {
+          setButtonsBusy(false);
+        }
+      })();
+    }
+
+    getRedirectResult(auth).then(async (result) => {
+      if (!result?.user) return;
+      const fallbackRole = readCachedRole() || document.getElementById("suRole").value || "musician";
+      const role = await readRole(result.user.uid, fallbackRole);
+      cacheRole(role);
+      await ensureRole(result.user.uid, role);
+      const hasProfile = await readProfileExists(role, result.user.uid);
+      await upsertUserSummary(result.user, role, hasProfile);
+      recordAuthEvent(db, result.user, "sign_in").catch(() => {});
+      goToRole(role, hasProfile);
+    }).catch((err) => {
+      showError(friendlyError(err));
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user || hasRedirected) return;
+      await redirectAfterAuth(user, readCachedRole() || "musician");
+    });
+  </script>
+
+</body>
+</html>

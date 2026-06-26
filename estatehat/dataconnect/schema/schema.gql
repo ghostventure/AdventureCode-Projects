@@ -1,0 +1,52 @@
+type User @table {
+  displayName: String!
+  email: String!
+  createdAt: Timestamp!
+  phoneNumber: String
+  companyName: String
+  userType: String
+}
+
+type Property @table {
+  title: String!
+  address: String!
+  city: String!
+  state: String!
+  zipCode: String!
+  price: Float!
+  propertyType: String!
+  listingStatus: String!
+  createdAt: Timestamp!
+  description: String
+  squareFootage: Int
+  lotSize: Float
+  bedrooms: Int
+  bathrooms: Float
+  yearBuilt: Int
+  blightStatus: Boolean
+  redevelopmentPotential: String
+  owner: User
+}
+
+type Image @table {
+  imageUrl: String!
+  order: Int!
+  altText: String
+  property: Property
+}
+
+type Watchlist @table(key: ["user", "property"]) {
+  createdAt: Timestamp!
+  user: User!
+  property: Property!
+}
+
+type Offer @table {
+  offerAmount: Float!
+  offerDate: Date!
+  offerStatus: String!
+  createdAt: Timestamp!
+  contingencies: String
+  buyer: User
+  property: Property
+}

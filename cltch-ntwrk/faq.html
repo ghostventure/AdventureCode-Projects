@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLTCH.NTWRK — FAQ</title>
+  <style>
+    body {
+      min-height: 100vh;
+      background: var(--cltch-body-bg);
+      color: var(--cltch-text);
+    }
+    .page-shell.faq-page {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      padding: 0 24px 48px;
+      width: min(1120px, 100%);
+    }
+    .faq-hero {
+      border: 1px solid var(--cltch-line);
+      border-radius: var(--cltch-radius);
+      background: var(--cltch-surface);
+      padding: 40px 48px;
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      align-items: stretch;
+      box-shadow: var(--cltch-shadow);
+    }
+    .faq-hero-content {
+      flex: 1 1 340px;
+    }
+    .faq-hero h1 {
+      font-size: clamp(2.4rem, 2vw, 2.8rem);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .faq-hero p {
+      color: var(--cltch-muted);
+      line-height: 1.6;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-actions a {
+      border-radius: 999px;
+      padding: 12px 24px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .hero-actions a.btn-primary {
+      background: var(--cltch-brand);
+      color: #1b1200;
+      border-color: transparent;
+    }
+    .hero-actions a.btn-outline {
+      border-color: var(--cltch-line);
+      color: var(--cltch-text);
+    }
+    .hero-actions a:hover {
+      transform: translateY(-2px);
+    }
+    .faq-hero-cards {
+      flex: 0 1 280px;
+      display: grid;
+      gap: 12px;
+    }
+    .faq-hero-card {
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--cltch-line);
+      background: var(--cltch-card-bg);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--cltch-text);
+    }
+    .faq-fast-track {
+      background: var(--cltch-surface-soft);
+      border-radius: 18px;
+      padding: 24px 32px;
+      border: 1px solid var(--cltch-line);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-fast-track h2 {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+    }
+    .faq-fast-track-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .faq-fast-track-card {
+      background: white;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--cltch-line);
+      font-size: 0.9rem;
+      color: var(--cltch-text);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .faq-fast-track-card strong {
+      font-size: 0.92rem;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .faq-grid-card {
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--cltch-line);
+      background: var(--cltch-surface);
+      box-shadow: var(--cltch-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 170px;
+    }
+    .faq-grid-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+    .faq-group {
+      border-radius: 18px;
+      border: 1px solid var(--cltch-line);
+      background: var(--cltch-surface);
+      padding-top: 6px;
+      margin-bottom: 20px;
+      box-shadow: 0 22px 48px rgba(26, 22, 8, 0.08);
+    }
+    .faq-group .section-label {
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 12px 22px;
+      color: var(--cltch-muted);
+    }
+    .faq-item {
+      border-top: 1px solid var(--cltch-line);
+    }
+    .faq-item:first-of-type {
+      border-top: none;
+    }
+    .faq-q {
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--cltch-text);
+    }
+    .faq-q span {
+      flex: 1;
+      margin-right: 12px;
+    }
+    .faq-chevron {
+      font-size: 1.4rem;
+      transition: transform 0.3s ease;
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(-180deg);
+    }
+    .faq-a {
+      padding: 0 22px 16px;
+      font-size: 0.95rem;
+      color: var(--cltch-muted);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-item.open .faq-a {
+      max-height: 400px;
+    }
+    .still-stuck {
+      background: var(--cltch-surface);
+      border: 1px solid var(--cltch-line);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      color: var(--cltch-muted);
+      box-shadow: var(--cltch-shadow);
+    }
+    .still-stuck a {
+      display: inline-flex;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 12px 28px;
+      border: 1px solid var(--cltch-brand-strong);
+      color: var(--cltch-text);
+      font-weight: 600;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.6);
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--cltch-muted);
+      border-top: 1px solid var(--cltch-line);
+    }
+    footer a { color: var(--cltch-muted); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: var(--cltch-text); }
+    @media (max-width: 768px) {
+      .faq-hero { padding: 28px; }
+      .hero-actions { flex-direction: column; }
+      .faq-hero-cards { grid-template-columns: 1fr; }
+      .page-shell.faq-page { padding: 0 16px 36px; }
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('cltch_theme_v1');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var mode = saved === 'dark' || (!saved && prefersDark) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.style.colorScheme = mode;
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <a href="auth.html">Sign In</a>
+      <a href="auth.html?tab=signup">Sign Up</a>
+    </nav>
+  </header>
+
+  <main class="page-shell faq-page">
+    <section class="faq-hero">
+      <div class="faq-hero-content">
+        <div class="eyebrow">Help Center</div>
+        <h1>Confidence before you even pick a role.</h1>
+        <p>We organize the most common questions into one guided landing space so new hosts, performers, and partners can start with clarity.</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="auth.html?tab=signup">Start an Account</a>
+          <a class="btn-outline" href="booking.html">See a Booking</a>
+        </div>
+      </div>
+      <div class="faq-hero-cards">
+        <div class="faq-hero-card">
+          <strong>Verified roles</strong>
+          <p>Set up Host, Performer, or dual access once, then toggle availability across gigs.</p>
+        </div>
+        <div class="faq-hero-card">
+          <strong>Compliance radar</strong>
+          <p>Every question references ADA, COPPA, DMCA, and local ordinances to keep venues and talent covered.</p>
+        </div>
+        <div class="faq-hero-card">
+          <strong>Support ready</strong>
+          <p>Need something not on this page? Contact legal@cltch.ntwrk or use the live support form.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-fast-track">
+      <div>
+        <h2>Fast answers for new starters</h2>
+        <p>The next six cards share proactive guidance most users need before asking a question.</p>
+      </div>
+      <div class="faq-fast-track-grid">
+        <div class="faq-fast-track-card">
+          <strong>Account creation</strong>
+          <p>Verify email first, then upload government ID and a selfie (18+). Performance or host-only accounts take 5 minutes.</p>
+        </div>
+        <div class="faq-fast-track-card">
+          <strong>Document safety</strong>
+          <p>Papers like IDs never reach CLTCH servers; we rely on vetted verification partners, and you can delete them anytime.</p>
+        </div>
+        <div class="faq-fast-track-card">
+          <strong>Booking fees</strong>
+          <p>Hosts cover a 2% processing fee; performers charge their own rate. Change settings in Billing > Pricing.</p>
+        </div>
+        <div class="faq-fast-track-card">
+          <strong>Payout workflow</strong>
+          <p>Payouts hit the linked bank, Apple Pay, or Google Pay after each booking settles; you see fees and net in the dashboard.</p>
+        </div>
+        <div class="faq-fast-track-card">
+          <strong>Local compliance</strong>
+          <p>City, county, parish, and borough obligations are mapped automatically. Manual overrides let you highlight special permits.</p>
+        </div>
+        <div class="faq-fast-track-card">
+          <strong>Reporting issues</strong>
+          <p>Flag safety, payments, or child-labor concerns through legal@cltch.ntwrk; we respond in 24 hours.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-grid">
+      <article class="faq-grid-card">
+        <h3>Marketing & visibility</h3>
+        <p>Complete your performer page, add tags, and respond to inquiries within three hours to stay featured on the Gig Radar.</p>
+      </article>
+      <article class="faq-grid-card">
+        <h3>Host checklists</h3>
+        <p>Upload venue insurance, safety plans, and child safety protocols before posting gigs to unlock premium exposure.</p>
+      </article>
+      <article class="faq-grid-card">
+        <h3>Guided onboarding</h3>
+        <p>We send an onboarding walkthrough to every new account that covers compliance, deposits, and talent scouting tools.</p>
+      </article>
+      <article class="faq-grid-card">
+        <h3>Safety first</h3>
+        <p>Every contract includes easy emergency contacts, insurance reminders, and optional check-in requirements.</p>
+      </article>
+    </section>
+
+    <div id="legal-banner"></div>
+    <div class="compliance-snapshot" id="compliance-snapshot"></div>
+    <div id="faq-container"></div>
+    <div class="still-stuck">
+      <h3>Still have a question?</h3>
+      <p>Share it through support.html, and we’ll fold it into the FAQ so the next visitor finds the answer faster.</p>
+      <a href="contact.html">Open Support</a>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 CLTCH.NTWRK &mdash;
+    <a href="about.html">About</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+  </footer>
+
+  <script src="scripts/legal-components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.LegalComponents) {
+        window.LegalComponents.showAccessibilityBanner('legal-banner');
+        window.LegalComponents.renderComplianceSnapshot('compliance-snapshot');
+        window.LegalComponents.renderFAQ('faq-container');
+        window.LegalComponents.initPolicyLayout();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLTCH.NTWRK — Contact</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      text-decoration: none;
+    }
+    header nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 14px;
+    }
+    header nav a:hover { color: #fff; }
+    .container {
+      flex: 1;
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #f5a623;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .lead {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+    .lead a { color: #f5a623; text-decoration: none; }
+    .lead a:hover { text-decoration: underline; }
+
+    /* Contact options */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 520px) { .contact-grid { grid-template-columns: 1fr; } }
+    .contact-card {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .contact-card .c-icon { font-size: 24px; margin-bottom: 12px; }
+    .contact-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .contact-card p  { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 14px; }
+    .contact-card a  {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f5a623;
+      text-decoration: none;
+    }
+    .contact-card a:hover { text-decoration: underline; }
+
+    /* Form */
+    .form-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .form-section .sub {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 28px;
+    }
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 7px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 15px;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #f5a623; }
+    select option { background: #141414; }
+    textarea { resize: vertical; min-height: 120px; }
+    .row { display: flex; gap: 16px; }
+    .row .form-group { flex: 1; }
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #f5a623;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #e09510; }
+    .btn-submit:disabled { background: #555; color: #333; cursor: not-allowed; }
+    .status {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    .status.success { background: #0d2e1a; border: 1px solid #1a5c34; color: #4caf82; display: block; }
+    .status.error   { background: #2e0d0d; border: 1px solid #5c1a1a; color: #cf6679; display: block; }
+
+    /* Response time note */
+    .response-note {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: #0e0e0e;
+      border: 1px solid #1a1a1a;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.7;
+    }
+    .response-note strong { color: #666; }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #333;
+      border-top: 1px solid #1e1e1e;
+    }
+    footer a { color: #555; text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: #aaa; }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('cltch_theme_v1');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var mode = saved === 'dark' || (!saved && prefersDark) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.style.colorScheme = mode;
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <a href="auth.html">Sign In</a>
+      <a href="auth.html?tab=signup">Sign Up</a>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <div class="eyebrow">Support</div>
+    <h1>Get in Touch</h1>
+    <p class="lead">
+      Have a question, issue, or feedback? Check the <a href="faq.html">FAQ</a> first — most answers are there. If you still need help, use the form below or reach out directly.
+    </p>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="c-icon">✉️</div>
+        <h3>General Support</h3>
+        <p>Account issues, booking problems, profile questions.</p>
+        <a href="mailto:support@cltch.ntwrk">support@cltch.ntwrk</a>
+      </div>
+      <div class="contact-card">
+        <div class="c-icon">⚖️</div>
+        <h3>Legal &amp; Compliance</h3>
+        <p>Terms disputes, data requests, DMCA, policy concerns.</p>
+        <a href="mailto:legal@cltch.ntwrk">legal@cltch.ntwrk</a>
+      </div>
+      <div class="contact-card">
+        <div class="c-icon">🤝</div>
+        <h3>Partnerships</h3>
+        <p>Venue partnerships, integrations, bulk hosting inquiries.</p>
+        <a href="mailto:partners@cltch.ntwrk">partners@cltch.ntwrk</a>
+      </div>
+      <div class="contact-card">
+        <div class="c-icon">🐛</div>
+        <h3>Bug Reports</h3>
+        <p>Found something broken? Help us fix it fast.</p>
+        <a href="mailto:bugs@cltch.ntwrk">bugs@cltch.ntwrk</a>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Send a Message</h2>
+      <p class="sub">Fill out the form and we'll follow up via email.</p>
+
+      <form id="contactForm" onsubmit="handleSubmit(event)">
+        <div class="row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="cfFirst" placeholder="First" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="cfLast" placeholder="Last" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="cfEmail" placeholder="you@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label>I am a</label>
+          <select id="cfRole">
+            <option value="performer">Performer / Creative</option>
+            <option value="host">Host / Venue</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="cfSubject">
+            <option value="account">Account issue</option>
+            <option value="booking">Booking problem</option>
+            <option value="payment">Payment dispute</option>
+            <option value="review">Review concern</option>
+            <option value="bug">Bug report</option>
+            <option value="partnership">Partnership inquiry</option>
+            <option value="data">Data / privacy request</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Message</label>
+          <textarea id="cfMessage" placeholder="Describe your issue or question in detail..." required></textarea>
+        </div>
+
+        <button class="btn-submit" type="submit" id="submitBtn">Send Message</button>
+      </form>
+
+      <div class="status" id="formStatus"></div>
+    </div>
+
+    <div class="response-note">
+      <strong>Response times:</strong> We aim to respond to all support requests within 2 business days. Legal and data requests may take up to 5 business days. For urgent booking issues, email <a href="mailto:support@cltch.ntwrk" style="color:#666;">support@cltch.ntwrk</a> directly with "URGENT" in the subject line.
+    </div>
+
+  </main>
+
+  <footer>
+    &copy; 2026 CLTCH.NTWRK &mdash;
+    <a href="about.html">About</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn    = document.getElementById('submitBtn');
+      const status = document.getElementById('formStatus');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      // Simulate submission — wire to a backend / EmailJS / Formspree when ready
+      setTimeout(() => {
+        status.className = 'status success';
+        status.textContent = 'Message sent. We\'ll follow up at the email you provided within 2 business days.';
+        document.getElementById('contactForm').reset();
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+      }, 800);
+    }
+  </script>
+
+</body>
+</html>

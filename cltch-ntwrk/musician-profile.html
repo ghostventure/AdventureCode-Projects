@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Set up and manage your performer profile on CLTCH.NTWRK.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/cltch-icon.svg" type="image/svg+xml">
+  <title>CLTCH.NTWRK — Performer Profile</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      text-decoration: none;
+    }
+    header nav {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 14px;
+    }
+    .mode-toggle {
+      margin-left: 24px;
+      display: inline-flex;
+      align-items: center;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .mode-btn {
+      border: 0;
+      background: transparent;
+      color: #8d98a8;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .mode-btn.active {
+      background: #f5a623;
+      color: #000;
+    }
+    .mode-toggle.busy { opacity: 0.7; }
+    .mode-toggle.busy .mode-btn { pointer-events: none; }
+    header nav select {
+      margin-left: 24px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #aaa;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 10px;
+      outline: none;
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    header nav select:focus { border-color: #f5a623; color: #fff; }
+    header nav a:hover { color: #fff; }
+    .container {
+      flex: 1;
+      max-width: 860px;
+      width: 100%;
+      margin: 32px auto 56px;
+      padding: 0 24px;
+    }
+    h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+    .subtitle { color: #8f9bad; font-size: 15px; margin-bottom: 20px; line-height: 1.6; }
+    .workspace-tabs {
+      display: inline-flex;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid #1f2d39;
+      background: rgba(11, 16, 22, 0.92);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .workspace-tab {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1px solid #24394b;
+      color: #cfe0f1;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #101923;
+    }
+    .workspace-tab.active {
+      background: #f5a623;
+      border-color: #f5a623;
+      color: #111;
+    }
+    .page-hero {
+      background: linear-gradient(180deg, rgba(16, 24, 33, 0.94), rgba(9, 13, 18, 0.94));
+      border: 1px solid #1e2d3a;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .form-shell {
+      display: grid;
+      gap: 18px;
+    }
+    .form-section {
+      background: #0f141a;
+      border: 1px solid #1f2b36;
+      border-radius: 18px;
+      padding: 22px;
+    }
+    .section-kicker {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f5a623;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 21px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .section-copy {
+      color: #8f9bad;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .profile-dashboard {
+      background: #0f0f0f;
+      border: 1px solid #262626;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 28px;
+    }
+    .dash-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .dash-card {
+      flex: 1;
+      min-width: 110px;
+      background: #151515;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .dash-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: #666;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .dash-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: #f0f0f0;
+      line-height: 1.2;
+    }
+    .dash-value.ok { color: #4caf82; }
+    .dash-value.warn { color: #f5a623; }
+    .dash-value.bad { color: #cf6679; }
+    .dash-progress {
+      width: 100%;
+      height: 8px;
+      background: #1b1b1b;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #2a2a2a;
+      margin-top: 8px;
+    }
+    .dash-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f5a623, #ffd16a);
+      transition: width 0.2s ease;
+    }
+    .dash-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .dash-link {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      color: #aaa;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      background: #141414;
+    }
+    .dash-link:hover {
+      border-color: #f5a623;
+      color: #f5a623;
+    }
+    .form-group { margin-bottom: 20px; }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #aaa;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 15px;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #f5a623; }
+    input.invalid, select.invalid { border-color: #cf6679 !important; }
+    .field-error { font-size: 12px; color: #cf6679; margin-top: 5px; min-height: 16px; }
+    select option { background: #141414; }
+    textarea { resize: vertical; min-height: 90px; }
+    .row { display: flex; gap: 16px; }
+    .row .form-group { flex: 1; }
+    .genre-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .genre-chip {
+      padding: 8px 16px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .genre-chip.selected {
+      background: #2a1a00;
+      border-color: #f5a623;
+      color: #f5a623;
+    }
+    .availability {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .avail-btn {
+      flex: 1 1 160px;
+      min-width: 0;
+      padding: 12px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #888;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .avail-btn.active {
+      border-color: #f5a623;
+      color: #f5a623;
+      background: #2a1a00;
+    }
+    .btn-save {
+      width: 100%;
+      padding: 14px;
+      background: #f5a623;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .btn-save:hover { background: #e09510; }
+    .btn-save:disabled { background: #555; color: #333; cursor: not-allowed; }
+    .status {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    .status.success {
+      background: #0d2e1a;
+      border: 1px solid #1a5c34;
+      color: #4caf82;
+      display: block;
+    }
+    .status.error {
+      background: #2e0d0d;
+      border: 1px solid #5c1a1a;
+      color: #cf6679;
+      display: block;
+    }
+    .btn-plaid {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #2a5c95;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #1f4f84, #163d66);
+      color: #eaf4ff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .btn-plaid:hover { border-color: #4d88ca; }
+    .btn-plaid:disabled { opacity: 0.65; cursor: not-allowed; }
+    .plaid-status-ok { color: #4caf82; }
+    .plaid-status-err { color: #cf6679; }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #333;
+      border-top: 1px solid #1e1e1e;
+    }
+
+    /* ── Availability Calendar ──────────────────────────── */
+    .cal-wrapper {
+      background: #0e0e0e;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .cal-title { font-size: 15px; font-weight: 700; }
+    .cal-nav {
+      background: none;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #888;
+      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .cal-nav:hover { border-color: #f5a623; color: #f5a623; }
+    .cal-nav:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .cal-weekdays span {
+      font-size: 11px;
+      color: #444;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 4px 0;
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+    .cal-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-size: 13px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      color: #ccc;
+      font-weight: 500;
+      transition: border-color 0.12s, color 0.12s, background 0.12s;
+    }
+    .cal-cell:hover          { border-color: #f5a623; color: #f5a623; }
+    .cal-cell.today          { border-color: #3a3a3a; color: #fff; font-weight: 700; }
+    .cal-cell.blocked        { background: #2e0d0d; border-color: #5c1a1a !important; color: #cf6679; }
+    .cal-cell.blocked:hover  { background: #3e1212; }
+    .cal-cell.past           { color: #2e2e2e; cursor: default; pointer-events: none; }
+    .cal-cell.other-month    { color: #1e1e1e; cursor: default; pointer-events: none; }
+    .cal-legend {
+      display: flex;
+      gap: 20px;
+      margin-top: 14px;
+      font-size: 12px;
+      color: #555;
+    }
+    .cal-legend .leg { display: flex; align-items: center; gap: 6px; }
+    .cal-legend .dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .dot-open    { background: #141414; border: 1px solid #2a2a2a; }
+    .dot-blocked { background: #2e0d0d; border: 1px solid #5c1a1a; }
+    .dot-booked  { background: #2a1a00; border: 1px solid #f5a623; }
+    .cal-cell.booked        { background: #2a1a00; border-color: #f5a623 !important; color: #f5a623; cursor: default; }
+    .cal-cell.booked:hover  { background: #3a2400; }
+    /* Tooltip popup for booked date info */
+    .cal-tooltip {
+      position: fixed;
+      background: #1a1a1a;
+      border: 1px solid #f5a623;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #f0f0f0;
+      z-index: 999;
+      pointer-events: none;
+      max-width: 220px;
+      line-height: 1.5;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    .page-hero {
+      background: linear-gradient(135deg, rgba(20, 36, 31, 0.96), rgba(10, 14, 18, 0.98));
+      border-color: rgba(126, 196, 163, 0.22);
+      border-radius: 8px;
+      padding: clamp(22px, 4vw, 34px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+      gap: 22px;
+      align-items: end;
+    }
+    .hero-actions {
+      display: grid;
+      gap: 10px;
+    }
+    .hero-action {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.035);
+      color: #d9e8df;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .hero-action span:last-child {
+      color: #8dd7ac;
+    }
+    .profile-dashboard {
+      background: rgba(9, 12, 15, 0.96);
+      border-color: rgba(255,255,255,0.09);
+      border-radius: 8px;
+      padding: clamp(16px, 2.2vw, 22px);
+      margin-bottom: 20px;
+      display: grid;
+      gap: 12px;
+    }
+    .dash-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 0;
+    }
+    .dash-card {
+      min-width: 0;
+      background: rgba(255,255,255,0.035);
+      border-color: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 14px;
+      display: grid;
+      align-content: start;
+    }
+    .dash-links {
+      margin-top: 2px;
+    }
+    .dash-link {
+      background: rgba(255,255,255,0.035);
+    }
+    .profile-note-row {
+      display: grid;
+      gap: 4px;
+      color: #8f9bad;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .form-shell {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      align-items: start;
+    }
+    .form-section {
+      background: rgba(12, 17, 21, 0.96);
+      border-color: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: clamp(18px, 2.4vw, 24px);
+      min-width: 0;
+    }
+    .form-section:nth-of-type(3),
+    .form-section:nth-of-type(6),
+    .form-section:nth-of-type(7) {
+      grid-column: 1 / -1;
+    }
+    .form-section:nth-of-type(4),
+    .form-section:nth-of-type(5) {
+      min-height: 220px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .row .form-group {
+      min-width: 0;
+    }
+    @media (max-width: 820px) {
+      .page-hero,
+      .form-shell {
+        grid-template-columns: 1fr;
+      }
+      .form-section,
+      .form-section:nth-of-type(3),
+      .form-section:nth-of-type(6),
+      .form-section:nth-of-type(7) {
+        grid-column: 1;
+      }
+      .dash-row {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+    }
+    @media (max-width: 560px) {
+      .container {
+        padding: 0 12px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .workspace-tabs,
+      .dash-links,
+      .availability {
+        width: 100%;
+      }
+      .workspace-tab,
+      .dash-link,
+      .avail-btn,
+      .btn-save {
+        width: 100%;
+      }
+      .page-hero {
+        padding: 20px;
+      }
+      .cal-wrapper {
+        padding: 14px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="cltch-boilerplate.css">
+  <script src="site-init.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">CLTCH.NTWRK</a>
+    <nav>
+      <div class="mode-toggle" id="modeSwitch" aria-label="Switch mode" role="tablist">
+        <button class="mode-btn" type="button" data-mode="host">Host</button>
+        <button class="mode-btn" type="button" data-mode="musician">Performer</button>
+      </div>
+      <a href="musician-matched-gigs.html" data-bypass-dirty-check>Gigs</a>
+      <a href="auth.html" id="signOutLink">Sign Out</a>
+    </nav>
+  </header>
+
+  <main class="page-shell container">
+    <div class="workspace-tabs" aria-label="Performer workspace tabs">
+      <a class="workspace-tab" href="musician-matched-gigs.html" data-bypass-dirty-check>My Matched Gigs</a>
+      <a class="workspace-tab" href="gig-radar.html" data-bypass-dirty-check>Gig Radar</a>
+      <a class="workspace-tab active" href="musician-profile.html" aria-current="page">My Profile</a>
+    </div>
+
+    <section class="page-hero">
+      <div>
+        <h1>Performer Profile</h1>
+        <p class="subtitle">Keep your work, location, availability, proof, and payout details ready so hosts can book without second guessing.</p>
+      </div>
+      <div class="hero-actions" aria-label="Profile shortcuts">
+        <a class="hero-action" href="#profileForm"><span>Edit setup</span><span>Start</span></a>
+        <a class="hero-action" href="musician-matched-gigs.html" data-bypass-dirty-check><span>Open gigs</span><span>Queue</span></a>
+        <a class="hero-action" href="gig-radar.html" data-bypass-dirty-check><span>Find requests</span><span>Radar</span></a>
+      </div>
+    </section>
+
+    <section class="profile-dashboard" id="profileDashboard">
+      <div class="dash-row">
+        <div class="dash-card">
+          <div class="dash-label">Profile Completion</div>
+          <div class="dash-value" id="dashCompletionValue">0%</div>
+          <div class="dash-progress"><div class="dash-progress-fill" id="dashCompletionFill"></div></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label">Availability</div>
+          <div class="dash-value" id="dashAvailability">Available</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label">Upcoming Bookings</div>
+          <div class="dash-value" id="dashUpcoming">0</div>
+        </div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-card">
+          <div class="dash-label">Blocked Dates</div>
+          <div class="dash-value" id="dashBlocked">0</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label">Primary Style</div>
+          <div class="dash-value" id="dashGenre">Not set</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label">Payout Setup</div>
+          <div class="dash-value" id="dashPayout">Pending</div>
+        </div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-card">
+          <div class="dash-label">Overall Grade</div>
+          <div class="dash-value" id="dashGrade">—</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label">Performer Tier</div>
+          <div class="dash-value" id="dashTier">Junior</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label" id="dashTierTrackLabel">B-or-Above Ratings</div>
+          <div class="dash-value" id="dashTierCount">0</div>
+        </div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-card" style="flex:1 1 100%;">
+          <div class="dash-label">Business Class</div>
+          <div class="dash-value" id="dashBusinessClass">Unavailable</div>
+          <div id="businessClassNote" style="margin-top:8px;font-size:12px;color:#8f8f8f;line-height:1.6;">Available to eligible performers. When active, hosts see a verified Business Class icon on your profile.</div>
+          <button type="button" class="dash-link" id="businessClassRequestBtn" style="margin-top:12px;display:none;border:1px solid currentColor;background:transparent;padding:10px 14px;border-radius:12px;cursor:pointer;">Enable Business Class</button>
+        </div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-card" style="flex:1 1 100%;">
+          <div class="dash-label">Verified Performer</div>
+          <div class="dash-value" id="dashVerifiedPerformer">Inactive</div>
+          <div id="verifiedPerformerNote" style="margin-top:8px;font-size:12px;color:#8f8f8f;line-height:1.6;">Add Verified Performer for $20/month to show other users your account is legitimate.</div>
+          <button type="button" class="dash-link" id="verifiedPerformerBtn" style="margin-top:12px;display:inline-flex;border:1px solid currentColor;background:transparent;padding:10px 14px;border-radius:12px;cursor:pointer;">Enable Verified Performer ($20/month)</button>
+        </div>
+      </div>
+      <div class="dash-links">
+        <a class="dash-link" href="musician-matched-gigs.html">Open Gig Dashboard</a>
+        <a class="dash-link" href="#profileForm">Edit Profile Fields</a>
+        <a class="dash-link" href="support.html">Support</a>
+      </div>
+      <div class="profile-note-row">
+        <div id="draftRestoreText">Profile drafts save locally while you work.</div>
+        <div id="authActivityText">Auth activity will appear here once available.</div>
+      </div>
+    </section>
+
+    <form id="profileForm" class="form-shell">
+      <section class="form-section">
+        <div class="section-kicker">Identity</div>
+        <div class="section-title">Core Performer Details</div>
+        <div class="section-copy">These are the first details hosts use to recognize you, understand your category, and decide whether to open your profile.</div>
+
+      <div class="form-group">
+        <label>Performer Type</label>
+        <div>
+          <select id="performerTypeSelect" onchange="setType(this.value)">
+            <option value="musician">Musician</option>
+            <option value="dj">DJ</option>
+            <option value="photographer">Photographer</option>
+            <option value="cinematographer">Cinematographer</option>
+            <option value="model">Model</option>
+          </select>
+        </div>
+        <div id="performerTypeHelper" style="margin-top:10px; font-size:12px; color:#8ea4bf; line-height:1.5;">Your performer type should narrow the kind of work and styles that appear below.</div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="firstName" placeholder="First" required>
+          <div class="field-error" id="err-firstName"></div>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="lastName" placeholder="Last" required>
+          <div class="field-error" id="err-lastName"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Stage / Brand Name (optional)</label>
+        <input type="text" id="stageName" placeholder="e.g. DJ Smooth, Studio North, Ava Lane">
+      </div>
+
+      <div class="form-group">
+        <label>Zip Code <span style="color:#f5a623;">*</span></label>
+        <input type="text" id="zipCode" placeholder="e.g. 30301" maxlength="10" required
+          style="letter-spacing:2px;">
+        <div id="locationResolved" style="margin-top:8px; font-size:13px; color:#555; min-height:18px;"></div>
+      </div>
+      </section>
+
+      <section class="form-section">
+        <div class="section-kicker">Craft</div>
+        <div class="section-title">Style, Skills, and Positioning</div>
+        <div class="section-copy">This section shapes who sees you in matching and why the fit feels credible when a host opens your card.</div>
+      <div class="form-group" id="instrumentsGroup">
+        <label id="instrumentsLabel">Instruments / Skills</label>
+        <input type="text" id="instruments" placeholder="e.g. Guitar, Vocals, Keys">
+      </div>
+
+      <div class="form-group">
+        <label id="stylesLabel">Styles / Genres</label>
+        <div class="genre-grid" id="genreGrid">
+          <div class="genre-chip" data-genre="Jazz">Jazz</div>
+          <div class="genre-chip" data-genre="R&B / Soul">R&B / Soul</div>
+          <div class="genre-chip" data-genre="Hip-Hop">Hip-Hop</div>
+          <div class="genre-chip" data-genre="Blues">Blues</div>
+          <div class="genre-chip" data-genre="Rock">Rock</div>
+          <div class="genre-chip" data-genre="Country">Country</div>
+          <div class="genre-chip" data-genre="Classical">Classical</div>
+          <div class="genre-chip" data-genre="Electronic">Electronic</div>
+          <div class="genre-chip" data-genre="House">House</div>
+          <div class="genre-chip" data-genre="Techno">Techno</div>
+          <div class="genre-chip" data-genre="EDM">EDM</div>
+          <div class="genre-chip" data-genre="Afrobeats">Afrobeats</div>
+          <div class="genre-chip" data-genre="Reggae">Reggae</div>
+          <div class="genre-chip" data-genre="Latin">Latin</div>
+          <div class="genre-chip" data-genre="Open Format">Open Format</div>
+          <div class="genre-chip" data-genre="Open / Any">Open / Any</div>
+          <div class="genre-chip" data-genre="Portrait">Portrait</div>
+          <div class="genre-chip" data-genre="Editorial">Editorial</div>
+          <div class="genre-chip" data-genre="Commercial">Commercial</div>
+          <div class="genre-chip" data-genre="Lifestyle">Lifestyle</div>
+          <div class="genre-chip" data-genre="Event Coverage">Event Coverage</div>
+          <div class="genre-chip" data-genre="Fashion">Fashion</div>
+          <div class="genre-chip" data-genre="Bridal">Bridal</div>
+          <div class="genre-chip" data-genre="Streetwear">Streetwear</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Rate</label>
+          <input type="text" id="rate" placeholder="e.g. $100/hr or $200 flat">
+        </div>
+        <div class="form-group">
+          <label>Years Experience</label>
+          <input type="number" id="experience" placeholder="e.g. 5" min="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea id="bio" placeholder="Tell hosts a little about yourself..."></textarea>
+      </div>
+      </section>
+
+      <section class="form-section">
+        <div class="section-kicker">Availability</div>
+        <div class="section-title">Booking Readiness</div>
+        <div class="section-copy">Set whether you are currently available, then block specific dates so accepted gigs and conflicts stay visible on the calendar.</div>
+      <div class="form-group">
+        <label>Availability</label>
+        <div class="availability">
+          <button type="button" class="avail-btn active" id="availYes" onclick="setAvail(true)">Available for Gigs</button>
+          <button type="button" class="avail-btn" id="availNo" onclick="setAvail(false)">Not Available</button>
+        </div>
+      </div>
+
+      <!-- ── Availability Calendar ────────────────────────── -->
+      <div style="border-top:1px solid #1e1e1e; margin:28px 0 24px;"></div>
+      <p style="font-size:11px; font-weight:700; letter-spacing:1.5px; color:#444; text-transform:uppercase; margin-bottom:8px;">Block Out Dates</p>
+      <p style="font-size:13px; color:#555; margin-bottom:16px; line-height:1.5;">Tap any future date to mark it unavailable. You won't see gig requests on blocked days.</p>
+      <div class="cal-wrapper">
+        <div class="cal-header">
+          <button type="button" class="cal-nav" id="calPrevBtn" onclick="calPrev()">&#8249;</button>
+          <div class="cal-title" id="calTitle"></div>
+          <button type="button" class="cal-nav" onclick="calNext()">&#8250;</button>
+        </div>
+        <div class="cal-weekdays">
+          <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <div class="leg"><div class="dot dot-open"></div> Available</div>
+        <div class="leg"><div class="dot dot-blocked"></div> Blocked</div>
+        <div class="leg"><div class="dot dot-booked"></div> Booked</div>
+      </div>
+    </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-kicker">Availability Sync</div>
+      <div class="section-title">Keep Your Calendar Aligned</div>
+      <div class="section-copy">Connect an external calendar so blocked dates and accepted gigs stay synchronized across Gig Radar and your booking queue.</div>
+      <div style="margin-top:12px;">
+        <button id="availability-sync-btn" class="cta" type="button">Connect Calendar</button>
+        <div id="availability-sync-status" style="margin-top:8px; font-size:13px; color:#8ea4bf;">Status: awaiting connection</div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-kicker">Document Vault</div>
+      <div class="section-title">Store Contracts & Riders</div>
+      <div class="section-copy">Drop quick notes about agreements, riders, insurance forms, or compliance docs and share them with hosts instantly.</div>
+      <div id="document-vault"></div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-kicker">Portfolio</div>
+      <div class="section-title">Media, EPK, and Work Proof</div>
+      <div class="section-copy">Attach performance videos, EPK links, reels, galleries, or socials so hosts can verify the fit before they book.</div>
+      <div id="portfolioManagerComponent"></div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-kicker">Trust</div>
+      <div class="section-title">Performer Verification Readiness</div>
+      <div class="section-copy">Use this checklist to keep your account, profile, payout method, and proof of work ready for bookings.</div>
+      <div id="performerTrustComponent"></div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-kicker">Payout</div>
+        <div class="section-title">How You Get Paid</div>
+        <div class="section-copy">Keep payout details current so accepted gigs can move forward without extra follow-up or confusion.</div>
+      <div style="background:#0e0e0e; border:1px solid #2a2a2a; border-radius:10px; padding:20px;">
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>How You Want to Be Paid <span style="color:#f5a623;">*</span></label>
+          <p style="font-size:12px; color:#8ea4bf; margin-bottom:10px; line-height:1.5;">Recommended: prioritize Apple Pay first, then Google Pay. Those are now the preferred payout methods.</p>
+          <select id="payoutMethod" required onchange="updatePayoutHandle()">
+            <option value="">Select payout method</option>
+            <option value="applepay">Apple Pay (Recommended)</option>
+            <option value="googlepay">Google Pay (Recommended)</option>
+            <option value="venmo">Venmo</option>
+            <option value="cashapp">Cash App</option>
+            <option value="zelle">Zelle</option>
+            <option value="paypal">PayPal</option>
+            <option value="ach">Direct Deposit (Bank Transfer)</option>
+            <option value="plaid">Plaid Bank Transfer (Coming Soon)</option>
+            <option value="check">Check / Cash</option>
+          </select>
+        </div>
+        <div class="form-group" id="payoutHandleGroup" style="display:none; margin-bottom:0;">
+          <label id="payoutHandleLabel">Payout Handle</label>
+          <input type="text" id="payoutHandle" placeholder="">
+        </div>
+        <div class="form-group" id="plaidConnectGroup" style="display:none; margin-top:12px; margin-bottom:0;">
+          <button type="button" class="btn-plaid blaze-disabled" id="connectPlaidBtn" disabled aria-disabled="true">Plaid Connect (Blaze required)</button>
+          <p style="font-size:12px; color:#444; margin-top:10px; line-height:1.5;" id="plaidStatus">Plaid bank connection requires the Blaze backend setup and is temporarily disabled.</p>
+        </div>
+        <p style="font-size:12px; color:#444; margin-top:10px; line-height:1.5;" id="payoutNote"></p>
+        <div class="form-group" style="margin-top:12px; margin-bottom:0;">
+          <button type="button" class="btn-plaid blaze-disabled" id="connectStripeBtn" disabled aria-disabled="true">Stripe Connect Disabled</button>
+          <p style="font-size:12px; color:#444; margin-top:10px; line-height:1.5;" id="stripeStatus">Stripe Connect requires the Blaze backend setup and is temporarily disabled. Use manual payout details for now.</p>
+        </div>
+      </div>
+      </section>
+
+      <button class="btn-save" type="submit" id="saveBtn">Save Profile</button>
+    </form>
+
+    <div class="status" id="statusMsg"></div>
+  </main>
+
+  <footer>&copy; 2026 CLTCH.NTWRK &mdash; <a href="about.html" style="color:#555;text-decoration:none;margin:0 6px;">About</a> <a href="faq.html" style="color:#555;text-decoration:none;margin:0 6px;">FAQ</a> <a href="contact.html" style="color:#555;text-decoration:none;margin:0 6px;">Contact</a> <a href="press.html" style="color:#555;text-decoration:none;margin:0 6px;">Press</a> <a href="accessibility.html" style="color:#555;text-decoration:none;margin:0 6px;">Accessibility</a> <a href="dmca.html" style="color:#555;text-decoration:none;margin:0 6px;">DMCA</a> <a href="terms.html" style="color:#555;text-decoration:none;margin:0 6px;">Terms</a> <a href="privacy.html" style="color:#555;text-decoration:none;margin:0 6px;">Privacy</a></footer>
+
+  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+  <script type="module">
+    import { doc, setDoc, getDoc, updateDoc, serverTimestamp, collection, getDocs, query, orderBy, limit }
+      from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { onAuthStateChanged, signOut, reload } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { auth, db } from "./app/firebase-client.js";
+    import { DEFAULT_TIMEOUT_MS, clearResumeTarget, installIdleLogout } from "./app/idle-logout.js";
+    import { bindModeSwitch } from "./app/mode-switch.js";
+    import { initProfileDrafts } from "./app/profile-drafts.js";
+    import { derivePerformerTier, isBusinessClassEligible } from "./app/performer-tier.js";
+    import { getStripeConfig, startStripeOnboarding } from "./app/stripe-connect.js";
+    import { installUnsavedChangesGuard } from "./app/unsaved-changes.js";
+    import { buildOneId, readUserSummary, recordAuthEvent, writeUserSummary } from "./app/user-db.js";
+
+    async function refreshUserVerification(user) {
+      if (!user) return user;
+      try {
+        await reload(user);
+      } catch {}
+      return auth.currentUser || user;
+    }
+
+    function requiresVerifiedEmail(user) {
+      return !!(user && user.providerData && user.providerData.some((provider) => provider?.providerId === 'password') && !user.emailVerified);
+    }
+
+    async function redirectUnverifiedUser() {
+      await signOut(auth).catch(() => {});
+      window.location.href = 'auth.html?reason=verify-email';
+    }
+
+    let MUSICIAN_ID = null;
+    const MUSICIAN_PROFILE_DRAFT_KEY = 'cltch_musician_profile_draft_v1';
+    let profileDraftApi = null;
+    const profileForm = document.getElementById('profileForm');
+    const dirtyGuard = installUnsavedChangesGuard({
+      form: profileForm,
+      statusEl: document.getElementById('statusMsg'),
+      message: 'You have unsaved performer profile changes. Leave this page anyway?'
+    });
+
+    // Gate: must be signed in
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'auth.html'; return; }
+      const freshUser = await refreshUserVerification(user);
+      if (requiresVerifiedEmail(freshUser)) { await redirectUnverifiedUser(); return; }
+      installIdleLogout(auth, DEFAULT_TIMEOUT_MS);
+      MUSICIAN_ID = freshUser.uid;
+      initModeSwitch('musician', MUSICIAN_ID);
+      document.getElementById('payoutMethod').value = 'applepay';
+      window.updatePayoutHandle();
+      await loadProfile();
+      window.CLTCHLoading?.done();
+    });
+
+    document.getElementById('signOutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      clearResumeTarget();
+      if (auth.currentUser) await recordAuthEvent(db, auth.currentUser, 'sign_out').catch(() => {});
+      await signOut(auth);
+      window.location.href = 'auth.html';
+    });
+
+    function formatTs(value) {
+      if (!value) return 'Not recorded yet.';
+      const date = value.toDate ? value.toDate() : new Date(value);
+      return Number.isFinite(date.getTime()) ? date.toLocaleString() : 'Not recorded yet.';
+    }
+
+    function updateProfileCompletion() {
+      const checks = [
+        document.getElementById('firstName').value.trim(),
+        document.getElementById('lastName').value.trim(),
+        document.getElementById('zipCode').value.trim(),
+        document.getElementById('instruments').value.trim(),
+        selectedGenres.length > 0,
+        document.getElementById('payoutMethod').value,
+        document.getElementById('payoutMethod').value === 'check' || document.getElementById('payoutHandle').value.trim(),
+        document.getElementById('bio').value.trim()
+      ];
+      const completion = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+      const text = document.getElementById('dashCompletionValue');
+      const fill = document.getElementById('dashCompletionFill');
+      if (text) text.textContent = `${completion}%`;
+      if (fill) fill.style.width = `${completion}%`;
+    }
+
+    async function refreshAccountActivity() {
+      const summary = await readUserSummary(db, MUSICIAN_ID);
+      const oneId = summary?.oneId || buildOneId(MUSICIAN_ID);
+      document.getElementById('authActivityText').textContent = `OneID: ${oneId} • Last sign-in: ${formatTs(summary?.authLastSignInAt)} • Last sign-out: ${formatTs(summary?.authLastSignOutAt)}`;
+    }
+
+    async function initModeSwitch(currentMode, userId) {
+      const modeSwitch = document.getElementById('modeSwitch');
+      bindModeSwitch(modeSwitch, { db, userId, currentMode });
+    }
+
+    let available = true;
+    let selectedGenres = [];
+    let performerType = 'musician';
+    let resolvedGeo = null; // stores geocoded result for current zip
+    let businessClassActive = false;
+    let businessClassRequestedAt = null;
+    const VERIFIED_PERFORMER_MONTHLY_USD = 20;
+    let verifiedPerformerActive = false;
+    let verifiedPerformerRequestedAt = null;
+    let reviewMetrics = {
+      reviewCount: 0,
+      overallGrade: null,
+      tierSummary: derivePerformerTier([])
+    };
+    const PERFORMER_TYPE_CONFIG = {
+      musician: {
+        label: 'Musician',
+        skillLabel: 'Instruments / Skills',
+        skillPlaceholder: 'e.g. Guitar, Vocals, Keys'
+      },
+      dj: {
+        label: 'DJ',
+        skillLabel: 'Equipment / Setup',
+        skillPlaceholder: 'e.g. Serato, CDJs, Pioneer DDJ'
+      },
+      photographer: {
+        label: 'Photographer',
+        skillLabel: 'Gear / Specialties',
+        skillPlaceholder: 'e.g. Sony A7, portraits, event coverage'
+      },
+      cinematographer: {
+        label: 'Cinematographer',
+        skillLabel: 'Gear / Specialties',
+        skillPlaceholder: 'e.g. RED, gimbal, branded content'
+      },
+      model: {
+        label: 'Model',
+        skillLabel: 'Specialties / Experience',
+        skillPlaceholder: 'e.g. runway, commercial, editorial'
+      }
+    };
+    const STYLE_OPTIONS_BY_TYPE = {
+      musician: ['Jazz', 'R&B / Soul', 'Hip-Hop', 'Blues', 'Rock', 'Country', 'Classical', 'Afrobeats', 'Reggae', 'Latin', 'Open / Any'],
+      dj: ['House', 'Techno', 'EDM', 'Electronic', 'Open Format', 'Hip-Hop', 'Latin', 'Open / Any'],
+      photographer: ['Portrait', 'Editorial', 'Commercial', 'Lifestyle', 'Event Coverage', 'Fashion', 'Bridal', 'Streetwear', 'Open / Any'],
+      cinematographer: ['Commercial', 'Lifestyle', 'Event Coverage', 'Editorial', 'Fashion', 'Streetwear', 'Open / Any'],
+      model: ['Fashion', 'Editorial', 'Commercial', 'Lifestyle', 'Bridal', 'Streetwear', 'Open / Any']
+    };
+    const GRADE_VALUES = { AA: 7, A: 6, B: 5, C: 4, D: 3, F: 2 };
+
+    let stripeConfigState = { ready: false, publishableKey: '', error: '' };
+
+    function setPlaidStatus(message, isError = false) {
+      const statusEl = document.getElementById('plaidStatus');
+      if (!statusEl) return;
+      statusEl.textContent = message;
+      statusEl.classList.remove('plaid-status-ok', 'plaid-status-err');
+      statusEl.classList.add(isError ? 'plaid-status-err' : 'plaid-status-ok');
+    }
+
+    function setPlaidButtonBusy(isBusy) {
+      const btn = document.getElementById('connectPlaidBtn');
+      if (!btn) return;
+      btn.disabled = true;
+      btn.textContent = isBusy ? 'Connecting...' : 'Plaid Connect (Coming Soon)';
+    }
+
+    function setStripeStatus(message, isError = false) {
+      const statusEl = document.getElementById('stripeStatus');
+      if (!statusEl) return;
+      statusEl.textContent = message;
+      statusEl.style.color = isError ? '#b54d56' : '#444';
+    }
+
+    function setStripeButtonState(label, disabled) {
+      const btn = document.getElementById('connectStripeBtn');
+      if (!btn) return;
+      btn.textContent = label;
+      btn.disabled = !!disabled;
+    }
+
+    async function refreshStripeReadiness() {
+      stripeConfigState = await getStripeConfig();
+      if (stripeConfigState.ready) {
+        setStripeButtonState('Continue Stripe Setup', false);
+        setStripeStatus('Stripe Connect is ready for this platform. Use this to connect your payout account for future automated CLTCH bookings.');
+      } else {
+        setStripeButtonState('Stripe Setup Pending', true);
+        setStripeStatus(stripeConfigState.error || 'Stripe Connect is prepared in the system, but the live platform account has not been connected yet.');
+      }
+    }
+
+    function cleanMask(mask) {
+      return (mask || '').replace(/[^0-9]/g, '').slice(-4);
+    }
+
+    function plaidDisplayHandle(institution, mask) {
+      const safeMask = cleanMask(mask);
+      const base = institution ? ('Plaid ' + institution) : 'Plaid Connected';
+      return safeMask ? (base + ' ••••' + safeMask) : base;
+    }
+
+    function countUpcomingBookings() {
+      const todayStr = new Date().toISOString().slice(0,10);
+      let count = 0;
+      bookedDatesMap.forEach((booking, dateKey) => {
+        if (dateKey >= todayStr) count++;
+      });
+      return count;
+    }
+
+    function computeOverallGrade(reviews) {
+      const vals = reviews.filter((r) => r.grade && r.grade !== 'N').map((r) => GRADE_VALUES[r.grade] || 0);
+      if (!vals.length) return null;
+      const avg = vals.reduce((sum, value) => sum + value, 0) / vals.length;
+      return avg >= 6.5 ? 'AA' : avg >= 5.5 ? 'A' : avg >= 4.5 ? 'B' : avg >= 3.5 ? 'C' : avg >= 2.5 ? 'D' : 'F';
+    }
+
+    async function loadReviewMetrics() {
+      if (!MUSICIAN_ID) return;
+      const snap = await getDocs(query(
+        collection(db, 'musicians', MUSICIAN_ID, 'reviews'),
+        orderBy('createdAt', 'desc'),
+        limit(600)
+      ));
+      const reviews = [];
+      snap.forEach((item) => reviews.push(item.data()));
+      reviewMetrics = {
+        reviewCount: reviews.length,
+        overallGrade: computeOverallGrade(reviews),
+        tierSummary: derivePerformerTier(reviews)
+      };
+      renderProfileDashboard();
+    }
+
+    function calcProfileCompletion() {
+      const checks = [
+        document.getElementById('firstName')?.value.trim(),
+        document.getElementById('lastName')?.value.trim(),
+        document.getElementById('zipCode')?.value.trim(),
+        (selectedGenres || []).length > 0,
+        document.getElementById('rate')?.value.trim(),
+        document.getElementById('bio')?.value.trim(),
+        document.getElementById('payoutMethod')?.value,
+      ];
+
+      const payoutMethod = document.getElementById('payoutMethod')?.value;
+      const payoutHandle = document.getElementById('payoutHandle')?.value.trim();
+      const needsHandle = payoutMethod && payoutMethod !== 'check' && payoutMethod !== 'plaid';
+      checks.push(needsHandle ? payoutHandle : true);
+
+      const completed = checks.filter(Boolean).length;
+      return Math.round((completed / checks.length) * 100);
+    }
+
+    function renderProfileDashboard() {
+      const completion = calcProfileCompletion();
+      const completionEl = document.getElementById('dashCompletionValue');
+      const completionFill = document.getElementById('dashCompletionFill');
+      if (completionEl) completionEl.textContent = completion + '%';
+      if (completionFill) completionFill.style.width = completion + '%';
+
+      const availabilityEl = document.getElementById('dashAvailability');
+      if (availabilityEl) {
+        availabilityEl.textContent = available ? 'Available' : 'Paused';
+        availabilityEl.className = 'dash-value ' + (available ? 'ok' : 'warn');
+      }
+
+      const upcoming = countUpcomingBookings();
+      const upcomingEl = document.getElementById('dashUpcoming');
+      if (upcomingEl) upcomingEl.textContent = String(upcoming);
+
+      const blockedEl = document.getElementById('dashBlocked');
+      if (blockedEl) blockedEl.textContent = String(blackoutDates.size);
+
+      const genreEl = document.getElementById('dashGenre');
+      if (genreEl) genreEl.textContent = selectedGenres[0] || 'Not set';
+
+      const payoutEl = document.getElementById('dashPayout');
+      if (payoutEl) {
+        const payoutMethod = document.getElementById('payoutMethod')?.value;
+        const payoutHandle = document.getElementById('payoutHandle')?.value.trim();
+        const isReady = payoutMethod && payoutMethod !== 'plaid' && (payoutMethod === 'check' || payoutHandle);
+        payoutEl.textContent = isReady ? 'Ready' : 'Pending';
+        payoutEl.className = 'dash-value ' + (isReady ? 'ok' : 'warn');
+      }
+
+      const gradeEl = document.getElementById('dashGrade');
+      if (gradeEl) {
+        gradeEl.textContent = reviewMetrics.overallGrade || '—';
+        gradeEl.className = 'dash-value ' + (reviewMetrics.overallGrade ? 'ok' : '');
+      }
+
+      const tierEl = document.getElementById('dashTier');
+      if (tierEl) {
+        tierEl.textContent = reviewMetrics.tierSummary.tier;
+        tierEl.className = 'dash-value ok';
+      }
+
+      const tierCountEl = document.getElementById('dashTierCount');
+      if (tierCountEl) {
+        const trackUsesA = ['Rising Star', 'Sensei', 'GOAT', 'Masterclass'].includes(reviewMetrics.tierSummary.nextTier || reviewMetrics.tierSummary.tier);
+        tierCountEl.textContent = String(trackUsesA ? reviewMetrics.tierSummary.aOrAboveCount : reviewMetrics.tierSummary.bOrAboveCount);
+      }
+
+      const tierTrackLabelEl = document.getElementById('dashTierTrackLabel');
+      if (tierTrackLabelEl) {
+        const trackUsesA = ['Rising Star', 'Sensei', 'GOAT', 'Masterclass'].includes(reviewMetrics.tierSummary.nextTier || reviewMetrics.tierSummary.tier);
+        tierTrackLabelEl.textContent = trackUsesA ? 'A-or-Above Ratings' : 'B-or-Above Ratings';
+      }
+
+      const businessClassEl = document.getElementById('dashBusinessClass');
+      const businessClassNoteEl = document.getElementById('businessClassNote');
+      const businessClassRequestBtn = document.getElementById('businessClassRequestBtn');
+      const eligible = isBusinessClassEligible(reviewMetrics.tierSummary);
+      const requestedDate = businessClassRequestedAt?.toDate ? businessClassRequestedAt.toDate() : (businessClassRequestedAt ? new Date(businessClassRequestedAt) : null);
+      const requestedLabel = requestedDate && Number.isFinite(requestedDate.getTime())
+        ? requestedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        : '';
+
+      if (businessClassEl) {
+        businessClassEl.textContent = businessClassActive ? 'Active' : (eligible ? (businessClassRequestedAt ? 'Pending' : 'Available') : 'Unavailable');
+        businessClassEl.className = 'dash-value ' + (businessClassActive ? 'ok' : eligible ? 'warn' : 'bad');
+      }
+
+      if (businessClassNoteEl) {
+        if (businessClassActive) {
+          businessClassNoteEl.textContent = 'Your Business Class status is active. Hosts can now see the verified icon on your profile.';
+        } else if (!eligible) {
+          businessClassNoteEl.textContent = 'Business Class becomes available at Senior tier and above.';
+        } else if (businessClassRequestedAt) {
+          businessClassNoteEl.textContent = `Business Class enabled${requestedLabel ? ' on ' + requestedLabel : ''}. The verified icon appears once the status is active.`;
+        } else {
+          businessClassNoteEl.textContent = 'Business Class is available on this account. When active, hosts see the verified icon on your profile.';
+        }
+      }
+
+      if (businessClassRequestBtn) {
+        businessClassRequestBtn.style.display = !businessClassActive && eligible ? 'inline-flex' : 'none';
+        businessClassRequestBtn.disabled = !!businessClassRequestedAt;
+        businessClassRequestBtn.textContent = businessClassRequestedAt ? 'Business Class Enabled' : 'Enable Business Class';
+      }
+
+      const verifiedEl = document.getElementById('dashVerifiedPerformer');
+      const verifiedNoteEl = document.getElementById('verifiedPerformerNote');
+      const verifiedBtn = document.getElementById('verifiedPerformerBtn');
+      const verifiedRequestedDate = verifiedPerformerRequestedAt?.toDate ? verifiedPerformerRequestedAt.toDate() : (verifiedPerformerRequestedAt ? new Date(verifiedPerformerRequestedAt) : null);
+      const verifiedRequestedLabel = verifiedRequestedDate && Number.isFinite(verifiedRequestedDate.getTime())
+        ? verifiedRequestedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        : '';
+
+      if (verifiedEl) {
+        verifiedEl.textContent = verifiedPerformerActive ? 'Active' : (verifiedPerformerRequestedAt ? 'Pending' : 'Inactive');
+        verifiedEl.className = 'dash-value ' + (verifiedPerformerActive ? 'ok' : verifiedPerformerRequestedAt ? 'warn' : 'bad');
+      }
+
+      if (verifiedNoteEl) {
+        if (verifiedPerformerActive) {
+          verifiedNoteEl.textContent = `Verified Performer is active at $${VERIFIED_PERFORMER_MONTHLY_USD}/month. Other users can now see your legitimacy badge.`;
+        } else if (verifiedPerformerRequestedAt) {
+          verifiedNoteEl.textContent = `Verified Performer enabled${verifiedRequestedLabel ? ' on ' + verifiedRequestedLabel : ''} at $${VERIFIED_PERFORMER_MONTHLY_USD}/month.`;
+        } else {
+          verifiedNoteEl.textContent = `Enable Verified Performer for $${VERIFIED_PERFORMER_MONTHLY_USD}/month so hosts and collaborators can quickly trust your account.`;
+        }
+      }
+
+      if (verifiedBtn) {
+        verifiedBtn.style.display = verifiedPerformerActive ? 'none' : 'inline-flex';
+        verifiedBtn.disabled = !!verifiedPerformerRequestedAt;
+        verifiedBtn.textContent = verifiedPerformerRequestedAt
+          ? `Verified Performer Enabled ($${VERIFIED_PERFORMER_MONTHLY_USD}/month)`
+          : `Enable Verified Performer ($${VERIFIED_PERFORMER_MONTHLY_USD}/month)`;
+      }
+    }
+
+    function wireDashboardInputs() {
+      [
+        'firstName','lastName','zipCode','instruments','rate','experience','bio','payoutMethod','payoutHandle'
+      ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', renderProfileDashboard);
+        if (el) el.addEventListener('change', renderProfileDashboard);
+      });
+    }
+
+    // ── Availability calendar ──────────────────────────────────────────
+    let blackoutDates  = new Set();  // 'YYYY-MM-DD' — manually blocked
+    let bookedDatesMap = new Map();  // 'YYYY-MM-DD' → booking object (auto from accepted gigs)
+    const _today = new Date(); _today.setHours(0,0,0,0);
+    let calYear = _today.getFullYear();
+    let calMonth = _today.getMonth();
+    const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    function renderCalendar() {
+      const grid  = document.getElementById('calGrid');
+      const title = document.getElementById('calTitle');
+      const prevBtn = document.getElementById('calPrevBtn');
+      title.textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+
+      // Disable prev button if already on current month
+      const isCurrentMonth = calYear === _today.getFullYear() && calMonth === _today.getMonth();
+      prevBtn.disabled = isCurrentMonth;
+
+      const firstDow    = new Date(calYear, calMonth, 1).getDay();
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const daysInPrev  = new Date(calYear, calMonth, 0).getDate();
+
+      grid.innerHTML = '';
+
+      // Leading days from previous month
+      for (let i = firstDow - 1; i >= 0; i--) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell other-month';
+        cell.textContent = daysInPrev - i;
+        grid.appendChild(cell);
+      }
+
+      // Days of this month
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date    = new Date(calYear, calMonth, d);
+        const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const isPast  = date < _today;
+        const isToday = date.getTime() === _today.getTime();
+
+        const cell = document.createElement('div');
+        const isBooked  = bookedDatesMap.has(dateStr);
+        const isBlocked = blackoutDates.has(dateStr);
+
+        let cls = 'cal-cell';
+        if (isPast)    cls += ' past';
+        if (isToday)   cls += ' today';
+        if (isBooked)  cls += ' booked';
+        else if (isBlocked) cls += ' blocked';
+        cell.className = cls;
+        cell.textContent = d;
+
+        if (isBooked) {
+          // Show info tooltip on hover
+          cell.style.cursor = 'pointer';
+          const booking = bookedDatesMap.get(dateStr);
+          cell.addEventListener('mouseenter', (ev) => showBookedTooltip(ev, booking));
+          cell.addEventListener('mouseleave', hideBookedTooltip);
+          cell.addEventListener('click', () => showBookedTooltip({ clientX: cell.getBoundingClientRect().left, clientY: cell.getBoundingClientRect().top - 10 }, booking));
+        } else if (!isPast) {
+          cell.addEventListener('click', () => {
+            if (blackoutDates.has(dateStr)) blackoutDates.delete(dateStr);
+            else blackoutDates.add(dateStr);
+            renderCalendar();
+            renderProfileDashboard();
+          });
+        }
+        grid.appendChild(cell);
+      }
+
+      // Trailing days
+      const total    = firstDow + daysInMonth;
+      const trailing = total % 7 === 0 ? 0 : 7 - (total % 7);
+      for (let d = 1; d <= trailing; d++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell other-month';
+        cell.textContent = d;
+        grid.appendChild(cell);
+      }
+    }
+
+    window.calPrev = () => {
+      const isCurrentMonth = calYear === _today.getFullYear() && calMonth === _today.getMonth();
+      if (isCurrentMonth) return;
+      calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    };
+    window.calNext = () => {
+      calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderCalendar();
+    };
+
+    // Tooltip for booked dates
+    let _tip = null;
+    function showBookedTooltip(ev, booking) {
+      hideBookedTooltip();
+      _tip = document.createElement('div');
+      _tip.className = 'cal-tooltip';
+      const time = booking.time ? ` · ${formatTime12(booking.time)}` : '';
+      const pay  = booking.pay  ? ` · ${booking.pay}` : '';
+      _tip.innerHTML = `<strong style="color:#f5a623;">BOOKED</strong><br>${booking.venue || 'Venue TBD'}${time}<br><span style="color:#888;">${booking.location || ''}${pay}</span>`;
+      document.body.appendChild(_tip);
+      const x = Math.min(ev.clientX + 12, window.innerWidth - 240);
+      const y = Math.max(ev.clientY - 80, 8);
+      _tip.style.left = x + 'px';
+      _tip.style.top  = y + 'px';
+    }
+    function hideBookedTooltip() {
+      if (_tip) { _tip.remove(); _tip = null; }
+    }
+    function formatTime12(t) {
+      const [h, m] = t.split(':').map(Number);
+      if (isNaN(h)) return t;
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const hr   = h % 12 || 12;
+      return `${hr}:${String(m||0).padStart(2,'0')} ${ampm}`;
+    }
+
+    // Render on load
+    renderCalendar();
+    wireDashboardInputs();
+    renderProfileDashboard();
+
+    // Payout method UI
+    const PAYOUT_CONFIGS = {
+      applepay:  { label: 'Apple Pay Phone / Email', placeholder: 'you@icloud.com or (404) 555-0100', note: 'Recommended. Hosts can pay you through Apple Pay for the fastest payout flow.' },
+      googlepay: { label: 'Google Pay Email',        placeholder: 'you@gmail.com',                     note: 'Recommended. Hosts can pay you through Google Pay when Apple Pay is not preferred.' },
+      venmo:     { label: 'Venmo Username',          placeholder: '@YourUsername',                     note: 'Hosts will send payment to your Venmo.' },
+      cashapp:   { label: 'Cash App $Cashtag',       placeholder: '$YourCashtag',                      note: 'Hosts will send payment to your Cash App.' },
+      zelle:     { label: 'Zelle Phone / Email',     placeholder: 'e.g. (404) 555-0100',              note: 'Hosts will send payment via Zelle.' },
+      paypal:    { label: 'PayPal Email',            placeholder: 'you@example.com',                  note: 'Hosts will send payment via PayPal.' },
+      ach:       { label: 'Bank Name',               placeholder: 'e.g. Chase',                       note: 'Routing and account details shared privately after booking.' },
+      plaid:     { label: '',                        placeholder: '',                                  note: 'Plaid Connect is coming soon. Please choose Apple Pay, Google Pay, or another method for now.' },
+      check:     { label: '',                        placeholder: '',                                  note: 'Host delivers check or cash on the day of the gig.' }
+    };
+
+    async function connectPlaidAccount() {
+      setPlaidStatus('Plaid Connect is coming soon. Please choose Apple Pay, Google Pay, or another method for now.', true);
+      setPlaidButtonBusy(false);
+    }
+
+    window.updatePayoutHandle = () => {
+      const method     = document.getElementById('payoutMethod').value;
+      const group      = document.getElementById('payoutHandleGroup');
+      const label      = document.getElementById('payoutHandleLabel');
+      const input      = document.getElementById('payoutHandle');
+      const note       = document.getElementById('payoutNote');
+      const plaidGroup = document.getElementById('plaidConnectGroup');
+      const cfg        = PAYOUT_CONFIGS[method];
+      if (!cfg) {
+        group.style.display = 'none';
+        if (plaidGroup) plaidGroup.style.display = 'none';
+        note.textContent = '';
+        renderProfileDashboard();
+        return;
+      }
+
+      note.textContent = cfg.note;
+      const isPlaid = method === 'plaid';
+      if (plaidGroup) plaidGroup.style.display = isPlaid ? 'block' : 'none';
+
+      if (isPlaid) {
+        group.style.display = 'none';
+        if (input.value.trim()) setPlaidStatus('Connected: ' + input.value.trim(), false);
+        else setPlaidStatus('Plaid Connect is coming soon. Please choose another payout method for now.', true);
+        renderProfileDashboard();
+        return;
+      }
+
+      if (cfg.label) {
+        label.textContent = cfg.label;
+        input.placeholder = cfg.placeholder;
+        group.style.display = 'block';
+      } else {
+        group.style.display = 'none';
+      }
+      renderProfileDashboard();
+    };
+
+    const connectPlaidBtn = document.getElementById('connectPlaidBtn');
+    if (connectPlaidBtn) connectPlaidBtn.addEventListener('click', () => connectPlaidAccount());
+    const connectStripeBtn = document.getElementById('connectStripeBtn');
+    if (connectStripeBtn) {
+      connectStripeBtn.addEventListener('click', async () => {
+        setStripeButtonState('Opening Stripe...', true);
+        try {
+          await startStripeOnboarding({ auth, role: 'musician' });
+        } catch (error) {
+          setStripeStatus(error.message || 'Could not open Stripe onboarding right now.', true);
+          await refreshStripeReadiness();
+        }
+      });
+    }
+
+    // Performer type toggle
+    window.setType = (val) => {
+      performerType = val;
+      const cfg = PERFORMER_TYPE_CONFIG[val] || PERFORMER_TYPE_CONFIG.musician;
+      const allowedStyles = new Set(STYLE_OPTIONS_BY_TYPE[val] || STYLE_OPTIONS_BY_TYPE.musician);
+      const performerTypeSelect = document.getElementById('performerTypeSelect');
+      if (performerTypeSelect && performerTypeSelect.value !== val) performerTypeSelect.value = val;
+      document.getElementById('instrumentsLabel').textContent = cfg.skillLabel;
+      document.getElementById('instruments').placeholder = cfg.skillPlaceholder;
+      const stylesLabel = document.getElementById('stylesLabel');
+      const helper = document.getElementById('performerTypeHelper');
+      if (stylesLabel) stylesLabel.textContent = val === 'musician' || val === 'dj' ? 'Styles / Genres' : 'Styles / Categories';
+      if (helper) helper.textContent = `${cfg.label} selected. The style choices below now focus on the work that fits this performer type.`;
+      document.querySelectorAll('.genre-chip').forEach((chip) => {
+        const isAllowed = allowedStyles.has(chip.dataset.genre);
+        chip.style.display = isAllowed ? '' : 'none';
+        if (!isAllowed && chip.classList.contains('selected')) {
+          chip.classList.remove('selected');
+        }
+      });
+      selectedGenres = selectedGenres.filter((genre) => allowedStyles.has(genre));
+      renderProfileDashboard();
+    };
+
+    // Genre chip toggle
+    document.querySelectorAll('.genre-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('selected');
+        const genre = chip.dataset.genre;
+        if (chip.classList.contains('selected')) {
+          selectedGenres.push(genre);
+        } else {
+          selectedGenres = selectedGenres.filter(g => g !== genre);
+        }
+        renderProfileDashboard();
+      });
+    });
+
+    // Availability toggle
+    window.setAvail = (val) => {
+      available = val;
+      document.getElementById('availYes').classList.toggle('active', val);
+      document.getElementById('availNo').classList.toggle('active', !val);
+      renderProfileDashboard();
+    };
+
+    // Load existing profile
+    async function loadProfile() {
+    const profileRef = doc(db, 'musicians', MUSICIAN_ID);
+    const snap = await getDoc(profileRef);
+      if (snap.exists()) {
+        const d = snap.data();
+        document.getElementById('firstName').value = d.firstName || '';
+        document.getElementById('lastName').value = d.lastName || '';
+        document.getElementById('stageName').value = d.stageName || '';
+        if (d.zip) {
+          document.getElementById('zipCode').value = d.zip;
+          if (d.city && d.state) {
+            const el = document.getElementById('locationResolved');
+            el.style.color = '#4caf82';
+            el.textContent = `✓ ${d.city}, ${d.state}`;
+            resolvedGeo = { lat: d.lat, lng: d.lng, city: d.city, state: d.state, location: d.location };
+          }
+        }
+        document.getElementById('instruments').value = d.instruments || '';
+        document.getElementById('rate').value = d.rate || '';
+        document.getElementById('experience').value = d.experience || '';
+        document.getElementById('bio').value = d.bio || '';
+        businessClassActive = d.businessClassActive === true;
+        businessClassRequestedAt = d.businessClassRequestedAt || null;
+        verifiedPerformerActive = d.verifiedPerformerActive === true;
+        verifiedPerformerRequestedAt = d.verifiedPerformerRequestedAt || null;
+        available = d.available !== false;
+        window.setAvail(available);
+        window.setType(d.performerType || 'musician');
+        selectedGenres = d.genres || [];
+        document.querySelectorAll('.genre-chip').forEach(chip => {
+          if (selectedGenres.includes(chip.dataset.genre)) chip.classList.add('selected');
+        });
+        if (d.payoutMethod) {
+          document.getElementById('payoutMethod').value = d.payoutMethod;
+          document.getElementById('payoutHandle').value = d.payoutHandle || '';
+          window.updatePayoutHandle();
+        }
+        if (d.blackoutDates) {
+          blackoutDates = new Set(d.blackoutDates);
+        }
+        if (d.bookedDates && Array.isArray(d.bookedDates)) {
+          bookedDatesMap = new Map(d.bookedDates.map(b => [b.date, b]));
+        }
+        if (d.blackoutDates || d.bookedDates) renderCalendar();
+      }
+      await loadReviewMetrics();
+      updateProfileCompletion();
+      await refreshAccountActivity();
+      await refreshStripeReadiness();
+    } // end loadProfile
+
+    // Geocode a zip code → { lat, lng, city, state, location }
+    async function geocodeZip(zip) {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?postalcode=${encodeURIComponent(zip)}&country=US&format=json&addressdetails=1&limit=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const data = await res.json();
+        if (data.length > 0) {
+          const addr  = data[0].address;
+          const city  = addr.city || addr.town || addr.village || addr.county || '';
+          const state = addr.state || '';
+          return {
+            lat: parseFloat(data[0].lat),
+            lng: parseFloat(data[0].lon),
+            city,
+            state,
+            location: `${city}, ${state}`
+          };
+        }
+      } catch (e) { console.warn('Geocode failed:', e); }
+      return null;
+    }
+
+    // Auto-resolve zip on input
+    let zipTimer = null;
+    document.getElementById('zipCode').addEventListener('input', (e) => {
+      const zip = e.target.value.trim();
+      const el  = document.getElementById('locationResolved');
+      resolvedGeo = null;
+      el.style.color = '#555';
+      el.textContent = '';
+      clearTimeout(zipTimer);
+      if (zip.length < 5) return;
+      el.textContent = 'Looking up zip code…';
+      zipTimer = setTimeout(async () => {
+        const geo = await geocodeZip(zip);
+        if (geo) {
+          resolvedGeo = geo;
+          el.style.color = '#4caf82';
+          el.textContent = `✓ ${geo.city}, ${geo.state}`;
+        } else {
+          el.style.color = '#cf6679';
+          el.textContent = '✗ Zip code not found. Please check and try again.';
+        }
+      }, 500);
+    });
+
+    // Save profile
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!MUSICIAN_ID) return;
+      const saveBtn = document.getElementById('saveBtn');
+      const statusMsg = document.getElementById('statusMsg');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      const zip = document.getElementById('zipCode').value.trim();
+      if (!resolvedGeo) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Please enter a valid zip code before saving.';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Profile';
+        return;
+      }
+
+      const payoutMethod = document.getElementById('payoutMethod').value;
+      if (!payoutMethod) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Please select how you want to be paid.';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Profile';
+        return;
+      }
+
+      if (payoutMethod === 'plaid') {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Plaid Connect is coming soon. Please choose Apple Pay, Google Pay, or another payout method before saving.';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Profile';
+        return;
+      }
+
+      const payoutHandle = document.getElementById('payoutHandle').value.trim();
+      if (payoutMethod !== 'check' && !payoutHandle) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Please provide your payout handle before saving.';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Profile';
+        return;
+      }
+
+      const profileRef = doc(db, 'musicians', MUSICIAN_ID);
+      const profile = {
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        stageName: document.getElementById('stageName').value.trim(),
+        zip,
+        location: resolvedGeo.location,
+        city: resolvedGeo.city,
+        state: resolvedGeo.state,
+        lat: resolvedGeo.lat,
+        lng: resolvedGeo.lng,
+        instruments: document.getElementById('instruments').value.trim(),
+        genres: selectedGenres,
+        rate: document.getElementById('rate').value.trim(),
+        experience: document.getElementById('experience').value,
+        bio: document.getElementById('bio').value.trim(),
+        available,
+        performerType,
+        payoutMethod,
+        payoutHandle: payoutHandle,
+        blackoutDates: [...blackoutDates],
+        verifiedPerformerActive,
+        verifiedPerformerPlanMonthlyUsd: VERIFIED_PERFORMER_MONTHLY_USD,
+        type: 'musician',
+        updatedAt: serverTimestamp()
+      };
+
+      try {
+        await setDoc(profileRef, profile, { merge: true });
+        await writeUserSummary(db, MUSICIAN_ID, {
+          role: 'musician',
+          displayName: profile.stageName || `${profile.firstName} ${profile.lastName}`.trim(),
+          city: profile.city,
+          state: profile.state,
+          status: 'active',
+          profileComplete: true,
+          payoutReady: payoutMethod === 'check' || !!payoutHandle
+        });
+        statusMsg.className = 'status success';
+        statusMsg.textContent = 'Profile saved! Redirecting…';
+        profileDraftApi?.clear();
+        dirtyGuard.markSaved();
+        setTimeout(() => window.location.href = 'musician-matched-gigs.html', 1000);
+      } catch (err) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = 'Error saving profile.';
+        console.error(err);
+      }
+
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Profile';
+    });
+
+    const businessClassRequestBtn = document.getElementById('businessClassRequestBtn');
+    if (businessClassRequestBtn) {
+      businessClassRequestBtn.addEventListener('click', async () => {
+        if (!MUSICIAN_ID) return;
+        if (!isBusinessClassEligible(reviewMetrics.tierSummary)) {
+          const statusMsg = document.getElementById('statusMsg');
+          statusMsg.className = 'status error';
+          statusMsg.textContent = 'Business Class unlocks at Senior tier or above.';
+          return;
+        }
+        if (businessClassRequestedAt || businessClassActive) return;
+
+        businessClassRequestBtn.disabled = true;
+        const statusMsg = document.getElementById('statusMsg');
+        try {
+          await updateDoc(doc(db, 'musicians', MUSICIAN_ID), {
+            businessClassRequestedAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          businessClassRequestedAt = new Date();
+          renderProfileDashboard();
+          statusMsg.className = 'status success';
+          statusMsg.textContent = 'Business Class has been enabled for this account. The verified icon appears once the status is active.';
+        } catch (err) {
+          console.error(err);
+          businessClassRequestBtn.disabled = false;
+          statusMsg.className = 'status error';
+          statusMsg.textContent = 'Could not request Business Class right now.';
+        }
+      });
+    }
+
+    const verifiedPerformerBtn = document.getElementById('verifiedPerformerBtn');
+    if (verifiedPerformerBtn) {
+      verifiedPerformerBtn.addEventListener('click', async () => {
+        if (!MUSICIAN_ID || verifiedPerformerActive || verifiedPerformerRequestedAt) return;
+        verifiedPerformerBtn.disabled = true;
+        const statusMsg = document.getElementById('statusMsg');
+        try {
+          await updateDoc(doc(db, 'musicians', MUSICIAN_ID), {
+            verifiedPerformerActive: true,
+            verifiedPerformerRequestedAt: serverTimestamp(),
+            verifiedPerformerPlanMonthlyUsd: VERIFIED_PERFORMER_MONTHLY_USD,
+            updatedAt: serverTimestamp()
+          });
+          verifiedPerformerActive = true;
+          verifiedPerformerRequestedAt = new Date();
+          renderProfileDashboard();
+          statusMsg.className = 'status success';
+          statusMsg.textContent = `Verified Performer enabled at $${VERIFIED_PERFORMER_MONTHLY_USD}/month. Other users can now see your legitimacy badge.`;
+        } catch (err) {
+          console.error(err);
+          verifiedPerformerBtn.disabled = false;
+          statusMsg.className = 'status error';
+          statusMsg.textContent = 'Could not enable Verified Performer right now.';
+        }
+      });
+    }
+
+    // ── Inline field validation ────────────────────────────────────────
+    function validateField(input, errId, message) {
+      const err = document.getElementById(errId);
+      if (!err) return;
+      const empty = !input.value.trim();
+      input.classList.toggle('invalid', empty);
+      err.textContent = empty ? message : '';
+    }
+
+    [
+      ['firstName', 'err-firstName', 'First name is required'],
+      ['lastName',  'err-lastName',  'Last name is required'],
+    ].forEach(([id, errId, msg]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('blur', () => validateField(el, errId, msg));
+      el.addEventListener('input', () => { if (el.classList.contains('invalid')) validateField(el, errId, msg); updateProfileCompletion(); });
+    });
+
+    ['stageName','zipCode','instruments','rate','experience','bio','payoutMethod','payoutHandle','performerTypeSelect'].forEach((id) => {
+      document.getElementById(id)?.addEventListener('input', updateProfileCompletion);
+      document.getElementById(id)?.addEventListener('change', updateProfileCompletion);
+    });
+
+    profileDraftApi = initProfileDrafts({
+      form: document.getElementById('profileForm'),
+      key: MUSICIAN_PROFILE_DRAFT_KEY,
+      fields: [
+        { id: 'performerTypeSelect' }, { id: 'firstName' }, { id: 'lastName' }, { id: 'stageName' },
+        { id: 'zipCode' }, { id: 'instruments' }, { id: 'rate' }, { id: 'experience' },
+        { id: 'bio' }, { id: 'payoutMethod' }, { id: 'payoutHandle' },
+        { id: 'genreGrid', read: () => selectedGenres, write: (_, value) => { selectedGenres = Array.isArray(value) ? value : []; } },
+        { id: 'availYes', read: () => available, write: (_, value) => { setAvail(!!value); } }
+      ],
+      onStatus(message) {
+        document.getElementById('draftRestoreText').textContent = message;
+      },
+      onRestore(draft) {
+        if (draft.performerTypeSelect) setType(draft.performerTypeSelect);
+        window.updatePayoutHandle();
+        document.querySelectorAll('.genre-chip').forEach((chip) => {
+          chip.classList.toggle('selected', selectedGenres.includes(chip.dataset.genre));
+        });
+        updateProfileCompletion();
+      }
+    });
+  </script>
+
+  <script src="scripts/legal-components.js"></script>
+  <script src="scripts/host-performer-enhancements.js"></script>
+  <script src="scripts/platform-components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.Enhancements) {
+        window.Enhancements.initAvailabilitySync('availability-sync-btn', 'availability-sync-status');
+        window.Enhancements.initDocumentVault('document-vault');
+      }
+      if (window.PlatformComponents) {
+        window.PlatformComponents.initPortfolioManager('portfolioManagerComponent');
+        window.PlatformComponents.initTrustVerification('performerTrustComponent');
+      }
+    });
+  </script>
+
+</body>
+</html>
