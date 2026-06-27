@@ -2371,6 +2371,96 @@ textarea:focus-visible {
   gap: 16px;
 }
 
+.model-premium-suite,
+.model-premium-head,
+.model-fit-card,
+.model-readiness-panel,
+.model-review-panel {
+  min-width: 0;
+}
+
+.model-premium-suite {
+  display: grid;
+  gap: 16px;
+}
+
+.model-premium-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(280px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.model-signal-grid,
+.model-fit-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.model-signal-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.model-fit-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.model-signal-card,
+.model-fit-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.model-signal-card {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.model-signal-card span,
+.model-pill-row span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.model-signal-card strong,
+.model-fit-card strong {
+  line-height: 1.12;
+}
+
+.model-signal-card p,
+.model-fit-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.model-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.model-pill-row span {
+  padding: 6px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.model-review-panel ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
 .model-form-section {
   display: grid;
   gap: 14px;
@@ -3271,8 +3361,14 @@ textarea:focus-visible {
   .portal-split,
   .dashboard-hero-grid,
   .service-grid,
-  .landing-media-pair {
+  .landing-media-pair,
+  .model-premium-head {
     grid-template-columns: 1fr;
+  }
+
+  .model-signal-grid,
+  .model-fit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero-copy h1 {
@@ -3422,7 +3518,9 @@ textarea:focus-visible {
 
   .quote-select-grid,
   .quote-result-metrics,
-  .quote-insight-grid {
+  .quote-insight-grid,
+  .model-signal-grid,
+  .model-fit-grid {
     grid-template-columns: 1fr;
   }
 

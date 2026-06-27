@@ -980,3 +980,14 @@ Verification:
 - Wired the new controls into the pricing calculation and copied request details instead of leaving them as static UI.
 - Added a confirmation checkbox requiring clients to confirm that the current Service Estimation matches what they are looking for before dashboard `Send Quote` can be used.
 - Confirmation is tied to the current estimate signature, so changing selections or sliders requires reconfirmation before manager handoff.
+
+## 2026-06-27 Model Sign-up Premium Enrichment
+
+- Added a premium model review overview to `/models` with eligibility, 1099 work type, review pace, and separate-profile signals.
+- Added model fit lanes for camera presence, production readiness, usage comfort, and brand alignment.
+- Added compact readiness and manager review standards beside the application form.
+- Consolidated repeated application-review, 1099, screening, and no-show notices into one `Important terms` notice to reduce redundancy.
+- Moved the full model FAQ to `/models/faq` so `/models` can stay focused on the premium overview and application form.
+- Kept only the highest-value FAQ preview items on `/models`: separate model profile, 18+ requirement, and 1099/non-W-2 project work.
+- Added `/models/faq` to footer navigation, sitemap, and smoke coverage.
+- Expanded smoke coverage so `/models` is checked for premium review/consolidated terms markers and `/models/faq` is checked for full FAQ content.

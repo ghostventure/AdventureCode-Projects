@@ -10,6 +10,7 @@ const footerGroups = [
       { href: "/dj-services", label: "DJ services" },
       { href: "/beat-sessions", label: "Beat sessions" },
       { href: "/models", label: "Model Sign-up" },
+      { href: "/models/faq", label: "Model FAQ" },
       { href: "/pc-tech-support", label: "PC tech support" },
       { href: "/membership-sites", label: "Membership sites" }
     ]

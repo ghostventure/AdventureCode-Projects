@@ -13,6 +13,7 @@ export default function sitemap() {
     "/photography",
     "/videography",
     "/models",
+    "/models/faq",
     "/dj-services",
     "/beat-sessions",
     "/pc-tech-support",

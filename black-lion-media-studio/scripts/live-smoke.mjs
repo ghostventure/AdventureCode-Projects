@@ -12,7 +12,9 @@ const coreRoutes = [
   "/privacy",
   "/terms",
   "/legal",
-  "/dmca"
+  "/dmca",
+  "/models",
+  "/models/faq"
 ];
 
 const adConversionRoutes = ["/book", "/support", "/ad-expansion"];
@@ -76,6 +78,20 @@ const expansion = await (await fetch(`${baseUrl}/ad-expansion`)).text();
 for (const marker of ["200 additional", "Campaign Conversion", "Reliability Resilience", "Compliance Trust"]) {
   assert(expansion.includes(marker), `/ad-expansion missing marker: ${marker}`);
   console.log(`expansion marker ok: ${marker}`);
+}
+
+const models = await (await fetch(`${baseUrl}/models`)).text();
+for (const marker of ["Premium review lane", "Built for models who can move with production.", "Important terms"]) {
+  assert(models.includes(marker), `/models missing marker: ${marker}`);
+  console.log(`models marker ok: ${marker}`);
+}
+assert(models.includes("Full Model FAQ"), "/models missing Full Model FAQ link");
+assert(!models.includes("Should I upload copyrighted work?"), "/models still contains full FAQ content");
+
+const modelFaq = await (await fetch(`${baseUrl}/models/faq`)).text();
+for (const marker of ["Questions before applying to model.", "Should I upload copyrighted work?", "Back to Model Sign-up"]) {
+  assert(modelFaq.includes(marker), `/models/faq missing marker: ${marker}`);
+  console.log(`model faq marker ok: ${marker}`);
 }
 
 for (const route of ["/robots.txt", "/sitemap.xml"]) {
