@@ -368,6 +368,18 @@ textarea {
   line-height: 0.96;
 }
 
+.panel:not(.workspace-hero) .editorial-heading,
+.ui-spotlight-card .editorial-heading,
+.service-quote-builder .editorial-heading {
+  font-size: clamp(1.45rem, 2vw, 2.05rem);
+  line-height: 1.08;
+  max-width: 26ch;
+}
+
+.service-quote-builder .editorial-heading {
+  max-width: 28ch;
+}
+
 .hero-copy p {
   max-width: 34rem;
   font-size: 1.02rem;
@@ -883,6 +895,11 @@ textarea:focus-visible {
   min-width: 0;
 }
 
+.service-quote-builder :is(span, strong, b, em, p, label, button) {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
 .quote-builder-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(190px, 0.26fr);
@@ -1155,7 +1172,8 @@ textarea:focus-visible {
 
 .quote-price-row,
 .quote-price-total {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
   gap: 12px;
   justify-content: space-between;
   align-items: center;
@@ -1164,6 +1182,8 @@ textarea:focus-visible {
 .quote-price-row strong,
 .quote-price-total strong {
   text-align: right;
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 .quote-price-row.discount strong {
@@ -1182,17 +1202,27 @@ textarea:focus-visible {
 
 .quote-result-metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
   gap: 8px;
 }
 
 .quote-result-metrics > div {
   display: grid;
   gap: 4px;
+  min-width: 0;
   padding: 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface);
+}
+
+.quote-result-metrics strong,
+.quote-review-panel strong,
+.quote-insight-grid strong {
+  font-size: clamp(0.78rem, 1.3vw, 0.95rem);
+  line-height: 1.15;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .quote-summary {
@@ -1787,8 +1817,8 @@ textarea:focus-visible {
 
 .homepage-shell {
   --homepage-h1: 4rem;
-  --homepage-h2: 2.15rem;
-  --homepage-card-title: 1.02rem;
+  --homepage-h2: 1.86rem;
+  --homepage-card-title: 0.96rem;
   --homepage-body: 0.98rem;
   --homepage-caption: 0.7rem;
 }
@@ -2122,7 +2152,8 @@ textarea:focus-visible {
 .ui-spotlight-card strong,
 .ui-mini-stat strong {
   display: block;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  line-height: 1.12;
 }
 
 .ui-process-steps {
@@ -3232,7 +3263,7 @@ textarea:focus-visible {
 @media (max-width: 1080px) {
   .homepage-shell {
     --homepage-h1: 3.35rem;
-    --homepage-h2: 1.95rem;
+    --homepage-h2: 1.78rem;
   }
 
   .hero-grid,
@@ -3272,7 +3303,7 @@ textarea:focus-visible {
 @media (max-width: 900px) {
   .homepage-shell {
     --homepage-h1: 3rem;
-    --homepage-h2: 1.82rem;
+    --homepage-h2: 1.66rem;
     --homepage-body: 0.95rem;
   }
 
