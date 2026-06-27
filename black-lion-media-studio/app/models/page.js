@@ -1,16 +1,10 @@
 import Link from "next/link";
-import { ModelApplicationComponentLibrary } from "../../components/model-application-component-library";
 import { ModelApplicationForm } from "../../components/model-application-form";
 import {
   DetailPairGrid,
-  ProcessSteps,
   ShortcutRail,
   SupportNotice
 } from "../../components/shared-ui";
-import {
-  modelApplicationComponentInventory,
-  modelApplicationComponentSections
-} from "../../lib/model-application-components";
 import { modelFaqPreviewItems } from "../../lib/model-faq";
 
 export const metadata = {
@@ -18,28 +12,6 @@ export const metadata = {
   description: "Apply to be considered for Black Lion Studios modeling projects, brand shoots, editorial work, video productions, and casting opportunities.",
   alternates: { canonical: "/models" }
 };
-
-const componentLibraryGroups = modelApplicationComponentSections.map((section) => ({
-  id: section.id,
-  title: section.title,
-  copy: section.summary,
-  summaryItems: [
-    { label: "Units", value: section.units.length },
-    { label: "Focus", value: section.title }
-  ],
-  items: section.units.map((unit) => ({
-    id: unit.id,
-    title: unit.label,
-    copy: unit.intent,
-    status: unit.kind,
-    tone: unit.kind === "consent" ? "warning" : unit.kind === "field" ? "success" : "neutral",
-    tags: [unit.category, unit.kind],
-    meta: [
-      { label: "Order", value: unit.order },
-      { label: "Section", value: section.title }
-    ]
-  }))
-}));
 
 const premiumSignals = [
   { label: "Eligibility", value: "18+", note: "Adult-only applicant review" },
@@ -72,15 +44,15 @@ const modelFitLanes = [
 ];
 
 const modelReadinessItems = [
-  { label: "Portfolio link", value: "Required if available", note: "Instagram, website, or public work samples help review." },
-  { label: "Availability", value: "Specific windows", note: "Clear dates, times, and travel limits reduce back-and-forth." },
+  { label: "Portfolio", value: "Current samples", note: "Use Instagram, website, or public work links that represent you now." },
+  { label: "Contact", value: "Reachable details", note: "Use information you can keep current in the model profile." },
   { label: "Boundaries", value: "Usage and wardrobe", note: "State comfort levels before a project is considered." },
   { label: "Compensation", value: "Expectation range", note: "Share starting expectations so scope can be reviewed cleanly." }
 ];
 
 const reviewStandards = [
   "Clear adult eligibility and contact information.",
-  "Realistic availability for fast production windows.",
+  "Reliable scheduling for fast production windows.",
   "Portfolio or social links that represent current presentation.",
   "Specific modeling interests, comfort boundaries, and usage expectations.",
   "Reliable communication, preparation habits, and no-show awareness."
@@ -170,29 +142,6 @@ export default function ModelsPage() {
               copy="Submission creates or updates a separate model profile. It does not create a booking, employment relationship, agency representation, exclusivity, or guaranteed paid work. Opportunities are project-based 1099 contractor opportunities, not full-time W-2 employment. Reapplication is limited to once every 3 months, and missed confirmed calls or bookings may lower future priority."
             />
             <section className="panel">
-              <p className="label">Useful context</p>
-              <DetailPairGrid
-                items={[
-                  { label: "Profile", value: "Username and PII" },
-                  { label: "Age", value: "18+ confirmation" },
-                  { label: "Tax", value: "1099 project work" },
-                  { label: "Terms", value: "Contract before booking" },
-                  { label: "Screening", value: "Speed and quality" }
-                ]}
-              />
-            </section>
-            <section className="panel">
-              <p className="label">Review flow</p>
-              <ProcessSteps
-                items={[
-                  "Submit the model application with portfolio and availability.",
-                  "The studio reviews fit, logistics, comfort boundaries, usage needs, and budget.",
-                  "If there is a match, compensation, release terms, schedule, and project details are confirmed before anything is booked."
-                ]}
-                className="ui-process-compact"
-              />
-            </section>
-            <section className="panel">
               <p className="label">Related paths</p>
               <ShortcutRail
                 items={[
@@ -205,17 +154,6 @@ export default function ModelsPage() {
             </section>
           </div>
         </section>
-        <ModelApplicationComponentLibrary
-          eyebrow="Application architecture"
-          title="100+ model application components installed."
-          copy="These page units support the streamlined model signup, PII profile path, production-speed screening, quality review, 18+ rules, 90-day reapplication limit, no-show priority handling, and follow-up workflow."
-          groups={componentLibraryGroups}
-          stats={[
-            { label: "Groups", value: modelApplicationComponentInventory.sectionCount },
-            { label: "Components", value: modelApplicationComponentInventory.unitCount },
-            { label: "Route", value: modelApplicationComponentInventory.route }
-          ]}
-        />
         <section className="panel">
           <p className="label">Model FAQ</p>
           <h2 className="editorial-heading">Quick questions before signing up.</h2>

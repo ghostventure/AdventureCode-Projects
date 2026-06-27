@@ -989,5 +989,7 @@ Verification:
 - Consolidated repeated application-review, 1099, screening, and no-show notices into one `Important terms` notice to reduce redundancy.
 - Moved the full model FAQ to `/models/faq` so `/models` can stay focused on the premium overview and application form.
 - Kept only the highest-value FAQ preview items on `/models`: separate model profile, 18+ requirement, and 1099/non-W-2 project work.
+- Removed the public 100+ component inventory from `/models`; it remains installed in code for internal architecture/reference, but no longer renders repeated `Section`, `Order`, `Portfolio`, or field inventory cards to applicants.
+- Removed redundant context/review-flow side panels from `/models` so the page focuses on the premium overview, application form, concise readiness guidance, important terms, related links, and short FAQ preview.
 - Added `/models/faq` to footer navigation, sitemap, and smoke coverage.
 - Expanded smoke coverage so `/models` is checked for premium review/consolidated terms markers and `/models/faq` is checked for full FAQ content.

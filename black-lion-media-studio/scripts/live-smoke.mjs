@@ -87,6 +87,8 @@ for (const marker of ["Premium review lane", "Built for models who can move with
 }
 assert(models.includes("Full Model FAQ"), "/models missing Full Model FAQ link");
 assert(!models.includes("Should I upload copyrighted work?"), "/models still contains full FAQ content");
+assert(!models.includes("Application architecture"), "/models still contains internal component inventory");
+assert(!models.includes("100+ model application components installed"), "/models still exposes component inventory");
 
 const modelFaq = await (await fetch(`${baseUrl}/models/faq`)).text();
 for (const marker of ["Questions before applying to model.", "Should I upload copyrighted work?", "Back to Model Sign-up"]) {
