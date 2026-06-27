@@ -992,5 +992,7 @@ Verification:
 - Removed the public 100+ component inventory from `/models`; it remains installed in code for internal architecture/reference, but no longer renders repeated `Section`, `Order`, `Portfolio`, or field inventory cards to applicants.
 - Removed redundant context/review-flow side panels from `/models` so the page focuses on the premium overview, application form, concise readiness guidance, important terms, related links, and short FAQ preview.
 - Moved the actual `Scheduling and job terms` form section into the second column of the model application layout, while keeping the shorter scheduling expectations/job-term reference cards available below the form.
+- Added a live `Application readiness` panel to the model form that calculates completion percentage, selected project/interests counts, next missing fields, readiness status, and model legal links from the applicant's current entries.
+- Updated Terms/Privacy model language so application readiness indicators, scheduling answers, and job-term answers are explicitly covered as model application review data, not approvals, bookings, contracts, or finalized compensation.
 - Added `/models/faq` to footer navigation, sitemap, and smoke coverage.
 - Expanded smoke coverage so `/models` is checked for premium review/consolidated terms markers and `/models/faq` is checked for full FAQ content.

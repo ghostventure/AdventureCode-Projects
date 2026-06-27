@@ -94,6 +94,52 @@ function sanitizeStoredDraft(value) {
   };
 }
 
+function hasText(value, min = 1) {
+  return String(value || "").trim().length >= min;
+}
+
+function buildReadiness(draft, hasOtherInstance) {
+  const checks = [
+    { key: "legalName", label: "Legal name", complete: hasText(draft.legalName) },
+    { key: "username", label: "Username", complete: hasText(draft.username) },
+    { key: "email", label: "Email", complete: hasText(draft.email) },
+    { key: "password", label: "Password", complete: hasText(draft.password, 8) },
+    { key: "city", label: "City or service area", complete: hasText(draft.city) },
+    { key: "dateOfBirth", label: "Date of birth", complete: hasText(draft.dateOfBirth) },
+    { key: "ageConfirmation", label: "18+ confirmation", complete: draft.ageConfirmation === true },
+    { key: "projectTypes", label: "Project interests", complete: draft.projectTypes.length > 0 },
+    { key: "modelingInterests", label: "Modeling interests", complete: draft.modelingInterests.length > 0 },
+    { key: "portfolio", label: "Portfolio or Instagram", complete: hasText(draft.portfolioUrl) || hasText(draft.instagram) },
+    { key: "experience", label: "Experience", complete: hasText(draft.experience, 20) },
+    { key: "availability", label: "Availability", complete: hasText(draft.availability) },
+    { key: "travelReadiness", label: "Travel readiness", complete: hasText(draft.travelReadiness) },
+    { key: "compensationExpectation", label: "Compensation expectation", complete: hasText(draft.compensationExpectation) },
+    { key: "usageComfort", label: "Usage comfort", complete: hasText(draft.usageComfort) },
+    { key: "wardrobeComfort", label: "Wardrobe comfort", complete: hasText(draft.wardrobeComfort) },
+    { key: "productionPace", label: "Fast-production readiness", complete: hasText(draft.productionPace) },
+    { key: "qualityStandards", label: "Quality standards", complete: hasText(draft.qualityStandards) },
+    { key: "reliabilityExamples", label: "Reliability examples", complete: hasText(draft.reliabilityExamples) },
+    { key: "preparationProcess", label: "Preparation process", complete: hasText(draft.preparationProcess) },
+    { key: "contractReadiness", label: "Contract readiness", complete: draft.contractReadiness === true },
+    { key: "independentContractorDisclosure", label: "1099 disclosure", complete: draft.independentContractorDisclosure === true },
+    { key: "reapplicationPolicy", label: "90-day reapplication policy", complete: draft.reapplicationPolicy === true },
+    { key: "noShowPolicy", label: "No-show priority policy", complete: draft.noShowPolicy === true },
+    { key: "legalPolicyAcceptance", label: "Terms and Privacy acceptance", complete: draft.legalPolicyAcceptance === true },
+    { key: "consentToContact", label: "Consent to contact", complete: draft.consentToContact === true }
+  ];
+  const completeCount = checks.filter((check) => check.complete).length;
+  const percent = Math.round((completeCount / checks.length) * 100);
+  const missing = checks.filter((check) => !check.complete).map((check) => check.label);
+
+  return {
+    percent,
+    completeCount,
+    totalCount: checks.length,
+    missing,
+    status: hasOtherInstance ? "Blocked" : percent >= 92 ? "Ready to submit" : percent >= 62 ? "Nearly ready" : "Needs details"
+  };
+}
+
 export function ModelApplicationForm() {
   const instanceId = useMemo(
     () => `model-signup-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -104,6 +150,9 @@ export function ModelApplicationForm() {
   const [noticeTone, setNoticeTone] = useState("neutral");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasOtherInstance, setHasOtherInstance] = useState(false);
+  const readiness = useMemo(() => buildReadiness(draft, hasOtherInstance), [draft, hasOtherInstance]);
+  const selectedProjectSummary = draft.projectTypes.length ? draft.projectTypes.slice(0, 3).join(", ") : "No project interests selected";
+  const selectedInterestSummary = draft.modelingInterests.length ? draft.modelingInterests.slice(0, 3).join(", ") : "No modeling interests selected";
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -462,6 +511,52 @@ export function ModelApplicationForm() {
         </div>
 
         <aside className="model-form-side-column">
+      <section className="model-readiness-card" aria-label="Application readiness">
+        <div>
+          <p className="label">Application readiness</p>
+          <strong>{readiness.percent}%</strong>
+          <span>{readiness.status}</span>
+        </div>
+        <div className="model-readiness-meter" aria-hidden="true">
+          <span style={{ width: `${readiness.percent}%` }} />
+        </div>
+        <div className="model-readiness-stats">
+          <div>
+            <span>Completed</span>
+            <strong>{readiness.completeCount}/{readiness.totalCount}</strong>
+          </div>
+          <div>
+            <span>Projects</span>
+            <strong>{draft.projectTypes.length}</strong>
+          </div>
+          <div>
+            <span>Interests</span>
+            <strong>{draft.modelingInterests.length}</strong>
+          </div>
+        </div>
+        <div className="model-readiness-summary">
+          <p>{selectedProjectSummary}</p>
+          <p>{selectedInterestSummary}</p>
+        </div>
+        {readiness.missing.length ? (
+          <div className="model-next-fields">
+            <span>Next fields</span>
+            <ul>
+              {readiness.missing.slice(0, 5).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="model-readiness-ready">Application details are ready for submission review.</p>
+        )}
+        <div className="model-legal-links">
+          <a href="/models/faq">Model FAQ</a>
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+        </div>
+      </section>
+
       <section className="model-form-section">
         <div className="ui-form-section-head">
           <strong>Scheduling and job terms</strong>

@@ -476,7 +476,7 @@ export const privacySections = [
     items: [
       "Account identity details such as name, email, phone, company, account type, and login credentials.",
       "Profile details such as billing, shipping, contact preferences, project goals, social links, accessibility notes, and extra notes.",
-      "Model Sign-up details for model accounts, including legal name, public or stage name, username, date of birth for 18+ screening, phone, city or service area, pronouns, portfolio and social links, physical/styling details supplied by the applicant, availability, travel readiness, compensation expectations, usage comfort, wardrobe comfort, production pace, quality standards, reliability examples, preparation process, project interests, no-show/reapplication acknowledgments, and model notes.",
+      "Model Sign-up details for model accounts, including legal name, public or stage name, username, date of birth for 18+ screening, phone, city or service area, pronouns, portfolio and social links, physical/styling details supplied by the applicant, application readiness indicators, availability, travel readiness, scheduling answers, compensation expectations, usage comfort, wardrobe comfort, production pace, quality standards, reliability examples, preparation process, project interests, job-term answers, no-show/reapplication acknowledgments, and model notes.",
       "Service request details including service type, timeline, budget range, project notes, messages, and delivery preferences.",
       "Service Estimation details such as selected main services, selected sub-services, usage, timeline, location, market mode, scope, complexity, deliverables, hours, revisions, travel distance, discount status, estimated total, required deposit amount, and copied request details.",
       "Locally saved Service Estimation records may be stored in the visitor's browser local storage when the visitor chooses to save an estimate. Local browser storage is not the same as a submitted request.",
@@ -579,6 +579,7 @@ export const termsSections = [
     items: [
       "Model Sign-up is for adult applicants only. Applicants must be at least 18 years old and provide accurate profile, contact, availability, and screening information.",
       "Model profiles are separate from client profiles and may be searched by authorized managers for project fit, availability, production speed, quality, reliability, and follow-up.",
+      "Application readiness indicators, scheduling answers, and job-term answers are review aids only; they do not approve a model, finalize compensation, reserve a call time, or create a booking.",
       "Submitting Model Sign-up does not create employment, agency representation, a booking, a contract, exclusivity, or guaranteed paid work.",
       "Model opportunities are presented as 1099 independent-contractor project work, not full-time W-2 employment. No payroll withholding, employee benefits, guaranteed hours, or employee status are promised unless a separate written agreement says otherwise.",
       "Compensation, schedule, usage rights, wardrobe/styling terms, release terms, cancellation/no-show terms, and deliverables must be confirmed separately before a project is booked.",

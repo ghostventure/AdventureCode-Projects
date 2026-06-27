@@ -2395,6 +2395,112 @@ textarea:focus-visible {
   top: 92px;
 }
 
+.model-readiness-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(135deg, var(--accent-soft), transparent 70%),
+    var(--surface-strong);
+  box-shadow: var(--shadow-soft);
+}
+
+.model-readiness-card > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.model-readiness-card > div:first-child strong {
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.model-readiness-card > div:first-child span,
+.model-readiness-stats span,
+.model-next-fields > span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.model-readiness-meter {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.model-readiness-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.model-readiness-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.model-readiness-stats > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.model-readiness-stats strong {
+  font-size: 0.98rem;
+  line-height: 1.12;
+}
+
+.model-readiness-summary,
+.model-next-fields {
+  display: grid;
+  gap: 8px;
+}
+
+.model-readiness-summary p,
+.model-readiness-ready {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.model-next-fields ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.model-legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.model-legal-links a {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
 .model-support-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
