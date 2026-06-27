@@ -2371,6 +2371,37 @@ textarea:focus-visible {
   gap: 16px;
 }
 
+.model-application-layout {
+  display: grid;
+  gap: 18px;
+}
+
+.model-form-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.78fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.model-form-main-column,
+.model-form-side-column {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.model-form-side-column .model-form-section {
+  position: sticky;
+  top: 92px;
+}
+
+.model-support-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
 .model-premium-suite,
 .model-premium-head,
 .model-fit-card,
@@ -3520,8 +3551,13 @@ textarea:focus-visible {
   .quote-result-metrics,
   .quote-insight-grid,
   .model-signal-grid,
-  .model-fit-grid {
+  .model-fit-grid,
+  .model-form-columns {
     grid-template-columns: 1fr;
+  }
+
+  .model-form-side-column .model-form-section {
+    position: static;
   }
 
   .hero-stage {

@@ -65,11 +65,25 @@ const schedulingItems = [
   { label: "Missed booking", value: "Priority impact", note: "Missing confirmed calls or bookings can move a model behind available applicants." }
 ];
 
+const schedulingSectionItems = [
+  "List normal availability, blackout dates, preferred notice, and whether weekends or evenings are realistic.",
+  "State your local radius, transportation limits, travel comfort, and whether lodging would need to be discussed.",
+  "Keep contact details current after applying so a manager can confirm call time, location, and arrival instructions quickly.",
+  "Final schedule, call sheet, location, and production contact are confirmed separately before any booking is treated as active."
+];
+
 const jobTermItems = [
   { label: "Agreement", value: "Before work", note: "Compensation, usage, release terms, wardrobe, and deliverables are confirmed separately." },
   { label: "Classification", value: "1099 project", note: "Model opportunities are project-based contractor opportunities, not full-time W-2 jobs." },
   { label: "Payment", value: "Per scope", note: "Rate, payment timing, tax paperwork, and cancellation terms depend on accepted project terms." },
   { label: "No guarantee", value: "Review only", note: "Submitting a profile does not guarantee booking, representation, exclusivity, or paid work." }
+];
+
+const jobTermsSectionItems = [
+  "Compensation, usage rights, release terms, wardrobe expectations, cancellation rules, and deliverables are confirmed per project.",
+  "Paid projects may require accurate tax information and project-specific paperwork before payment processing.",
+  "Portfolio links and references do not transfer ownership or republication rights outside written project terms.",
+  "Applying does not create employment, agency representation, exclusivity, guaranteed hours, or guaranteed paid work."
 ];
 
 export default function ModelsPage() {
@@ -125,7 +139,7 @@ export default function ModelsPage() {
           </div>
         </section>
 
-        <section className="two-column quote-layout">
+        <section className="model-application-layout">
           <div className="panel" id="model-application">
             <p className="label">Application</p>
             <h2 className="editorial-heading">Send your model profile.</h2>
@@ -136,7 +150,7 @@ export default function ModelsPage() {
             <ModelApplicationForm />
           </div>
 
-          <div className="stack-small">
+          <div className="model-support-grid">
             <section className="panel model-readiness-panel">
               <p className="label">Before you apply</p>
               <h2 className="editorial-heading">Make the profile easy to review.</h2>
@@ -151,13 +165,31 @@ export default function ModelsPage() {
                 ))}
               </ul>
             </section>
+            <section className="panel model-review-panel">
+              <p className="label">Scheduling</p>
+              <h2 className="editorial-heading">How booking timing gets reviewed.</h2>
+              <ul>
+                {schedulingSectionItems.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
             <section className="panel model-readiness-panel">
               <p className="label">Scheduling expectations</p>
               <h2 className="editorial-heading">Be clear about timing.</h2>
               <DetailPairGrid items={schedulingItems} />
             </section>
-            <section className="panel model-readiness-panel">
+            <section className="panel model-review-panel">
               <p className="label">Job terms</p>
+              <h2 className="editorial-heading">What must be agreed before work.</h2>
+              <ul>
+                {jobTermsSectionItems.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
+            <section className="panel model-readiness-panel">
+              <p className="label">Job terms snapshot</p>
               <h2 className="editorial-heading">Nothing is booked until terms are accepted.</h2>
               <DetailPairGrid items={jobTermItems} />
             </section>

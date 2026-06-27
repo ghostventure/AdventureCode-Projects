@@ -321,50 +321,52 @@ export function ModelApplicationForm() {
 
   return (
     <form className="model-application-form" onSubmit={submit}>
-      <section className="model-form-section">
-        <div className="ui-form-section-head">
-          <strong>Basic information</strong>
-          <p className="ui-form-hint">Use legal details for contracting and public details for creative review.</p>
-        </div>
-      <div className="quick-quote-grid">
-        <label>
-          Legal name
-          <input value={draft.legalName} onChange={(event) => update("legalName", event.target.value)} autoComplete="name" />
-        </label>
-        <label>
-          Public or stage name
-          <input value={draft.displayName} onChange={(event) => update("displayName", event.target.value)} />
-        </label>
-        <label>
-          Username
-          <input value={draft.username} onChange={(event) => update("username", event.target.value)} autoComplete="username" placeholder="model-name" />
-        </label>
-        <label>
-          Email
-          <input type="email" value={draft.email} onChange={(event) => update("email", event.target.value)} autoComplete="email" />
-        </label>
-        <label>
-          Password
-          <input type="password" minLength={8} value={draft.password} onChange={(event) => update("password", event.target.value)} autoComplete="new-password" />
-        </label>
-        <label>
-          Phone
-          <input type="tel" value={draft.phone} onChange={(event) => update("phone", event.target.value)} autoComplete="tel" />
-        </label>
-        <label>
-          City or service area
-          <input value={draft.city} onChange={(event) => update("city", event.target.value)} placeholder="Atlanta, remote, travel radius" />
-        </label>
-        <label>
-          Date of birth
-          <input type="date" value={draft.dateOfBirth} onChange={(event) => update("dateOfBirth", event.target.value)} />
-        </label>
-        <label>
-          Pronouns
-          <input value={draft.pronouns} onChange={(event) => update("pronouns", event.target.value)} placeholder="Optional" />
-        </label>
-      </div>
-      </section>
+      <div className="model-form-columns">
+        <div className="model-form-main-column">
+          <section className="model-form-section">
+            <div className="ui-form-section-head">
+              <strong>Basic information</strong>
+              <p className="ui-form-hint">Use legal details for contracting and public details for creative review.</p>
+            </div>
+          <div className="quick-quote-grid">
+            <label>
+              Legal name
+              <input value={draft.legalName} onChange={(event) => update("legalName", event.target.value)} autoComplete="name" />
+            </label>
+            <label>
+              Public or stage name
+              <input value={draft.displayName} onChange={(event) => update("displayName", event.target.value)} />
+            </label>
+            <label>
+              Username
+              <input value={draft.username} onChange={(event) => update("username", event.target.value)} autoComplete="username" placeholder="model-name" />
+            </label>
+            <label>
+              Email
+              <input type="email" value={draft.email} onChange={(event) => update("email", event.target.value)} autoComplete="email" />
+            </label>
+            <label>
+              Password
+              <input type="password" minLength={8} value={draft.password} onChange={(event) => update("password", event.target.value)} autoComplete="new-password" />
+            </label>
+            <label>
+              Phone
+              <input type="tel" value={draft.phone} onChange={(event) => update("phone", event.target.value)} autoComplete="tel" />
+            </label>
+            <label>
+              City or service area
+              <input value={draft.city} onChange={(event) => update("city", event.target.value)} placeholder="Atlanta, remote, travel radius" />
+            </label>
+            <label>
+              Date of birth
+              <input type="date" value={draft.dateOfBirth} onChange={(event) => update("dateOfBirth", event.target.value)} />
+            </label>
+            <label>
+              Pronouns
+              <input value={draft.pronouns} onChange={(event) => update("pronouns", event.target.value)} placeholder="Optional" />
+            </label>
+          </div>
+          </section>
 
       <section className="model-form-section">
         <div className="ui-form-section-head">
@@ -457,7 +459,9 @@ export function ModelApplicationForm() {
         </div>
       </fieldset>
       </section>
+        </div>
 
+        <aside className="model-form-side-column">
       <section className="model-form-section">
         <div className="ui-form-section-head">
           <strong>Scheduling and job terms</strong>
@@ -545,6 +549,8 @@ export function ModelApplicationForm() {
         />
       </label>
       </section>
+        </aside>
+      </div>
 
       <section className="model-form-section">
         <div className="ui-form-section-head">
