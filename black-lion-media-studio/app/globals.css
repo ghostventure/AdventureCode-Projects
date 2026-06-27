@@ -918,6 +918,9 @@ textarea:focus-visible {
 
 .quote-builder-total span,
 .quote-result-metrics span,
+.quote-review-panel span,
+.quote-premium-card span,
+.quote-insight-grid span,
 .quote-price-row span,
 .quote-price-total span {
   color: var(--muted);
@@ -1096,6 +1099,55 @@ textarea:focus-visible {
   background: var(--accent-soft);
 }
 
+.quote-premium-card {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(135deg, var(--accent-soft), transparent 68%),
+    var(--surface);
+}
+
+.quote-premium-card strong {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.quote-premium-card p,
+.quote-insight-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.quote-insight-grid,
+.quote-review-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.quote-insight-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.quote-insight-grid > div,
+.quote-review-panel > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.quote-insight-grid strong,
+.quote-review-panel strong {
+  font-size: 0.92rem;
+}
+
 .quote-result-card {
   position: sticky;
   top: 92px;
@@ -1149,6 +1201,28 @@ textarea:focus-visible {
 
 .quote-disclaimer {
   font-size: 0.86rem;
+}
+
+.quote-confirmation {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.quote-confirmation input {
+  width: 18px;
+  min-width: 18px;
+  margin-top: 2px;
+  padding: 0;
+  accent-color: var(--accent);
 }
 
 .quote-action-row {
@@ -3316,7 +3390,8 @@ textarea:focus-visible {
   }
 
   .quote-select-grid,
-  .quote-result-metrics {
+  .quote-result-metrics,
+  .quote-insight-grid {
     grid-template-columns: 1fr;
   }
 

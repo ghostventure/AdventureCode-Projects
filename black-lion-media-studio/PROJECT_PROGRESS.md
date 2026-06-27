@@ -972,3 +972,11 @@ Verification:
 - Manager decline marks the request `Declined`, closes fulfillment, waives the invoice state, and notifies the client through a portal message.
 - Square invoice creation now uses the stored required-deposit amount for Service Estimation requests when present, instead of defaulting to a generic service starting price.
 - FAQ/legal content now explains that approval or non-approval is reflected in dashboard status and portal messages.
+
+## 2026-06-27 Service Estimation Premium Enrichment
+
+- Added production tier, delivery format, and talent/crew support controls to the estimator.
+- Added a production readiness score with contextual tier, delivery, and support notes so the quote feels more like a premium planning tool.
+- Wired the new controls into the pricing calculation and copied request details instead of leaving them as static UI.
+- Added a confirmation checkbox requiring clients to confirm that the current Service Estimation matches what they are looking for before dashboard `Send Quote` can be used.
+- Confirmation is tied to the current estimate signature, so changing selections or sliders requires reconfirmation before manager handoff.

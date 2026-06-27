@@ -72,6 +72,11 @@ export const faqItems = [
       "After a dashboard quote is sent, the manager reviews it from the request desk. If it is approved or not approved, your dashboard request status and portal messages are updated so you can see the decision and next steps."
   },
   {
+    question: "Why do I have to confirm the Service Estimation before sending it?",
+    answer:
+      "The confirmation asks you to verify that the selected services, production tier, delivery format, support level, travel, revisions, total, and deposit match what you are looking for before the estimate goes to manager review. It is still not a final quote or contract until the studio reviews and accepts the request."
+  },
+  {
     question: "How are deposits, invoices, and payments handled?",
     answer:
       "Payment terms are confirmed per accepted request. Once selected services are requested, a 50% deposit is warranted and required to confirm seriousness, scheduling, and production commitment. Approved payment links and invoices should be used for card payments, deposits, balances, refunds, chargebacks, and receipts."

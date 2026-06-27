@@ -61,6 +61,8 @@ for (const marker of [
   "Create account",
   "Service Estimation",
   "Build a Service Estimation before you send the request.",
+  "Production readiness",
+  "I confirm this Service Estimation matches what I am looking for",
   "Travel charge over 30 miles",
   "Revision rounds after 2",
   "50% deposit",

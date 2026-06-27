@@ -71,6 +71,24 @@ const locationOptions = [
   { label: "Multi-location", fee: 175 },
   { label: "Event venue", fee: 125 }
 ];
+const productionTierOptions = [
+  { label: "Essential", multiplier: 0.92, note: "Lean setup" },
+  { label: "Studio standard", multiplier: 1, note: "Balanced production" },
+  { label: "Premium", multiplier: 1.16, note: "Higher polish" },
+  { label: "Campaign-grade", multiplier: 1.32, note: "Commercial-ready" }
+];
+const deliveryFormatOptions = [
+  { label: "Standard delivery", fee: 0, note: "Core files and handoff" },
+  { label: "Social-ready kit", fee: 125, note: "Crops, captions, and platform cuts" },
+  { label: "Brand asset kit", fee: 250, note: "Organized launch-ready deliverables" },
+  { label: "Archive and source handoff", fee: 350, note: "Expanded file packaging" }
+];
+const talentSupportOptions = [
+  { label: "No added crew", fee: 0, note: "Solo or client-provided support" },
+  { label: "Assistant coordination", fee: 175, note: "On-site support planning" },
+  { label: "Model/talent coordination", fee: 300, note: "Talent scheduling support" },
+  { label: "Full production support", fee: 550, note: "Crew, talent, and run-of-show support" }
+];
 const marketModes = [
   { label: "Soft", multiplier: 0.94 },
   { label: "Normal", multiplier: 1 },
@@ -149,6 +167,27 @@ function primaryServiceName(selectedItems, selectedLanes) {
   return selectedItems[0]?.service || "Photography";
 }
 
+function readinessScore({ selectedItems, scope, complexity, deliverables, hours, revisions, timeline, productionTier, deliveryFormat }) {
+  let score = selectedItems.length ? 48 : 12;
+  score += Math.min(18, selectedItems.length * 4);
+  score += clamp(scope, 0, 4) * 3;
+  score += clamp(complexity, 0, 4) * 3;
+  score += Math.min(10, deliverables * 1.5);
+  score += Math.min(8, hours);
+  score += revisions <= includedRevisionRounds ? 4 : 1;
+  if (timeline === "Flexible" || timeline === "Standard") score += 5;
+  if (productionTier === "Premium" || productionTier === "Campaign-grade") score += 4;
+  if (deliveryFormat !== "Standard delivery") score += 3;
+  return Math.round(clamp(score, 0, 100));
+}
+
+function readinessLabel(score) {
+  if (score >= 82) return "Production-ready";
+  if (score >= 64) return "Strong brief";
+  if (score >= 42) return "Needs review";
+  return "Early draft";
+}
+
 export function ServiceQuoteBuilder({
   compact = false,
   dashboard = false,
@@ -161,6 +200,9 @@ export function ServiceQuoteBuilder({
   const [usage, setUsage] = useState(usageOptions[1].label);
   const [timeline, setTimeline] = useState(timelineOptions[1].label);
   const [location, setLocation] = useState(locationOptions[0].label);
+  const [productionTier, setProductionTier] = useState(productionTierOptions[1].label);
+  const [deliveryFormat, setDeliveryFormat] = useState(deliveryFormatOptions[0].label);
+  const [talentSupport, setTalentSupport] = useState(talentSupportOptions[0].label);
   const [market, setMarket] = useState(1);
   const [scope, setScope] = useState(2);
   const [complexity, setComplexity] = useState(2);
@@ -169,6 +211,7 @@ export function ServiceQuoteBuilder({
   const [revisions, setRevisions] = useState(1);
   const [travelMiles, setTravelMiles] = useState(0);
   const [firstTimer, setFirstTimer] = useState(true);
+  const [confirmedSignature, setConfirmedSignature] = useState("");
   const [savedNotice, setSavedNotice] = useState("");
 
   const estimate = useMemo(() => {
@@ -178,6 +221,9 @@ export function ServiceQuoteBuilder({
     const usageOption = getOption(usageOptions, usage, 0);
     const timelineOption = getOption(timelineOptions, timeline, 1);
     const locationOption = getOption(locationOptions, location, 0);
+    const productionTierOption = getOption(productionTierOptions, productionTier, 1);
+    const deliveryFormatOption = getOption(deliveryFormatOptions, deliveryFormat, 0);
+    const talentSupportOption = getOption(talentSupportOptions, talentSupport, 0);
     const marketOption = getMarketMode(market);
     const serviceBase = selectedItems.reduce((sum, item) => sum + item.base, 0);
     const setupBase = selectedItems.length ? serviceBase : 0;
@@ -190,9 +236,10 @@ export function ServiceQuoteBuilder({
     const travelCharge = calculateTravelCharge(travelMiles, selectedItems.length > 0);
     const billableTravelMiles = travelCharge.billableMiles;
     const travelFee = travelCharge.fee;
-    const serviceSubtotal = (setupBase + locationOption.fee + deliverableFee + hourFee + revisionFee) *
+    const serviceSubtotal = (setupBase + locationOption.fee + deliveryFormatOption.fee + talentSupportOption.fee + deliverableFee + hourFee + revisionFee) *
       scopeMultiplier *
       complexityMultiplier *
+      productionTierOption.multiplier *
       usageOption.multiplier *
       timelineOption.multiplier *
       marketOption.multiplier;
@@ -203,10 +250,46 @@ export function ServiceQuoteBuilder({
     const summary = selectedItems.length
       ? selectedItems.map((item) => item.label).join(", ")
       : "No optional micro-services selected yet";
+    const score = readinessScore({
+      selectedItems,
+      scope,
+      complexity,
+      deliverables,
+      hours,
+      revisions,
+      timeline,
+      productionTier,
+      deliveryFormat
+    });
+    const signature = [
+      selectedItems.map((item) => item.id).sort().join(","),
+      safeSelectedLanes.sort().join(","),
+      usage,
+      timeline,
+      location,
+      productionTier,
+      deliveryFormat,
+      talentSupport,
+      market,
+      scope,
+      complexity,
+      deliverables,
+      hours,
+      revisions,
+      travelMiles,
+      firstTimer,
+      Math.round(total)
+    ].join("|");
 
     return {
       selectedItems,
       summary,
+      productionTierLabel: productionTierOption.label,
+      productionTierNote: productionTierOption.note,
+      deliveryFormatLabel: deliveryFormatOption.label,
+      deliveryFormatNote: deliveryFormatOption.note,
+      talentSupportLabel: talentSupportOption.label,
+      talentSupportNote: talentSupportOption.note,
       marketRate: serviceSubtotal,
       discount,
       serviceTotal,
@@ -221,19 +304,26 @@ export function ServiceQuoteBuilder({
       budgetSummary: `${money(total)} estimated total | 50% deposit ${money(deposit)} | ${budgetLabel(total)}`,
       estimateAmountCents: cents(total),
       depositAmountCents: cents(deposit),
+      readinessScore: score,
+      readinessLabel: readinessLabel(score),
+      signature,
       details: [
         `Estimate generated from: ${summary}.`,
         `Main services: ${safeSelectedLanes.length ? safeSelectedLanes.join(", ") : "None selected"}.`,
-        `Usage: ${usage}. Timeline: ${timeline}. Location: ${location}. Market: ${marketOption.label}.`,
+        `Usage: ${usage}. Timeline: ${timeline}. Location: ${location}. Production tier: ${productionTierOption.label}. Delivery format: ${deliveryFormatOption.label}. Talent or crew support: ${talentSupportOption.label}. Market: ${marketOption.label}.`,
+        `Production readiness: ${readinessLabel(score)} at ${score}/100.`,
         `Scope ${scope}/4, complexity ${complexity}/4, deliverables ${deliverables}, hours ${hours}, revisions ${revisions}; the first ${includedRevisionRounds} revision rounds are included and ${billableRevisionRounds} rounds are billable.`,
         `Travel distance: ${travelCharge.safeMiles} miles; travel under ${includedTravelMiles} miles is included and ${billableTravelMiles} miles are an independent extra charge over the included ${includedTravelMiles}-mile window.`,
+        `Client confirmation required before manager handoff: confirm this estimate matches what they are looking for.`,
         firstTimer ? "First-time client discount included at 25%." : "No first-time discount included.",
         selectedItems.length
           ? "Once selected services are requested, a 50% deposit is warranted and required to confirm the request, scheduling seriousness, and production commitment."
           : "Deposit requirement applies after services are selected and requested."
       ].join(" ")
     };
-  }, [selectedIds, usage, timeline, location, market, scope, complexity, deliverables, hours, revisions, travelMiles, firstTimer, selectedLanes]);
+  }, [selectedIds, usage, timeline, location, productionTier, deliveryFormat, talentSupport, market, scope, complexity, deliverables, hours, revisions, travelMiles, firstTimer, selectedLanes]);
+
+  const estimateConfirmed = confirmedSignature === estimate.signature;
 
   function toggleService(serviceId) {
     setSavedNotice("");
@@ -289,6 +379,26 @@ export function ServiceQuoteBuilder({
     setSavedNotice("Estimate copied into the service request form.");
   }
 
+  function sendConfirmedEstimate() {
+    if (!onSendQuote) return;
+    if (!estimate.selectedItems.length) {
+      setSavedNotice("Select at least one service before sending a quote.");
+      return;
+    }
+    if (!estimateConfirmed) {
+      setSavedNotice("Confirm that this estimate matches what you are looking for before sending it.");
+      return;
+    }
+    onSendQuote({
+      projectType: estimate.serviceName,
+      budget: estimate.budgetSummary,
+      timeline: estimate.timelineDays,
+      estimateAmountCents: estimate.estimateAmountCents,
+      depositAmountCents: estimate.depositAmountCents,
+      details: estimate.details
+    });
+  }
+
   const visibleServices = microServices.filter(
     (item) => selectedLanes.includes(item.category) || selectedLanes.includes(item.service)
   );
@@ -338,6 +448,30 @@ export function ServiceQuoteBuilder({
               Location
               <select value={location} onChange={(event) => setLocation(event.target.value)}>
                 {locationOptions.map((option) => (
+                  <option key={option.label}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Production tier
+              <select value={productionTier} onChange={(event) => setProductionTier(event.target.value)}>
+                {productionTierOptions.map((option) => (
+                  <option key={option.label}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Delivery format
+              <select value={deliveryFormat} onChange={(event) => setDeliveryFormat(event.target.value)}>
+                {deliveryFormatOptions.map((option) => (
+                  <option key={option.label}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Talent / crew support
+              <select value={talentSupport} onChange={(event) => setTalentSupport(event.target.value)}>
+                {talentSupportOptions.map((option) => (
                   <option key={option.label}>{option.label}</option>
                 ))}
               </select>
@@ -394,6 +528,28 @@ export function ServiceQuoteBuilder({
         </div>
 
         <div className="quote-adjust-panel">
+          <div className="quote-premium-card">
+            <span>Production readiness</span>
+            <strong>{estimate.readinessScore}/100</strong>
+            <p>{estimate.readinessLabel}</p>
+          </div>
+          <div className="quote-insight-grid">
+            <div>
+              <span>Tier</span>
+              <strong>{estimate.productionTierLabel}</strong>
+              <p>{estimate.productionTierNote}</p>
+            </div>
+            <div>
+              <span>Delivery</span>
+              <strong>{estimate.deliveryFormatLabel}</strong>
+              <p>{estimate.deliveryFormatNote}</p>
+            </div>
+            <div>
+              <span>Support</span>
+              <strong>{estimate.talentSupportLabel}</strong>
+              <p>{estimate.talentSupportNote}</p>
+            </div>
+          </div>
           <label>
             Market rate
             <input type="range" min="0" max="3" value={market} onChange={(event) => setMarket(Number(event.target.value))} />
@@ -467,6 +623,16 @@ export function ServiceQuoteBuilder({
               <strong>{estimate.budget}</strong>
             </div>
           </div>
+          <div className="quote-review-panel">
+            <div>
+              <span>Production readiness</span>
+              <strong>{estimate.readinessLabel}</strong>
+            </div>
+            <div>
+              <span>Selected services</span>
+              <strong>{estimate.selectedItems.length}</strong>
+            </div>
+          </div>
           <p className="quote-summary">{estimate.summary}</p>
           <p className="quote-disclaimer">
             Estimate only. Baselines use 2026 market-rate research for comparable U.S. creative,
@@ -477,18 +643,21 @@ export function ServiceQuoteBuilder({
             reserve production time. Two revision rounds are included; additional revision rounds
             may add charges.
           </p>
+          <label className="quote-confirmation">
+            <input
+              type="checkbox"
+              checked={estimateConfirmed}
+              onChange={(event) => setConfirmedSignature(event.target.checked ? estimate.signature : "")}
+            />
+            <span>
+              I confirm this Service Estimation matches what I am looking for and is ready for manager review.
+            </span>
+          </label>
           <div className="quote-action-row">
             <button type="button" className="button" onClick={saveEstimate}>Save estimation</button>
             {dashboard && onSendQuote ? (
-              <button type="button" className="button" onClick={() => onSendQuote({
-                projectType: estimate.serviceName,
-                budget: estimate.budgetSummary,
-                timeline: estimate.timelineDays,
-                estimateAmountCents: estimate.estimateAmountCents,
-                depositAmountCents: estimate.depositAmountCents,
-                details: estimate.details
-              })} disabled={sendingQuote || estimate.selectedItems.length === 0}>
-                {sendingQuote ? "Sending quote..." : estimate.selectedItems.length === 0 ? "Select services first" : "Send Quote"}
+              <button type="button" className="button" onClick={sendConfirmedEstimate} disabled={sendingQuote || estimate.selectedItems.length === 0 || !estimateConfirmed}>
+                {sendingQuote ? "Sending quote..." : estimate.selectedItems.length === 0 ? "Select services first" : !estimateConfirmed ? "Confirm estimate first" : "Send Quote"}
               </button>
             ) : null}
             {dashboard && onApplyEstimate ? (

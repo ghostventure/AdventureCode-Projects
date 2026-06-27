@@ -18,12 +18,17 @@
 - Usage dropdown for personal/internal, social content, business marketing, and paid campaign/commercial work.
 - Timeline dropdown for flexible, standard, priority, and rush work.
 - Location dropdown for remote/studio-ready, local on-site, multi-location, and event venue work.
+- Production tier dropdown for Essential, Studio standard, Premium, and Campaign-grade production depth.
+- Delivery format dropdown for standard delivery, social-ready kit, brand asset kit, and archive/source handoff.
+- Talent and crew support dropdown for no added crew, assistant coordination, model/talent coordination, and full production support.
+- Production readiness score and label that summarize how complete the estimate is before manager review.
 - Market-rate slider for soft, normal, busy, and high-demand pricing.
 - Scope, complexity, deliverables, session hours, revision rounds, and travel-distance sliders.
 - Two revision rounds are included; selected revision rounds above 2 become billable extras.
 - First-time client discount toggle at 25%.
 - Travel under 30 miles is included. Travel over 30 miles is calculated as a separate independent extra charge outside the service subtotal, market multipliers, and first-time discount.
 - Required deposit display set to 50% of the estimated total once selected services are requested.
+- Confirmation checkbox asks clients to confirm that the Service Estimation matches what they are looking for before dashboard `Send Quote` is enabled. Changing estimate inputs requires reconfirmation.
 
 ## Market Baselines
 
@@ -34,6 +39,7 @@ Estimator defaults were adjusted using current 2026 public market-rate research 
 - Dashboard users can build a Service Estimation before submitting a request.
 - Dashboard users can click `Send Quote` to submit the estimate directly to the manager request desk for review.
 - `Send Quote` stores the estimated total and required 50% deposit as structured cents fields on the request, while also keeping the readable estimate summary in the budget/details fields.
+- `Send Quote` requires the client to confirm the current estimate matches what they are looking for before manager handoff.
 - `Apply to request` copies the service lane, budget range, estimated timing, selected sub-services, usage, timeline, location, market mode, scope, complexity, deliverables, hours, revisions, travel distance, and discount status into the request form.
 - The copied request details include that a 50% deposit is warranted and required once selected services are requested, to confirm seriousness, scheduling, and production commitment.
 - The request form remains the authenticated submission path through `/api/requests`.
